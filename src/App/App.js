@@ -7,11 +7,9 @@ import { css } from "@emotion/core";
 import { AppContext, AppContextProvider } from "./AppContext.js";
 
 import { Status } from "Components/StatusPanel";
-import { TaskConfig } from "../Components/TaskConfig";
-
-import { BasicTextField } from "Components/TextField";
+import { TaskConfig } from "Components/TaskConfig";
 import { TaskListing } from "Components/TaskListing";
-import { Dropbar } from "../Dropbar/index.js";
+import { Dropbar } from "Components/Dropbar";
 
 
 import { Provider } from "react-redux";
