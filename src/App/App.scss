@@ -1,0 +1,65 @@
+@use "~M/components/normalize";
+@use "~Theme" as *;
+
+:root {
+	font-size: 10px;
+	font-family: $font-primary;
+}
+
+* {
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.headline,
+.title {
+	letter-spacing: 0.0555rem;
+}
+
+button,
+.button {
+	cursor: pointer;
+	border: none;
+	box-shadow: none;
+}
+
+li,
+.list {
+	list-style: none;
+}
+
+a,
+.link {
+	text-decoration: none;
+}
+
+.headline {
+	display: flex;
+	align-items: center;
+	padding: 2.4rem;
+	font-size: 1.4rem;
+	font-weight: bold;
+	text-transform: uppercase;
+	border-bottom: 1px solid rgb(230, 230, 230);
+	letter-spacing: 0.0333rem;
+}
+
+.app {
+	display: grid;
+	grid-template-columns: min-content 1fr 34rem;
+	grid-template-rows: min-content 1fr;
+	grid-template-areas:
+		"status main tasklisting"
+		"status main taskconfig";
+
+	padding-right: 2.4rem;
+	overflow: hidden;
+
+	height: 100vh;
+	background: $background;
+}
+
+.main {
+	grid-area: main;
+}

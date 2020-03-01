@@ -1,0 +1,12 @@
+@use "~M/components/color-variables" as m;
+
+$font-primary: Roboto;
+
+$text-primary: m.color("blue-grey", "darken-4");
+$text-secondary: m.color("grey", "darken-1");
+
+$background: m.color("blue-grey", "lighten-5");
+$status-background: white;
+
+$input-border: m.color("grey", "lighten-1");
+$accent-focus: m.color("teal", "base");

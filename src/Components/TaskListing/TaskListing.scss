@@ -1,0 +1,23 @@
+.tasklisting {
+	grid-area: tasklisting;
+	display: grid;
+	grid-auto-rows: min-content;
+	padding: 0;
+	font-size: 13px;
+	background: white;
+
+	margin-top: 2.4rem;
+	margin-bottom: 2.4rem;
+
+	.headline {
+		text-transform: uppercase;
+	}
+
+	li {
+		padding: 16px 24px;
+		&:hover {
+			background: rgb(230, 230, 230);
+			cursor: pointer;
+		}
+	}
+}

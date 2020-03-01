@@ -1,0 +1,45 @@
+@use "~Theme" as *;
+@use "~M/components/color-variables" as m;
+
+.textfield {
+	display: flex;
+	flex-direction: column;
+	font-size: 1.4rem;
+	position: relative;
+
+	.title {
+		position: absolute;
+		padding: 0.4rem 0;
+		color: $text-secondary;
+	}
+
+	.input {
+		margin-top: 2.4rem;
+		font-size: 1.4rem;
+		// padding: 0.8rem;
+		height: 3rem;
+		// border-radius: 0.4rem;
+		border: none;
+		border-bottom: 1px solid $input-border;
+		padding-bottom: 1px;
+
+		&:invalid {
+			box-shadow: none;
+		}
+
+		&:focus ~ .title {
+			color: $accent-focus;
+		}
+
+		&:focus {
+			border-bottom-style: outset;
+			border-color: $accent-focus;
+		}
+	}
+
+	.helpertext {
+		padding: 0.4rem 0;
+		font-size: 1.2rem;
+		color: $text-secondary;
+	}
+}

@@ -1,0 +1,37 @@
+@use "~Theme" as *;
+@use "~Sass/mixins" as *;
+
+$expandedWidth: 24rem;
+
+.status {
+	background: $status-background;
+	grid-area: status;
+	width: 8rem;
+	transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	height: 100vh;
+
+	&.expanded,
+	&:hover {
+		width: $expandedWidth;
+	}
+
+	.items {
+		display: grid;
+		grid-auto-flow: row;
+		height: 100%;
+
+		.item {
+			@include flex-center;
+			height: 8rem;
+			font-size: 1.6rem;
+
+			&.active {
+				background: darken($color: $status-background, $amount: 10%);
+			}
+		}
+
+		.item:last-child {
+			align-self: flex-end;
+		}
+	}
+}
