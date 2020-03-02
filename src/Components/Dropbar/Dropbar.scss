@@ -1,3 +1,5 @@
+@use "~Theme" as *;
+
 .dropbar {
 	grid-area: dropbar;
 	position: relative;
@@ -37,11 +39,7 @@
 
 		&.active {
 			width: min-content;
-			border-bottom: 2px solid #2ee59d;
-		}
-
-		&:active {
-			background: red;
+			border-bottom: 2px solid $accent-focus;
 		}
 	}
 }

@@ -32,9 +32,10 @@ function BasicTextArea(props) {
 }
 export function TaskConfig(props) {
 	const currentTask = props.currentTask;
+	const expanded = props.expanded ?? true;
 	return (
 		<Formik>{ (formik) => (
-			<form className={"taskconfig"}>
+			<form className={classNames("taskconfig", { "expanded": expanded })}>
 				<div className="headline">Task Settings</div>
 				<BasicTextField 
 					name="name" 

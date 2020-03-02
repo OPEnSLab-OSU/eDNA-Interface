@@ -1,10 +1,11 @@
 import { Fragment, h, render } from "preact";
 
-import { Global, css } from "@emotion/core";
+import { css } from "@emotion/core";
 
 import { App } from "App";
 
-import Showcase from "./Showcase.js";
+import { Provider } from "react-redux";
+import { store } from "App/redux/store";
 
 
 const Reset = css`
@@ -53,46 +54,12 @@ const Reset = css`
 	}
 `;
 
-const Base = css`
-	* {
-		box-sizing: border-box;
-		font-family: Roboto, Verdana !important;
-		padding: 0;
-	}
-
-	body {
-		background: rgba(0,0,0,0.1);
-	}
-
-	html {
-		font-size: 10px !important;
-	}
-
-	button {
-		cursor: pointer;
-		border: none;
-		box-shadow: none;
-	}
-
-	input {
-		border: none;
-	}
-
-	.clickable {
-		cursor: pointer;
-		-webkit-user-select: none; 
-		-moz-user-select: none;
-		-ms-user-select: none; 
-		user-select: none;
-	}
-
-	.card {
-		background: white;
-		box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1);
-		border-radius: 4px;
-	}
-`;
-
-render((<Fragment><App /></Fragment>), document.body);
+render(
+	<Fragment>
+		<Provider store={store}>
+			<App />
+		</Provider>
+	</Fragment>
+	, document.body);
 
 // render((<Fragment><Global styles={Base} /><Showcase /></Fragment>), document.body);

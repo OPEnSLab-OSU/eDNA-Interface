@@ -1,12 +1,13 @@
 @use '~Theme' as *;
+@use "~Sass/mixins" as mix;
 
 .taskconfig {
+	@include mix.card;
 	grid-area: taskconfig;
 	background: white;
 	position: relative;
 
 	margin-bottom: 2.4rem;
-	border-radius: 0.4rem;
 	overflow-y: scroll;
 
 	display: grid;

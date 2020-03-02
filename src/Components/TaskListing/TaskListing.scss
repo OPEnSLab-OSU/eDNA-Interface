@@ -1,4 +1,7 @@
+@use "~Sass/mixins" as mix;
+
 .tasklisting {
+	@include mix.card;
 	grid-area: tasklisting;
 	display: grid;
 	grid-auto-rows: min-content;
