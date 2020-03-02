@@ -47,7 +47,7 @@ a,
 
 .app {
 	display: grid;
-	grid-template-columns: min-content 1fr 34rem;
+	grid-template-columns: min-content 1fr min-content;
 	grid-template-rows: min-content 1fr;
 	grid-template-areas:
 		"status main tasklisting"
@@ -62,4 +62,14 @@ a,
 
 .main {
 	grid-area: main;
+}
+
+.taskconfig {
+	width: 0;
+	transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
+	overflow-x: hidden;
+}
+
+.taskconfig.expanded {
+	width: 34rem;
 }

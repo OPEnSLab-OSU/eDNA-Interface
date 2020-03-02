@@ -62,7 +62,7 @@ module.exports = {
 				loaders: ["style-loader", "css-loader"]
 			},
 			{
-				test: /\.s[ac]ss$/,
+				test: /\.scss$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
 				loaders: ["style-loader", "css-loader", "sass-loader"]
 			}

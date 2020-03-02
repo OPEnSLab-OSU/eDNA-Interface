@@ -16,12 +16,9 @@
 	.input {
 		margin-top: 2.4rem;
 		font-size: 1.4rem;
-		// padding: 0.8rem;
 		height: 3rem;
-		// border-radius: 0.4rem;
 		border: none;
 		border-bottom: 1px solid $input-border;
-		padding-bottom: 1px;
 
 		&:invalid {
 			box-shadow: none;
@@ -32,8 +29,10 @@
 		}
 
 		&:focus {
+			box-shadow: none;
+			outline: none;
 			border-bottom-style: outset;
-			border-color: $accent-focus;
+			border-bottom: 1px solid $accent-focus;
 		}
 	}
 

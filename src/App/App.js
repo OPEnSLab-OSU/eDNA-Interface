@@ -1,31 +1,26 @@
 import { h } from "preact";
-
 import { useState } from "preact/hooks";
-
-import { css } from "@emotion/core";
-
-import { AppContext, AppContextProvider } from "./AppContext.js";
 
 import { Status } from "Components/StatusPanel";
 import { TaskConfig } from "Components/TaskConfig";
 import { TaskListing } from "Components/TaskListing";
 import { Dropbar } from "Components/Dropbar";
+import { StateTimeline } from "Components/StateTimeline";
 
-
-import { Provider } from "react-redux";
-import { store } from "./redux/store";
+import { useSelector } from "react-redux";
 
 export function App() {
+	const panels = useSelector(state => state.panels);
+
 	return (
-		<Provider store={store}>
-			<div className="app">
-				<Status />
-				<main className="main">
-					<Dropbar />
-				</main>
-				<TaskConfig />
-				<TaskListing />
-			</div>
-		</Provider>
+		<div className="app">
+			<Status />
+			<main className="main">
+				<Dropbar />
+				<StateTimeline />
+			</main>
+			<TaskConfig expanded={panels.task}/>
+			<TaskListing />
+		</div>
 	);
 }
