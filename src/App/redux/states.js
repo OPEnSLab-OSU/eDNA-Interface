@@ -3,7 +3,6 @@ const initialPanelVisibility = {
 	task: true
 };
 
-
 const initialStateTimelineData = { 
 	names: ["stop", "flush", "sample", "clean", "preserve"],
 	current: "stop" 
@@ -63,10 +62,38 @@ const initialStateConfigs = {
 	values: { flushDuration: 0, flushVolume: 0 }
 };
 
+const initialStatus = [{
+	name: "State",
+	properties: [
+		{ name: "current", value: null }
+	]
+}, {
+	name: "Valve",
+	properties: [
+		{ name: "current", value: null	}, 
+		{ name: "total", value: null }
+	]
+}, {
+	name: "Sensor Data",
+	properties: [
+		{ name: "pressure", value: null },
+		{ name: "temperature", value: null },
+		{ name: "flow speed", value: null },
+		{ name: "Almospheric", value: null }
+	]
+}, {
+	name: "Clock",
+	properties: [
+		{ name: "Local Date", value: null },
+		{ name: "Local Time", value: null }
+	]
+}];
+
 
 export { 
 	initialPanelVisibility,
 	initialStateTimelineData,
 	initialValveInfo,
-	initialStateConfigs 
+	initialStateConfigs, 
+	initialStatus
 };

@@ -3,6 +3,7 @@ import {
 	initialPanelVisibility,
 	initialStateConfigs,
 	initialStateTimelineData,
+	initialStatus,
 	initialValveInfo
 } from "./states";
 
@@ -65,12 +66,17 @@ function stateConfigReducer(configs = initialStateConfigs, action) {
 	return configs;
 }
 
+function statusReducer(status = initialStatus, action) {
+	return status;
+}
+
 const rootReducer = combineReducers({ 
 	panels: panelReducer, 
 	groups: groupReducer,
 	states: stateTimelineReducer,
 	valves: valveReducer,
-	stateConfigs: stateConfigReducer
+	status: statusReducer,
+	stateConfigs: stateConfigReducer,
 });
 
 export default rootReducer;

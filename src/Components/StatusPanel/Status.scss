@@ -1,5 +1,6 @@
 @use "~Theme" as *;
 @use "~Sass/mixins" as mix;
+@use "~M/components/color-variables" as material;
 
 $expandedWidth: 24rem;
 
@@ -20,11 +21,38 @@ $expandedWidth: 24rem;
 		display: grid;
 		grid-auto-flow: row;
 		height: 100%;
+		grid-template-rows: repeat(4, min-content) 1fr;
 
 		.item {
-			@include mix.flex-center;
-			height: 8rem;
-			font-size: 1.6rem;
+			padding: 24px;
+			display: grid;
+			gap: 16px;
+			align-self: flex-start;
+
+			.title {
+				text-transform: uppercase;
+				font-size: 1.2rem;
+				font-weight: bold;
+				border-bottom: 1px solid lightgrey;
+				padding-bottom: 8px;
+			}
+
+			.property {
+				display: grid;
+				grid-template-columns: 40% 60%;
+				justify-content: center;
+				font-size: 1.2rem;
+
+				.name {
+					color: material.color("grey", "darken-4");
+					text-transform: capitalize;
+				}
+
+				.value {
+					color: material.color("grey", "darken-1");
+					text-align: center;
+				}
+			}
 
 			&.active {
 				background: darken($color: $status-background, $amount: 10%);
