@@ -1,9 +1,10 @@
 @use "~Theme" as *;
-@use "~Sass/mixins" as *;
+@use "~Sass/mixins" as mix;
 
 $expandedWidth: 24rem;
 
 .status {
+	@include mix.card;
 	background: $status-background;
 	grid-area: status;
 	width: 8rem;
@@ -21,7 +22,7 @@ $expandedWidth: 24rem;
 		height: 100%;
 
 		.item {
-			@include flex-center;
+			@include mix.flex-center;
 			height: 8rem;
 			font-size: 1.6rem;
 

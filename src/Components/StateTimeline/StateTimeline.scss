@@ -10,9 +10,12 @@
 	user-select: none;
 
 	.state-node {
+		@include mix.card;
 		@include mix.flex-center;
 		text-transform: uppercase;
 		background: white;
 		font-size: 13px;
+		// background: red;
+		cursor: default;
 	}
 }

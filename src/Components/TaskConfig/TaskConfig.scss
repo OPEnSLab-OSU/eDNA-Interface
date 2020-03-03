@@ -42,7 +42,12 @@
 
 .textfield.textarea {
 	.input {
-		border: 0.1rem outset $input-border;
+		border-style: none;
+		border-color: Transparent;
+		overflow: auto;
+		outline: none;
+
+		border: 0.1rem solid $input-border;
 		border-radius: 0.4rem;
 		padding: 0.8rem;
 		margin-top: 2.6rem;

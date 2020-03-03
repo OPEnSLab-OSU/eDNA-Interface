@@ -8,6 +8,7 @@ import { Dropbar } from "Components/Dropbar";
 import { StateTimeline } from "Components/StateTimeline";
 
 import { useSelector } from "react-redux";
+import { ValveOverview } from "../Components/ValveOverview";
 
 export function App() {
 	const panels = useSelector(state => state.panels);
@@ -18,6 +19,7 @@ export function App() {
 			<main className="main">
 				<Dropbar />
 				<StateTimeline />
+				<ValveOverview />
 			</main>
 			<TaskConfig expanded={panels.task}/>
 			<TaskListing />

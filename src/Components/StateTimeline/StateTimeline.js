@@ -5,13 +5,14 @@ import { useSelector } from "react-redux";
 
 
 function StateNode(props) {
-	const { name, current, color } = props;
+	const { name, color } = props;
 	return (
-		<div className={classNames("state-node", "card", { current })}
+		<button 
+			className={classNames("state-node", "card")}
 			style={`color: ${color}`}
-		>
+			disabled={color === null}>
 			{name}
-		</div>
+		</button>
 	);
 }
 
@@ -25,8 +26,7 @@ export function StateTimeline() {
 			{names.map((name, i) => (
 				<StateNode 
 					key={name} name={name} 
-					color={nodeColors[i % names.length]}
-					current={name === states.current}
+					color={name === states.current ? nodeColors[i % names.length]: null}
 				/>
 			))}
 		</div>

@@ -4,6 +4,7 @@ import { Fragment, h } from "preact";
 import { useContext, useEffect, useReducer, useState } from "preact/hooks";
 import { Formik, useField, useFormik, useFormikContext } from "formik";
 import { BasicTextField, TextFieldComponent } from "Components/TextField";
+import { useSelector } from "react-redux";
 
 
 function TaskScheduleTimeFields(props) {
@@ -31,7 +32,8 @@ function BasicTextArea(props) {
 	);
 }
 export function TaskConfig(props) {
-	const currentTask = props.currentTask;
+	const valves = useSelector(state => state.valves);
+	const selectedValves = valves.selected.join(", ");
 	const expanded = props.expanded ?? true;
 	return (
 		<Formik>{ (formik) => (
@@ -59,7 +61,7 @@ export function TaskConfig(props) {
 					name="valves"
 					title="Valves *"
 					helpertext="Valves assigned to this task"
-					type="text" placeholder="e.g. 1,2,3,4,5"/>
+					type="text" placeholder="e.g. 1,2,3,4,5" value={selectedValves}/>
 
 				<TaskScheduleTimeFields 
 					title="Time Between *"
