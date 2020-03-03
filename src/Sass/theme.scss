@@ -3,10 +3,11 @@
 $font-primary: Roboto;
 
 $text-primary: m.color("blue-grey", "darken-4");
-$text-secondary: m.color("grey", "darken-1");
+$text-secondary: m.color("grey", "darken-3");
 
-$background: m.color("blue-grey", "lighten-5");
+$background: m.color("grey", "lighten-2");
 $status-background: white;
 
 $input-border: m.color("grey", "lighten-1");
-$accent-focus: #2ee59d;
+// $accent-focus: #2ee59d;
+$accent-focus: lighten(teal, 10%);

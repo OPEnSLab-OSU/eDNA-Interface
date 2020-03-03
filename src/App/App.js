@@ -6,6 +6,7 @@ import { TaskConfig } from "Components/TaskConfig";
 import { TaskListing } from "Components/TaskListing";
 import { Dropbar } from "Components/Dropbar";
 import { StateTimeline } from "Components/StateTimeline";
+import { StateConfig } from "Components/StateConfig";
 
 import { useSelector } from "react-redux";
 import { ValveOverview } from "../Components/ValveOverview";
@@ -20,6 +21,7 @@ export function App() {
 				<Dropbar />
 				<StateTimeline />
 				<ValveOverview />
+				<StateConfig />
 			</main>
 			<TaskConfig expanded={panels.task}/>
 			<TaskListing />

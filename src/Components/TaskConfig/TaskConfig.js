@@ -38,7 +38,11 @@ export function TaskConfig(props) {
 	return (
 		<Formik>{ (formik) => (
 			<form className={classNames("taskconfig", { "expanded": expanded })}>
-				<div className="headline">Task Settings</div>
+				<div className="headline">
+					<div className="title">
+						Task Settings
+					</div>
+				</div>
 				<BasicTextField 
 					name="name" 
 					title="Group Name *"

@@ -1,8 +1,9 @@
 import { actionTypes } from "./actions";
 import {
 	initialPanelVisibility,
+	initialStateConfigs,
 	initialStateTimelineData,
-	initialValveInfo 
+	initialValveInfo
 } from "./states";
 
 import { combineReducers } from "redux";
@@ -59,11 +60,17 @@ function valveReducer(valves = initialValveInfo, action) {
 	}
 }
 
+
+function stateConfigReducer(configs = initialStateConfigs, action) {
+	return configs;
+}
+
 const rootReducer = combineReducers({ 
 	panels: panelReducer, 
 	groups: groupReducer,
 	states: stateTimelineReducer,
-	valves: valveReducer
+	valves: valveReducer,
+	stateConfigs: stateConfigReducer
 });
 
 export default rootReducer;

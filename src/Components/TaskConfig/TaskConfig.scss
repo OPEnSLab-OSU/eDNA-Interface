@@ -14,10 +14,13 @@
 	gap: 2.4rem;
 
 	.headline {
+		display: flex;
+		justify-content: space-between;
 		position: sticky;
 		top: 0;
 		background: white;
 		z-index: 999;
+		border-bottom: 1px solid lightgrey;
 	}
 
 	.textfield {

@@ -4,13 +4,16 @@
 .textfield {
 	display: flex;
 	flex-direction: column;
-	font-size: 1.4rem;
+	font-size: 1.2rem;
 	position: relative;
 
 	.title {
 		position: absolute;
 		padding: 0.4rem 0;
-		color: $text-secondary;
+		// color: $text-secondary;
+		color: m.color("grey", "darken-4");
+		// font-weight: bold;
+		text-transform: uppercase;
 	}
 
 	.input {
