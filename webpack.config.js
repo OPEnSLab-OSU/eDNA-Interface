@@ -30,8 +30,8 @@ module.exports = {
 		}),
 		new CompressionPlugin(),
 		new HtmlWebpackInlineSourcePlugin(),
-		new HtmlWebpackHarddiskPlugin(),
-		new webpack.HotModuleReplacementPlugin()
+		new HtmlWebpackHarddiskPlugin()
+		// new webpack.HotModuleReplacementPlugin()
 	],
 	resolve: {
 		alias: {
@@ -62,7 +62,7 @@ module.exports = {
 				loaders: ["style-loader", "css-loader"]
 			},
 			{
-				test: /\.s[ac]ss$/,
+				test: /\.scss$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
 				loaders: ["style-loader", "css-loader", "sass-loader"]
 			}

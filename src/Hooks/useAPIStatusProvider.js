@@ -16,14 +16,15 @@ export const useAPIStatusProvider = (endpoint, options = {}) => {
 	const fetching = () => ({ type: STATUS_FETCHING });
 	const error = () => ({ type: STATUS_ERROR });
 	const timeout = () => ({ type: STATUS_TIMEOUT });
-	const success = response => ({ type: STATUS_SUCCESS, response });
+	const success = data => ({ type: STATUS_SUCCESS, data });
 
 	const initialState = {
 		status: null,
-		response: null,
+		data: null,
 	};
 
-	const statusReducer = (state = initialState, { type, response } = {}) => {
+	const responseReducer = (state = initialState, action) => {
+		const { type, data } = action;
 		switch (type) {
 		case STATUS_FETCHING:
 			return { status: STATUS_FETCHING };
@@ -32,18 +33,18 @@ export const useAPIStatusProvider = (endpoint, options = {}) => {
 		case STATUS_TIMEOUT:
 			return { status: STATUS_TIMEOUT };
 		case STATUS_SUCCESS:
-			return { status: STATUS_SUCCESS, response };
+			return { status: STATUS_SUCCESS, data };
 		default:
 			return state;
 		}
 	};
 
-	const [status, dispatchStatus] = useReducer(statusReducer, initialState);
+	const [response, dispatchStatus] = useReducer(responseReducer, initialState);
 	const makeRequest = useCallback(async () => {
 		try {
 			dispatchStatus(fetching());
-			const response = await Promise.all([sendRequestWithTimeout(1000, endpoint, options), sleep(50)]);
-			dispatchStatus(success(response));
+			const httpResponse = await Promise.all([sendRequestWithTimeout(1000, endpoint, options), sleep(50)]);
+			dispatchStatus(success(httpResponse));
 		} catch (e) {
 			if (e.timeout) {
 				dispatchStatus(timeout());
@@ -52,5 +53,5 @@ export const useAPIStatusProvider = (endpoint, options = {}) => {
 			}
 		}
 	}, [endpoint, options]);
-	return [status, makeRequest];
+	return [response, makeRequest];
 };

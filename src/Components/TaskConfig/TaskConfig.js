@@ -4,6 +4,7 @@ import { Fragment, h } from "preact";
 import { useContext, useEffect, useReducer, useState } from "preact/hooks";
 import { Formik, useField, useFormik, useFormikContext } from "formik";
 import { BasicTextField, TextFieldComponent } from "Components/TextField";
+import { useSelector } from "react-redux";
 
 
 function TaskScheduleTimeFields(props) {
@@ -24,27 +25,36 @@ function TaskScheduleTimeFields(props) {
 }
 
 function BasicTextArea(props) {
+	const { getFieldProps } = useFormikContext();
 	return (
 		<TextFieldComponent className="textfield textarea" {...props}>{ (rest) =>
-			<textarea className={"input"} {...rest}/>
+			<textarea name="notes" className={"input"} {...rest} {...getFieldProps("notes")}/>
 		}</TextFieldComponent>
 	);
 }
 export function TaskConfig(props) {
-	const currentTask = props.currentTask;
+	const valves = useSelector(state => state.valves);
+	const selectedValves = valves.selected.join(", ");
+	const expanded = props.expanded ?? true;
 	return (
-		<Formik>{ (formik) => (
-			<form className={"taskconfig"}>
-				<div className="headline">Task Settings</div>
+		<Formik initialValues={{}}>{ (formik) => (
+			<form className={classNames("taskconfig", { "expanded": expanded })}>
+				<div className="headline">
+					<div className="title">
+						Task Settings
+					</div>
+				</div>
+				
 				<BasicTextField 
 					name="name" 
-					title="Group Name *"
+					title="Task Name *"
+					placeholder="Untitled"
 					helpertext="Name used to identify the valve group"
-					type="text" required/>
+					type="text" required {...formik.getFieldProps("name")}/>
 
 				<BasicTextField
 					name="scheduleDate"
-					title="Schedule Date*"
+					title="Schedule Date *"
 					helpertext="Specific date when to run this group (YYYY-MM-DD)"
 					type="date"/>
 
@@ -58,11 +68,11 @@ export function TaskConfig(props) {
 					name="valves"
 					title="Valves *"
 					helpertext="Valves assigned to this task"
-					type="text" placeholder="e.g. 1,2,3,4,5"/>
+					type="text" placeholder="e.g. 1,2,3,4,5" value={selectedValves}/>
 
 				<TaskScheduleTimeFields 
 					title="Time Between *"
-					subtitle="Controls how long until the next sample in the group"/>
+					helpertext="Controls how long until the next sample in the group"/>
 		
 				<BasicTextArea 
 					name="notes"

@@ -1,3 +1,5 @@
+@use "~Theme" as *;
+
 .dropbar {
 	grid-area: dropbar;
 	position: relative;
@@ -14,7 +16,7 @@
 			list-style: none;
 			text-transform: uppercase;
 			font-size: 12px;
-			letter-spacing: 1px;
+			// letter-spacing: 1px;
 		}
 	}
 
@@ -22,6 +24,7 @@
 		display: grid;
 		grid-auto-flow: column;
 		padding: 0;
+		justify-content: left;
 	}
 
 	.right-section {
@@ -37,11 +40,7 @@
 
 		&.active {
 			width: min-content;
-			border-bottom: 2px solid #2ee59d;
-		}
-
-		&:active {
-			background: red;
+			border-bottom: 2px solid $accent-focus;
 		}
 	}
 }

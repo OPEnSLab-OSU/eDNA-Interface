@@ -1,4 +1,7 @@
+@use "~Sass/mixins" as mix;
+
 .tasklisting {
+	@include mix.card;
 	grid-area: tasklisting;
 	display: grid;
 	grid-auto-rows: min-content;
@@ -10,7 +13,27 @@
 	margin-bottom: 2.4rem;
 
 	.headline {
-		text-transform: uppercase;
+		display: flex;
+		justify-content: space-between;
+		position: sticky;
+		top: 0;
+		z-index: 999;
+		border-bottom: 1px solid lightgrey;
+		padding: 0 24px;
+		height: 60px;
+
+		.create-group {
+			@include mix.card;
+			min-width: 80px;
+			text-align: center;
+			text-transform: uppercase;
+			font-size: 1.2rem;
+			padding: 8px;
+			background: rgb(5, 177, 177);
+			color: white;
+			border: none;
+			border-radius: 4px;
+		}
 	}
 
 	li {

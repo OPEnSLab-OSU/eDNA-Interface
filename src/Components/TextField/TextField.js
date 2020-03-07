@@ -19,9 +19,9 @@ export const TextFieldComponent = (props) => {
 
 	return (
 		<div className={classNames(className)}>
+			{helpertext && <p className={"helpertext"}>{helpertext}</p>}
 			{inputComponent}
 			{<label className="title">{title}</label>}
-			{helpertext && <p className={"helpertext"}>{helpertext}</p>}
 		</div>
 	); 
 };

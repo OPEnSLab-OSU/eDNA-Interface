@@ -1,0 +1,47 @@
+@use "~Sass/mixins" as mix;
+@use "~Theme" as *;
+
+.stateconfig {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+	margin: 24px;
+	margin-top: 0;
+	gap: 24px;
+
+	padding-bottom: 24px;
+
+	.column {
+		display: grid;
+		grid-auto-flow: row;
+		gap: 24px;
+
+		grid-template-rows: min-content;
+		align-items: flex-start;
+	}
+
+	.config {
+		@include mix.card;
+
+		display: grid;
+		gap: 24px;
+		background: white;
+		padding-bottom: 24px;
+
+		.headline {
+			border-radius: 4px 4px 0 0;
+			padding: 16px;
+			background: orange;
+			color: white;
+			letter-spacing: 0.1rem;
+		}
+
+		.textfield {
+			padding: 0 24px;
+
+			.input {
+				@include mix.input;
+				width: 100%;
+			}
+		}
+	}
+}
