@@ -3,7 +3,7 @@ import rootReducer from "./reducers";
 
 
 const logger = store => next => action => {
-	const result = next(action);
+	next(action);
 	console.log(store.getState().valves.selected);
 };
 

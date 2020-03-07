@@ -22,12 +22,12 @@ function ValveNode(props) {
 		dispatch(toggleValveSelection(id));
 		setSelected(!selected);
 	};
+	
 	return (
 		<button 
 			className={classNames("valve-node", { "selected": selected })} 
 			onClick={toggle}>
 			{id}
-
 			{order > -1 ? <div className="badge">{order}</div> : null}
 		</button>
 	);

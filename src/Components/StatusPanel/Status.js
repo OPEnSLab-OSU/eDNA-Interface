@@ -27,7 +27,7 @@ export function Status(props) {
 				<li className={classNames("item", "button", { "active": panels.status })} 
 					onClick={() => {}}>
 					<a className={classNames("active")}>
-						eDNA
+						<i>E</i>DNA
 					</a>
 				</li>
 

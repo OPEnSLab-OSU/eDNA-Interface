@@ -12,11 +12,6 @@
 	box-sizing: border-box;
 }
 
-.headline,
-.title {
-	letter-spacing: 0.0555rem;
-}
-
 button,
 .button {
 	cursor: pointer;
@@ -40,9 +35,10 @@ a,
 	padding: 2.4rem;
 	font-size: 1.4rem;
 	font-weight: bold;
-	text-transform: uppercase;
+	letter-spacing: 0.15px;
+	// text-transform: uppercase;
 	border-bottom: 1px solid rgb(230, 230, 230);
-	letter-spacing: 0.0333rem;
+	// letter-spacing: 0.0333rem;
 }
 
 .app {
@@ -68,6 +64,7 @@ a,
 	height: 100%;
 	padding-bottom: 24px;
 	overflow-y: scroll;
+	min-width: 600px;
 	// margin-bottom: 24px;
 }
 

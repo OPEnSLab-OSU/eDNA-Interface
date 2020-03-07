@@ -34,11 +34,22 @@
 }
 
 .textfield.time {
-	flex-direction: row;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0 8px;
+	// flex-direction: row;
+	// justify-content: space-between;
+
+	.title {
+		grid-column: 1/-1;
+	}
+
+	.helpertext {
+		grid-column: 1/-1;
+	}
 
 	.input {
-		width: 30%;
+		width: 100%;
 		overflow: hidden;
 	}
 }

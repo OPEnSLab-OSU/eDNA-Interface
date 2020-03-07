@@ -30,8 +30,8 @@ module.exports = {
 		}),
 		new CompressionPlugin(),
 		new HtmlWebpackInlineSourcePlugin(),
-		new HtmlWebpackHarddiskPlugin(),
-		new webpack.HotModuleReplacementPlugin()
+		new HtmlWebpackHarddiskPlugin()
+		// new webpack.HotModuleReplacementPlugin()
 	],
 	resolve: {
 		alias: {

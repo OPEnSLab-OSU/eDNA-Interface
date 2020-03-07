@@ -12,30 +12,40 @@ import { useDispatch, useSelector } from "react-redux";
 import { ValveOverview } from "../Components/ValveOverview";
 
 import { sleep } from "Util/timeout";
-import { STATUS_SUCCESS, STATUS_TIMEOUT, useAPIStatusProvider } from "../Hooks/useAPIStatusProvider";
 import { fetchWithTimeout } from "../Util/timeout";
 
-const base = new URL("192.168.1.1");
-const abortController = new AbortController();
+import { updateStatus } from "./redux/actions";
 
-async function fetchStatus() {
-	// const url = "https://jsonplaceholder.typicode.com/todos/1";
+
+const base = new URL("http://192.168.1.1");
+const controller = new AbortController();
+
+function fetchStatus() {
+	const signal = controller.signal;
+
+	window.onunload = () => {
+		controller.abort();
+	};
+	
+	setTimeout(() => {
+		controller.abort();
+	}, 3000);
+
 	const url = new URL("api/status", base);
-	const signal = abortController.signal;
-	try {
-		const response = await fetchWithTimeout(3000, url, { signal });
-		console.log(response);
-	} catch (error) {
-		console.log(error);
-	}
+	return fetch(url, { signal }).then(response => response.json());
 }
+
 export function App() {
 	const panels = useSelector(state => state.panels);
 	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const timerId = setInterval(() => {
-			fetchStatus();
+			fetchStatus().then(payload => {
+				dispatch(updateStatus(payload));
+			}).catch(error => {
+				console.log("Timeout", error);
+			});
 		}, 3000);
 		return () => {
 			clearInterval(timerId);

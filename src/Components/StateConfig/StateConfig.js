@@ -17,16 +17,16 @@ import { css } from "@emotion/core";
 const nodeColors = ["#173F5F", "#20639B", "#3CAEA3", "#ED553B"];
 
 function Config(props) {
-	const { config, index } = props;
+	const { config, index, type } = props;
 	return (
 		<div className="config">
 			<h2 className="headline" style={`background: ${nodeColors[index % nodeColors.length]}`}>
 				{config.name}
 			</h2>
 			{config.configs.map((section, i)=> (
-				<BasicTextField 
-					key={i} title={section.name} 
-					type="text"
+				<BasicTextField key={i} 
+					title={section.name} 
+					type={type}
 					helpertext={section.description} 
 				/>
 			))}
@@ -41,15 +41,16 @@ function StateConfig(props) {
 	const sampleConfig = configs.sample;
 	const cleanConfig = configs.clean;
 	const preserveConfig = configs.preserve;
+
 	return (
 		<div className="stateconfig">
 			<div className="column">
-				<Config config={flushConfig} index={0} />
-				<Config config={sampleConfig} index={1}/>
+				<Config config={flushConfig} index={0} type="number" />
+				<Config config={sampleConfig} index={1} type="number"/>
 			</div>
 			<div className="column">
-				<Config config={cleanConfig} index={2} />
-				<Config config={preserveConfig} index={3} />
+				<Config config={cleanConfig} index={2} type="number"/>
+				<Config config={preserveConfig} index={3} type="number" />
 			</div>
 		</div>
 	);
