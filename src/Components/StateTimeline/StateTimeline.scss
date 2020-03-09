@@ -3,9 +3,10 @@
 
 .state-timeline {
 	display: flex;
-	padding: 2.4rem 3.6rem;
+	margin: 2.4rem 3.6rem;
 	align-items: center;
-	user-select: none;
+	position: relative;
+	height: 40px;
 
 	> hr {
 		flex-grow: 1;
@@ -14,10 +15,12 @@
 	}
 
 	.state-node {
-		width: 40px;
-		height: 40px;
 		@include mix.card;
 		@include mix.flex-center;
+
+		width: 40px;
+		height: 40px;
+
 		text-transform: uppercase;
 		background: white;
 		font-size: 13px;

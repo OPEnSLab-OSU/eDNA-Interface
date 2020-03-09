@@ -1,5 +1,5 @@
 import { h } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 
 import { Status } from "Components/StatusPanel";
 import { TaskConfig } from "Components/TaskConfig";
@@ -8,53 +8,67 @@ import { Dropbar } from "Components/Dropbar";
 import { StateTimeline } from "Components/StateTimeline";
 import { StateConfig } from "Components/StateConfig";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, useSelector, useStore } from "react-redux";
 import { ValveOverview } from "../Components/ValveOverview";
 
 import { sleep } from "Util/timeout";
 import { fetchWithTimeout } from "../Util/timeout";
 
-import { updateStatus } from "./redux/actions";
+import { apiConnect, apiSuccess, apiTimeout, updateStatus } from "./redux/actions";
 
 
 const base = new URL("http://192.168.1.1");
-const controller = new AbortController();
 
-function fetchStatus() {
+const start = Date.now();
+function fetchStatus(timeout) {
+	console.log("Fetching", (Date.now() - start)/1000);
+	const url = new URL("api/status", base);
+	const controller = new AbortController();
 	const signal = controller.signal;
 
-	window.onunload = () => {
-		controller.abort();
-	};
-	
-	setTimeout(() => {
-		controller.abort();
-	}, 3000);
-
-	const url = new URL("api/status", base);
+	window.onunload = () => controller.abort();
+	// -10 to make timeout event trigger before the setInterval
+	setTimeout(() => controller.abort(), timeout - 10); 
 	return fetch(url, { signal }).then(response => response.json());
 }
 
-export function App() {
-	const panels = useSelector(state => state.panels);
-	const dispatch = useDispatch();
 
+export function App() {
+	const store = useStore();
+	const dispatch = useDispatch();
+	const panels = useSelector(state => state.panels);
+	const connection = useSelector(state => state.connection);
+	const [statusUpdating, setStatusUpdating] = useState(true);
+
+	// Status update effect 
 	useEffect(() => {
-		const timerId = setInterval(() => {
-			fetchStatus().then(payload => {
+		if (!statusUpdating) {
+			return;
+		}
+			
+		const timeout = 500;
+		const fetchHandleStatusUpdate = (timerId = null) => {
+			fetchStatus(timeout).then(payload => {
 				dispatch(updateStatus(payload));
-			}).catch(error => {
-				console.log("Timeout", error);
+				dispatch(apiSuccess());
+			}).catch(_ => {
+				dispatch(apiTimeout());
+				if (store.getState().connection.statusText === "offline") {
+					clearInterval(timerId);
+					setStatusUpdating(false);
+				}
 			});
-		}, 3000);
-		return () => {
-			clearInterval(timerId);
 		};
-	}, []);
+
+		dispatch(apiConnect());
+		fetchHandleStatusUpdate();
+		const timer = setInterval(() => fetchHandleStatusUpdate(timer), timeout);
+		return () => clearInterval(timer);
+	}, [statusUpdating]);
 
 	return (
 		<div className="app">
-			<Status connectionStatus={status}/>
+			<Status connection={connection} setStatusUpdating={setStatusUpdating}/>
 			<main className="main">
 				<Dropbar />
 				<StateTimeline />

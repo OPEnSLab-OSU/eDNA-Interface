@@ -12,11 +12,12 @@ import { toggleValveSelection } from "../../App/redux/actions";
 
 
 function ValveNode(props) {
-	const { id } = props;
+	const { id, status } = props;
 	const [selected, setSelected] = useState(false);
 	const dispatch = useDispatch();
-	const valvesSelected = useSelector(state => state.valves.selected);
-	const order = valvesSelected.findIndex(valveId => valveId === id);
+	const valves = useSelector(state => state.valves);
+	const valvesSelected = valves.selected;
+	const queue = valvesSelected.findIndex(valveId => valveId === id);
 
 	const toggle = () => {
 		dispatch(toggleValveSelection(id));
@@ -26,15 +27,15 @@ function ValveNode(props) {
 	return (
 		<button 
 			className={classNames("valve-node", { "selected": selected })} 
-			onClick={toggle}>
+			onClick={toggle}
+			disabled={status === "sampled"}>
 			{id}
-			{order > -1 ? <div className="badge">{order}</div> : null}
+			{queue > -1 ? <div className="badge">{queue + 1}</div> : null}
 		</button>
 	);
 }
 export function ValveOverview() {
 	const valves = useSelector(state => state.valves);
-	const dispatch = useDispatch();
 	const midPoint = valves.all.length;
 	const top = valves.all.filter(v => v.id < midPoint);
 	const bottom = valves.all.filter(v => v.id >= midPoint);

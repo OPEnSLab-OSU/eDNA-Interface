@@ -8,15 +8,14 @@ const initialStateTimelineData = {
 	current: "stop" 
 };
 
-
 const dummyValveData = Array(24).fill(0).map((_, idx) => ({ 
 	id: idx, 
-	status: "free" 
+	status: "sampled" 
 }));
 
 const initialValveInfo = {
-	current: 0,
 	all: dummyValveData,
+	current: 0,
 	selected: []
 };
 
@@ -28,7 +27,7 @@ const initialStateConfigs = {
 			"description": "Controls how long before transitioning to the sample state" 
 		}, {
 			"name": "volume",
-			"description": "Controls how much water will be taken" 
+			"description": "Controls how much water will be used to flush the system" 
 		}] 
 	},
 	sample: {
@@ -38,10 +37,10 @@ const initialStateConfigs = {
 			"description": "Controls how long before transitioning to the clean state" 
 		}, {
 			"name": "volume",
-			"description": "Controls how much water will be taken" 
+			"description": "Controls how much water will be sampled" 
 		}, {
 			"name": "pressure",
-			"description": "Controls how much water will be taken" 
+			"description": "Controls when to automatically stop when the pressure exeeds the given limit" 
 		}] 
 	},
 	clean: {
@@ -56,7 +55,7 @@ const initialStateConfigs = {
 		name: "Preserve",
 		configs: [{ 
 			"name": "duration",
-			"description": "Controls how long before transitioning to the clean state" 
+			"description": "Controls how long before transitioning to the stop state" 
 		}] 
 	},
 	values: { flushDuration: 0, flushVolume: 0 }

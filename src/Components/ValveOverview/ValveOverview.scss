@@ -22,6 +22,10 @@
 
 		position: relative;
 
+		&:disabled {
+			background: rgba(40, 45, 60, 0.5);
+		}
+
 		&.current {
 			background: #2ee59d;
 			transform: translateY(-4px);

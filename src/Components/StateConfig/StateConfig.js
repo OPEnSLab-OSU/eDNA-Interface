@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { actions } from "App/redux/actions";
 import { toggleValveSelection } from "../../App/redux/actions";
 
-import { css } from "@emotion/core";
 
 const nodeColors = ["#173F5F", "#20639B", "#3CAEA3", "#ED553B"];
 
@@ -23,7 +22,7 @@ function Config(props) {
 			<h2 className="headline" style={`background: ${nodeColors[index % nodeColors.length]}`}>
 				{config.name}
 			</h2>
-			{config.configs.map((section, i)=> (
+			{config.configs.map((section, i) => (
 				<BasicTextField key={i} 
 					title={section.name} 
 					type={type}

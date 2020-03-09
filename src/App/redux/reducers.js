@@ -9,26 +9,30 @@ import {
 
 import { combineReducers } from "redux";
 
-const { TOGGLE_PANEL } = actionTypes;
 function panelReducer(panels = initialPanelVisibility, action) {
-	switch (action.type) {
+	const { TOGGLE_PANEL } = actionTypes;
+	const { type, panel } = action;
+
+	switch (type) {
 	case TOGGLE_PANEL:
 		return {
 			...panels,
-			[action.panel]: !panels[action.panel],
+			[panel]: !panels[panel],
 		};
 	default:
 		return panels;	
 	}
 }
 
-function groupReducer(groups = ["Task 1", "Task 2", "Task 3"], action) {
-	return groups;
+function taskReducer(tasks = ["Task 1", "Task 2", "Task 3"], action) {
+	return tasks;
 }
 
-const { STATE_JUMP } = actionTypes;
 function stateTimelineReducer(state = initialStateTimelineData, action) {
-	switch (action.type) {
+	const { STATE_JUMP } = actionTypes;
+	const { type } = action;
+
+	switch (type) {
 	case STATE_JUMP:
 			
 		return state;
@@ -37,12 +41,12 @@ function stateTimelineReducer(state = initialStateTimelineData, action) {
 	}
 }
 
-const { TOGGLE_VALVE_SELECTION } = actionTypes;
 function valveReducer(valves = initialValveInfo, action) {
-	const { valveId } = action;
-	switch (action.type) {
-	case TOGGLE_VALVE_SELECTION: {
+	const { TOGGLE_VALVE_SELECTION, VALVE_STATUS_UPDATE } = actionTypes;
+	const { type, valveId } = action;
 
+	switch (type) {
+	case TOGGLE_VALVE_SELECTION: {
 		const index = valves.selected.findIndex(id => id === valveId);
 		if (index > -1) { 
 			return {
@@ -56,6 +60,11 @@ function valveReducer(valves = initialValveInfo, action) {
 			};
 		}
 	}
+	case VALVE_STATUS_UPDATE:
+		return {
+			...valves,
+			all: action.payload
+		};
 	default:
 		return valves;
 	}
@@ -76,6 +85,7 @@ function extractStatus(payload) {
 		waterVolume,
 		waterDepth 
 	} = payload; 
+
 	const currentValve = valves.findIndex(v => parseInt(v) === 2);
 	const valveCount = valves.length;
 
@@ -109,13 +119,15 @@ function extractStatus(payload) {
 	}];
 }
 
-const { STATUS_UPDATE } = actionTypes;
 function statusReducer(status = initialStatus, action) {
-	if (!action.payload) {
+	const { STATUS_UPDATE } = actionTypes;
+	const { type, payload }= action;
+
+	if (!payload) {
 		return status;
 	}
 
-	switch (action.type) {
+	switch (type) {
 	case STATUS_UPDATE:
 		return extractStatus(action.payload);
 	default:
@@ -123,13 +135,47 @@ function statusReducer(status = initialStatus, action) {
 	}
 }
 
+const initialConnection = {
+	statusText: "offline",
+	attempts: 0
+};
+
+function connectionReducer(connection = initialConnection, action) {
+	const {
+		CONNECTION_CONNECT, 
+		CONNECTION_SUCCESS,
+		CONNECTION_TIMEOUT 
+	} = actionTypes;
+
+	switch (action.type) {
+	case CONNECTION_CONNECT:	
+		return {
+			statusText: "connecting",
+			attempts: 0
+		};
+	case CONNECTION_SUCCESS:
+		return {
+			statusText: "online",
+			attempts: 0
+		};
+	case CONNECTION_TIMEOUT:
+		return {
+			statusText: connection.attempts >= 3 ? "offline" : "timeout",
+			attempts: connection.attempts + 1
+		};
+	default:
+		return connection;
+	}
+}
+
 const rootReducer = combineReducers({ 
 	panels: panelReducer, 
-	groups: groupReducer,
+	tasks: taskReducer,
 	states: stateTimelineReducer,
 	valves: valveReducer,
 	status: statusReducer,
-	stateConfigs: stateConfigReducer
+	stateConfigs: stateConfigReducer,
+	connection: connectionReducer
 });
 
 export default rootReducer;

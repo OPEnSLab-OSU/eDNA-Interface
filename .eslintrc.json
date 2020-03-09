@@ -20,7 +20,7 @@
 		"ecmaVersion": 2020,
 		"sourceType": "module"
 	},
-	"plugins": ["react", "emotion"],
+	"plugins": ["react"],
 	"settings": {
 		"react": {
 			"pragma": "h",
@@ -71,7 +71,8 @@
 		"no-unused-vars": [
 			"warn",
 			{
-				"argsIgnorePattern": "_"
+				"argsIgnorePattern": "_|props",
+				"ignoreRestSiblings": true
 			}
 		],
 		"sort-imports": ["error", { "ignoreDeclarationSort": true }],

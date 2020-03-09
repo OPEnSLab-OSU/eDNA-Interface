@@ -1,5 +1,4 @@
 import { h } from "preact";
-import { useContext, useState } from "preact/hooks";
 import { useSelector } from "react-redux"; 
 
 
@@ -21,14 +20,22 @@ function StatusItem(props) {
 export function Status(props) {
 	const panels = useSelector(state => state.panels);
 	const statusItems = useSelector(state => state.status);
+	const { connection, setStatusUpdating } = props;
+
+	const statusText = (function() {
+		if (connection.statusText === "timeout") {
+			return `timeout (${connection.attempts})`;
+		} else {
+			return connection.statusText;
+		}
+	})();
+
 	return (
 		<div className={classNames("status", { "expanded": panels.status })}>
 			<ul className="items">
 				<li className={classNames("item", "button", { "active": panels.status })} 
 					onClick={() => {}}>
-					<a className={classNames("active")}>
-						<i>E</i>DNA
-					</a>
+					<span><i>E</i>DNA</span>
 				</li>
 
 				{statusItems.map((status, i) => (
@@ -37,10 +44,11 @@ export function Status(props) {
 					</li>
 				))}
 
-				<li className={classNames("item", "button")}>
-					<a className={classNames("active")}>
-						Connection: {props.connectionStatus}
-					</a>
+				<li className={classNames("item", "connection")}>
+					<button onClick={() => setStatusUpdating(true)}>
+						<i className={classNames("dot", statusText)}></i>
+						<i>{statusText}</i>
+					</button>
 				</li>
 			</ul>
 		</div>

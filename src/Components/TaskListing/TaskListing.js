@@ -8,10 +8,8 @@ import { useSelector } from "react-redux";
 
 
 export function TaskListing(props) {
-	// const [{ groups }] = useContext(AppContext);
 	const panels = useSelector(state => state.panels);
-	const groups = useSelector(state => state.groups);
-	console.log(groups);
+	const tasks = useSelector(state => state.tasks);
 
 	return (
 		<div className="tasklisting">
@@ -19,12 +17,12 @@ export function TaskListing(props) {
 				<div className="title">Tasks</div>
 				{panels.task && 
 					<button className="create-group">
-							+ Group
+						+ Task
 					</button>
 				}
 			</div>
 			<ul>
-				{groups.map((name, i) => (<li key={i}>{name}</li>))}
+				{tasks.map((name, i) => (<li key={i}>{name}</li>))}
 			</ul>
 			<div className="underbar"></div>
 		</div>

@@ -58,14 +58,12 @@ a,
 
 .main {
 	grid-area: main;
-	display: flex;
-	flex-direction: column;
-	// grid-auto-flow: column;
+	// display: flex;
+	// flex-direction: column;
 	height: 100%;
 	padding-bottom: 24px;
 	overflow-y: scroll;
 	min-width: 600px;
-	// margin-bottom: 24px;
 }
 
 .taskconfig {

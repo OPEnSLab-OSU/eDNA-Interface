@@ -64,7 +64,13 @@ module.exports = {
 			{
 				test: /\.scss$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
-				loaders: ["style-loader", "css-loader", "sass-loader"]
+				loaders: ["style-loader", "css-loader", {
+					loader: "postcss-loader",
+					options: {
+					  sourceMap: true,
+					  config: { path: "postcss.config.js" }
+					}
+				  }, "sass-loader"]
 			}
 		]
 	}
