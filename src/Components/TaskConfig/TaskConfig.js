@@ -32,12 +32,39 @@ function BasicTextArea(props) {
 		}</TextFieldComponent>
 	);
 }
+
+function FormikControlledTextField(props) {
+	const [field, meta, helpers] = useField(props);
+	return (
+		<BasicTextField {...field} {...props}/>
+	);
+}
 export function TaskConfig(props) {
 	const valves = useSelector(state => state.valves);
 	const selectedValves = valves.selected.join(", ");
 	const expanded = props.expanded ?? true;
+	const tasks = useSelector(state => state.tasks);
+	const allTasks = tasks.all;
+	const selectedTask = allTasks.find(t => t.name === tasks.selected);
+
+	if (!selectedTask) {
+		return null;
+	}
+
+	console.log("Select", selectedTask);
+
+	const formValues = {
+		name: selectedTask.name,
+		scheduleDate: selectedTask.scheduleDate || null,
+		hour: selectedTask.scheduleDate || null,
+		minute: selectedTask.scheduleDate || null,
+		second: selectedTask.scheduleDate || null,
+		valves: selectedTask.valves + valves.selected,
+		notes: ""
+	};
+
 	return (
-		<Formik initialValues={{}}>{ (formik) => (
+		<Formik initialValues={formValues} enableReinitialize>{(formik) => (
 			<form className={classNames("taskconfig", { "expanded": expanded })}>
 				<div className="headline">
 					<div className="title">
@@ -45,26 +72,26 @@ export function TaskConfig(props) {
 					</div>
 				</div>
 				
-				<BasicTextField 
+				<FormikControlledTextField 
 					name="name" 
 					title="Task Name *"
 					placeholder="Untitled"
 					helpertext="Name used to identify the valve group"
-					type="text" required {...formik.getFieldProps("name")}/>
+					type="text" required/>
 
-				<BasicTextField
+				<FormikControlledTextField
 					name="scheduleDate"
 					title="Schedule Date *"
 					helpertext="Specific date when to run this group (YYYY-MM-DD)"
 					type="date"/>
 
-				<BasicTextField
+				<FormikControlledTextField
 					name="scheduleTime"
 					title="Schedule Time *"
 					helpertext="Specific time when to run this group (HH:MM)"
 					type="time"/>
 
-				<BasicTextField
+				<FormikControlledTextField
 					name="valves"
 					title="Valves *"
 					helpertext="Valves assigned to this task"

@@ -1,13 +1,18 @@
 const types = { 
-	TOGGLE_PANEL: "TOGGLE_PANEL",
-	STATE_JUMP: "STATE_JUMP",
-	TOGGLE_VALVE_SELECTION: "TOGGLE_VALVE_SELECTION",
-	STATUS_UPDATE: "STATUS_UPDATE",
-	VALVE_STATUS_UPDATE: "VALVE_STATUS_UPDATE",
-	CONNECTION_CONNECT: "connect",
-	CONNECTION_TIMEOUT: "timeout",
-	CONNECTION_SUCCESS: "success"
+	TOGGLE_PANEL: "",
+	STATE_JUMP: "",
+	TOGGLE_VALVE_SELECTION: "",
+	STATUS_UPDATE: "",
+	VALVE_STATUS_UPDATE: "",
+	CONNECTION_CONNECT: "",
+	CONNECTION_TIMEOUT: "",
+	CONNECTION_SUCCESS: "",
+	UPDATE_TASK: "",
+	UPDATE_TASKLIST: "",
+	SELECT_TASK: ""
 };
+
+Object.keys(types).forEach(k => types[k] = k);
 
 function togglePanel(panel) {
 	return { type: types.TOGGLE_PANEL, panel };
@@ -21,8 +26,8 @@ function toggleValveSelection(valveId) {
 	return { type: types.TOGGLE_VALVE_SELECTION, valveId };
 } 
 
-function updateStatus(payload, success) {
-	return { type: types.STATUS_UPDATE, payload, success };
+function updateStatus(payload) {
+	return { type: types.STATUS_UPDATE, payload };
 }
 
 function updateValveStatus(payload) {
@@ -41,6 +46,18 @@ function apiSuccess() {
 	return { type: types.CONNECTION_SUCCESS };
 }
 
+function updateTask(name, payload) {
+	return { type: types.UPDATE_TASK, name, payload };
+}
+
+function updateTaskList(tasks) {
+	return { type: types.UPDATE_TASKLIST, tasks };
+}
+
+function selectTask(name) {
+	return { type: types.SELECT_TASK, name };
+}
+
 export {
 	types as actionTypes,
 	togglePanel,
@@ -48,6 +65,9 @@ export {
 	toggleValveSelection,
 	updateStatus,
 	updateValveStatus,
+	updateTask,
+	selectTask,
+	updateTaskList,
 	apiConnect,
 	apiTimeout,
 	apiSuccess

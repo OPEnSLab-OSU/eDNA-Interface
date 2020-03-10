@@ -3,11 +3,12 @@ import {
 	initialPanelVisibility,
 	initialStateConfigs,
 	initialStateTimelineData,
-	initialStatus,
-	initialValveInfo
+	initialTasks,
+	initialValveData
 } from "./states";
 
 import { combineReducers } from "redux";
+import Schema from "App/Schema";
 
 function panelReducer(panels = initialPanelVisibility, action) {
 	const { TOGGLE_PANEL } = actionTypes;
@@ -24,8 +25,33 @@ function panelReducer(panels = initialPanelVisibility, action) {
 	}
 }
 
-function taskReducer(tasks = ["Task 1", "Task 2", "Task 3"], action) {
-	return tasks;
+function taskReducer(tasks = { all: [], selected: null }, action) {
+	const { UPDATE_TASKLIST, UPDATE_TASK, SELECT_TASK } = actionTypes;
+	const { type, name, payload } = action;
+
+	const updatedTask = {
+		...tasks,
+		all: tasks.all.map(t => t.name === name ? Schema.Task({ ...t, ...payload }) : t)
+	};
+
+	switch (type) {
+	case UPDATE_TASK:	
+		return updatedTask;
+	case SELECT_TASK:
+		return {
+			...tasks,
+			selected: name
+		};
+	case UPDATE_TASKLIST:
+		console.log("Tasks", action.tasks);
+
+		return {
+			...tasks,
+			all: action.tasks
+		};
+	default:
+		return tasks;
+	}
 }
 
 function stateTimelineReducer(state = initialStateTimelineData, action) {
@@ -41,7 +67,7 @@ function stateTimelineReducer(state = initialStateTimelineData, action) {
 	}
 }
 
-function valveReducer(valves = initialValveInfo, action) {
+function valveReducer(valves = initialValveData, action) {
 	const { TOGGLE_VALVE_SELECTION, VALVE_STATUS_UPDATE } = actionTypes;
 	const { type, valveId } = action;
 
@@ -76,60 +102,13 @@ function stateConfigReducer(configs = initialStateConfigs, action) {
 }
 
 
-function extractStatus(payload) {
-	const {
-		valves, 
-		pressure,
-		temperature,
-		barometric,
-		waterVolume,
-		waterDepth 
-	} = payload; 
-
-	const currentValve = valves.findIndex(v => parseInt(v) === 2);
-	const valveCount = valves.length;
-
-	return [{
-		name: "State",
-		properties: [
-			{ name: "current", value: null }
-		]
-	}, {
-		name: "Valve",
-		properties: [
-			{ name: "current", value: currentValve }, 
-			{ name: "total", value: valveCount }
-		]
-	}, {
-		name: "Sensor Data",
-		properties: [
-			{ name: "pressure", value: pressure },
-			{ name: "temperature", value: temperature },
-			{ name: "flow speed", value: null },
-			{ name: "Barometric", value: barometric },
-			{ name: "water volume:", value: waterVolume },
-			{ name: "water depth", value: waterDepth }
-		]
-	}, {
-		name: "Clock",
-		properties: [
-			{ name: "Local Date", value: null },
-			{ name: "Local Time", value: null }
-		]
-	}];
-}
-
-function statusReducer(status = initialStatus, action) {
+function statusReducer(status = Schema.Status(), action) {
 	const { STATUS_UPDATE } = actionTypes;
-	const { type, payload }= action;
-
-	if (!payload) {
-		return status;
-	}
+	const { type, payload } = action;
 
 	switch (type) {
 	case STATUS_UPDATE:
-		return extractStatus(action.payload);
+		return Schema.Status(payload);
 	default:
 		return status;
 	}

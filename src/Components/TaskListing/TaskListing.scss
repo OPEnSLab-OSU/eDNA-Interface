@@ -12,6 +12,8 @@
 	margin-top: 2.4rem;
 	margin-bottom: 2.4rem;
 
+	min-width: 200px;
+
 	.headline {
 		display: flex;
 		justify-content: space-between;
@@ -42,5 +44,9 @@
 			background: rgb(230, 230, 230);
 			cursor: pointer;
 		}
+	}
+
+	li.selected {
+		background: rgb(240, 240, 240);
 	}
 }

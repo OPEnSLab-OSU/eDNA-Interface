@@ -40,13 +40,13 @@ module.exports = {
 			"react-dom": "preact/compat",
 
 			// Top level resolves  
-			"Components": path.resolve(__dirname, "src/Components"),
-			"App": path.resolve(__dirname, "src/App"),
-			"Hooks": path.resolve(__dirname, "src/Hooks"),
-			"M": path.resolve(__dirname, "src/Libraries/Materialize"),
-			"Util": path.resolve(__dirname, "src/Util"),
-			"Theme": path.resolve(__dirname, "src/Sass/theme.scss"),
-			"Sass": path.resolve(__dirname, "src/Sass")
+			Components: path.resolve(__dirname, "src/Components"),
+			App: path.resolve(__dirname, "src/App"),
+			Hooks: path.resolve(__dirname, "src/Hooks"),
+			M: path.resolve(__dirname, "src/Libraries/Materialize"),
+			Util: path.resolve(__dirname, "src/Util"),
+			Theme: path.resolve(__dirname, "src/Sass/theme.scss"),
+			Sass: path.resolve(__dirname, "src/Sass")
 		}
 	  },
 	module: {

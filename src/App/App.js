@@ -1,34 +1,20 @@
 import { h } from "preact";
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
-
-import { Status } from "Components/StatusPanel";
-import { TaskConfig } from "Components/TaskConfig";
-import { TaskListing } from "Components/TaskListing";
-import { Dropbar } from "Components/Dropbar";
-import { StateTimeline } from "Components/StateTimeline";
-import { StateConfig } from "Components/StateConfig";
-
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { ValveOverview } from "../Components/ValveOverview";
+import { apiConnect, apiSuccess, apiTimeout, updateStatus, updateTaskList } from "./redux/actions";
 
-import { sleep } from "Util/timeout";
-import { fetchWithTimeout } from "../Util/timeout";
-
-import { apiConnect, apiSuccess, apiTimeout, updateStatus } from "./redux/actions";
-
-
-const base = new URL("http://192.168.1.1");
+import { Dropbar, StateConfig, StateTimeline, Status, TaskConfig, TaskListing, ValveOverview } from "Components";
+import { base } from "./Static.js";
 
 const start = Date.now();
 function fetchStatus(timeout) {
-	console.log("Fetching", (Date.now() - start)/1000);
+	console.log("Fetching", (Date.now() - start) / 1000);
 	const url = new URL("api/status", base);
 	const controller = new AbortController();
 	const signal = controller.signal;
 
 	window.onunload = () => controller.abort();
-	// -10 to make timeout event trigger before the setInterval
-	setTimeout(() => controller.abort(), timeout - 10); 
+	setTimeout(() => controller.abort(), timeout - 10);  // -10 to make timeout event trigger before the setInterval
 	return fetch(url, { signal }).then(response => response.json());
 }
 
@@ -46,7 +32,7 @@ export function App() {
 			return;
 		}
 			
-		const timeout = 500;
+		const timeout = 1000;
 		const fetchHandleStatusUpdate = (timerId = null) => {
 			fetchStatus(timeout).then(payload => {
 				dispatch(updateStatus(payload));
@@ -56,7 +42,7 @@ export function App() {
 				if (store.getState().connection.statusText === "offline") {
 					clearInterval(timerId);
 					setStatusUpdating(false);
-				}
+				} 
 			});
 		};
 
@@ -65,6 +51,13 @@ export function App() {
 		const timer = setInterval(() => fetchHandleStatusUpdate(timer), timeout);
 		return () => clearInterval(timer);
 	}, [statusUpdating]);
+
+	// Get taskrefs
+	useEffect(() => {
+		fetch(new URL("/api/taskrefs", base)).then(res => res.json()).then(tasks => {
+			dispatch(updateTaskList(tasks));
+		});
+	}, []);
 
 	return (
 		<div className="app">

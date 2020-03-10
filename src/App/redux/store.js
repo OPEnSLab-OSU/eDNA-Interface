@@ -5,6 +5,7 @@ import rootReducer from "./reducers";
 
 const logger = store => next => action => {
 	next(action);
+	console.log(store.getState().tasks);
 };
 
 const valveStatusExtracter = store => next => action => {

@@ -1,3 +1,5 @@
+import Schema from "App/Schema";
+
 const initialPanelVisibility = {
 	status: true, 
 	task: true
@@ -8,15 +10,17 @@ const initialStateTimelineData = {
 	current: "stop" 
 };
 
-const dummyValveData = Array(24).fill(0).map((_, idx) => ({ 
-	id: idx, 
-	status: "sampled" 
-}));
-
-const initialValveInfo = {
-	all: dummyValveData,
-	current: 0,
+const initialValveData = {
+	all: Array(24).fill(0).map((_, id) => ({ id, status: "sampled" })),
+	current: -1,
 	selected: []
+};
+
+const dummyTasks = ["Task 1", "Task 2", "Task 3"].map(t => Schema.Task({ [Schema.keys.TASK_NAME]: t }));
+
+const initialTasks = {
+	all: dummyTasks,
+	selected: null
 };
 
 const initialStateConfigs = {
@@ -61,38 +65,11 @@ const initialStateConfigs = {
 	values: { flushDuration: 0, flushVolume: 0 }
 };
 
-const initialStatus = [{
-	name: "State",
-	properties: [
-		{ name: "current", value: null }
-	]
-}, {
-	name: "Valve",
-	properties: [
-		{ name: "current", value: null	}, 
-		{ name: "total", value: null }
-	]
-}, {
-	name: "Sensor Data",
-	properties: [
-		{ name: "pressure", value: null },
-		{ name: "temperature", value: null },
-		{ name: "flow speed", value: null },
-		{ name: "Almospheric", value: null }
-	]
-}, {
-	name: "Clock",
-	properties: [
-		{ name: "Local Date", value: null },
-		{ name: "Local Time", value: null }
-	]
-}];
-
 
 export { 
 	initialPanelVisibility,
 	initialStateTimelineData,
-	initialValveInfo,
+	initialTasks,
+	initialValveData,
 	initialStateConfigs, 
-	initialStatus
 };
