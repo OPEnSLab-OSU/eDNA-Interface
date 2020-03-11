@@ -68,8 +68,10 @@ export function App() {
 				<ValveOverview />
 				<StateConfig />
 			</main>
-			<TaskConfig expanded={panels.task}/>
-			<TaskListing />
+			<div className="task-panel">
+				<TaskListing />
+				<TaskConfig expanded={panels.task}/>
+			</div>
 		</div>
 	);
 }

@@ -25,7 +25,8 @@ function panelReducer(panels = initialPanelVisibility, action) {
 	}
 }
 
-function taskReducer(tasks = { all: [], selected: null }, action) {
+const tasks_initial = initialTasks;
+function taskReducer(tasks = tasks_initial, action) {
 	const { UPDATE_TASKLIST, UPDATE_TASK, SELECT_TASK } = actionTypes;
 	const { type, name, payload } = action;
 
@@ -38,17 +39,9 @@ function taskReducer(tasks = { all: [], selected: null }, action) {
 	case UPDATE_TASK:	
 		return updatedTask;
 	case SELECT_TASK:
-		return {
-			...tasks,
-			selected: name
-		};
+		return { ...tasks, selected: name };
 	case UPDATE_TASKLIST:
-		console.log("Tasks", action.tasks);
-
-		return {
-			...tasks,
-			all: action.tasks
-		};
+		return { ...tasks, all: action.tasks };
 	default:
 		return tasks;
 	}
@@ -60,7 +53,6 @@ function stateTimelineReducer(state = initialStateTimelineData, action) {
 
 	switch (type) {
 	case STATE_JUMP:
-			
 		return state;
 	default:
 		return state;
@@ -87,10 +79,7 @@ function valveReducer(valves = initialValveData, action) {
 		}
 	}
 	case VALVE_STATUS_UPDATE:
-		return {
-			...valves,
-			all: action.payload
-		};
+		return { ...valves, all: action.payload };
 	default:
 		return valves;
 	}

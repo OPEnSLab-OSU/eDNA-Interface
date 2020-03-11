@@ -45,13 +45,11 @@ export function TaskConfig(props) {
 	const expanded = props.expanded ?? true;
 	const tasks = useSelector(state => state.tasks);
 	const allTasks = tasks.all;
-	const selectedTask = allTasks.find(t => t.name === tasks.selected);
+	const selectedTask = allTasks.find(t => t.name === tasks.selected) ?? {};
 
-	if (!selectedTask) {
-		return null;
-	}
-
-	console.log("Select", selectedTask);
+	// if (!selectedTask) {
+	// 	return null;
+	// }
 
 	const formValues = {
 		name: selectedTask.name,
