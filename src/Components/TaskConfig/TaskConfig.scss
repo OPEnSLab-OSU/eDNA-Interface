@@ -3,26 +3,24 @@
 
 .taskconfig {
 	@include mix.card;
-	grid-area: taskconfig;
+
 	background: white;
-	position: relative;
-
-	margin-bottom: 2.4rem;
-	overflow-y: scroll;
-
 	display: grid;
-	gap: 2.4rem;
-
+	gap: 24px;
+	grid-area: taskconfig;
+	margin-bottom: 24px;
+	overflow-y: scroll;
+	position: relative;
 	width: 340px;
 
 	.headline {
+		background: inherit;
+		border-bottom: 1px solid lightgrey;
 		display: flex;
 		justify-content: space-between;
 		position: sticky;
 		top: 0;
-		background: white;
 		z-index: 999;
-		border-bottom: 1px solid lightgrey;
 	}
 
 	.textfield {
@@ -66,7 +64,6 @@
 		border: 0.1rem solid $input-border;
 		border-radius: 0.4rem;
 		padding: 0.8rem;
-		margin-top: 2.6rem;
 		min-height: 20rem;
 		resize: none;
 

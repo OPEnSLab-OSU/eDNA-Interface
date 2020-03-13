@@ -25,9 +25,8 @@ function panelReducer(panels = initialPanelVisibility, action) {
 	}
 }
 
-const tasks_initial = initialTasks;
-function taskReducer(tasks = tasks_initial, action) {
-	const { UPDATE_TASKLIST, UPDATE_TASK, SELECT_TASK } = actionTypes;
+function taskReducer(tasks = initialTasks, action) {
+	const { UPDATE_TASKLIST, UPDATE_TASK, ADD_TASK, SELECT_TASK } = actionTypes;
 	const { type, name, payload } = action;
 
 	const updatedTask = {
@@ -38,6 +37,8 @@ function taskReducer(tasks = tasks_initial, action) {
 	switch (type) {
 	case UPDATE_TASK:	
 		return updatedTask;
+	case ADD_TASK:
+		return { ...tasks, all: [...tasks.all, Schema.Task(action.task)] };
 	case SELECT_TASK:
 		return { ...tasks, selected: name };
 	case UPDATE_TASKLIST:

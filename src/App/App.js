@@ -24,7 +24,7 @@ export function App() {
 	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
 	const connection = useSelector(state => state.connection);
-	const [statusUpdating, setStatusUpdating] = useState(true);
+	const [statusUpdating, setStatusUpdating] = useState(false);
 
 	// Status update effect 
 	useEffect(() => {
@@ -61,17 +61,23 @@ export function App() {
 
 	return (
 		<div className="app">
-			<Status connection={connection} setStatusUpdating={setStatusUpdating}/>
-			<main className="main">
+			{panels.status && 
+				<Status connection={connection} setStatusUpdating={setStatusUpdating}/>
+			}
+
+			<main className={classNames("main", { "showTask": panels.task })}>
 				<Dropbar />
 				<StateTimeline />
 				<ValveOverview />
 				<StateConfig />
 			</main>
-			<div className="task-panel">
-				<TaskListing />
-				<TaskConfig expanded={panels.task}/>
-			</div>
+
+			{panels.task &&
+				<div className="task-panel">
+					<TaskListing />
+					<TaskConfig expanded={panels.task}/>
+				</div>
+			}
 		</div>
 	);
 }

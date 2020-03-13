@@ -10,7 +10,7 @@ import { useSelector } from "react-redux";
 function TaskScheduleTimeFields(props) {
 	const { getFieldProps } = useFormikContext();
 	return (
-		<TextFieldComponent className="textfield time" {...props}>{ (_) => 
+		<TextFieldComponent className="textfield time" {...props}>{(_) => 
 			<Fragment>
 				{["hour", "minute", "second"].map(t => 
 					<input key={t} name={t} 
@@ -47,9 +47,9 @@ export function TaskConfig(props) {
 	const allTasks = tasks.all;
 	const selectedTask = allTasks.find(t => t.name === tasks.selected) ?? {};
 
-	// if (!selectedTask) {
-	// 	return null;
-	// }
+	if (!selectedTask) {
+		return null;
+	}
 
 	const formValues = {
 		name: selectedTask.name,
@@ -103,7 +103,7 @@ export function TaskConfig(props) {
 					name="notes"
 					title="Notes"
 					subtitle="Additional information associated with this group up to 250 characters" 
-					type="text" placeholder="Describe what this group is for memo"/>
+					type="text" helpertext="Describe the task (optional)"/>
 			</form>
 		)}</Formik>
 	);

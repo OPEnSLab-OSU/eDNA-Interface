@@ -1,34 +1,31 @@
-
-
 import { Fragment, h } from "preact";
 import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { AppContext } from "App";
 import { Formik, useField, useFormik, useFormikContext } from "formik";
-import { BasicTextField } from "Components/TextField";
 
 import { useDispatch, useSelector } from "react-redux";
+import { actions, toggleValveSelection } from "App/redux/actions";
+
+import { BasicTextField } from "Components/TextField";
 
 
-import { actions } from "App/redux/actions";
-import { toggleValveSelection } from "../../App/redux/actions";
-
-
-const nodeColors = ["#173F5F", "#20639B", "#3CAEA3", "#ED553B"];
 
 function Config(props) {
 	const { config, index, type } = props;
 	return (
 		<div className="config">
-			<h2 className="headline" style={`background: ${nodeColors[index % nodeColors.length]}`}>
+			<h2 className={classNames("headline", "background-accent-" + (index + 1))}>
 				{config.name}
+				<i className={classNames("square", "background-accent-" + (index + 1))}></i>
 			</h2>
-			{config.configs.map((section, i) => (
-				<BasicTextField key={i} 
-					title={section.name} 
-					type={type}
-					helpertext={section.description} 
-				/>
-			))}
+			<div className="content">
+				{config.configs.map((section, i) => (
+					<BasicTextField key={i} 
+						title={section.name} 
+						type={type}
+						helpertext={section.description} 
+					/>
+				))}
+			</div>
 		</div>
 	);
 }

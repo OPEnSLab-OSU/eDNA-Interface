@@ -7,6 +7,7 @@ const types = {
 	CONNECTION_CONNECT: "",
 	CONNECTION_TIMEOUT: "",
 	CONNECTION_SUCCESS: "",
+	ADD_TASK: "",
 	UPDATE_TASK: "",
 	UPDATE_TASKLIST: "",
 	SELECT_TASK: ""
@@ -54,6 +55,10 @@ function updateTaskList(tasks) {
 	return { type: types.UPDATE_TASKLIST, tasks };
 }
 
+function addTask(task) {
+	return { type: types.ADD_TASK, task };
+}
+
 function selectTask(name) {
 	return { type: types.SELECT_TASK, name };
 }
@@ -67,6 +72,7 @@ export {
 	updateValveStatus,
 	updateTask,
 	selectTask,
+	addTask,
 	updateTaskList,
 	apiConnect,
 	apiTimeout,

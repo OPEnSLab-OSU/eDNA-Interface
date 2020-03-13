@@ -36,9 +36,7 @@ a,
 	font-size: 1.4rem;
 	font-weight: bold;
 	letter-spacing: 0.15px;
-	// text-transform: uppercase;
 	border-bottom: 1px solid rgb(230, 230, 230);
-	// letter-spacing: 0.0333rem;
 }
 
 .app {
@@ -58,9 +56,12 @@ a,
 	grid-area: main;
 	height: 100%;
 	padding: 24px;
-	padding-right: 388px;
 	overflow-y: scroll;
 	min-width: 600px;
+
+	&.showTask {
+		padding-right: 388px;
+	}
 }
 
 .task-panel {
@@ -70,6 +71,9 @@ a,
 	height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+
+.tasklisting {
 }
 
 .taskconfig {
@@ -82,13 +86,19 @@ a,
 	width: 100%;
 }
 
+i {
+	font-style: normal;
+}
+
 @media only screen and (max-width: 800px) {
 	.status {
 		display: none;
 	}
+
 	.app {
 		display: block;
 	}
+
 	.main {
 		padding: 24px;
 		margin: auto;
@@ -97,7 +107,4 @@ a,
 	.task-panel {
 		display: none;
 	}
-}
-i {
-	font-style: normal;
 }

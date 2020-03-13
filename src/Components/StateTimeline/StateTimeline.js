@@ -29,7 +29,7 @@ export function StateTimeline() {
 				<Fragment key={name}>
 					<StateNode key={name} 
 						name={name} 
-						color={name === states.current ? nodeColors[i % names.length]: null}
+						color={name === states.current ? nodeColors[i % names.length] : null}
 						position={i}
 					/>
 

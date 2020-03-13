@@ -19,7 +19,7 @@ const initialValveData = {
 const dummyTasks = ["Task 1", "Task 2", "Task 3"].map(t => Schema.Task({ [Schema.keys.TASK_NAME]: t }));
 
 const initialTasks = {
-	all: dummyTasks,
+	all: [],
 	selected: null
 };
 
