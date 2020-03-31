@@ -18,6 +18,7 @@ module.exports = {
 		hotUpdateMainFilename: "hot/hot-update.json"
 	},
 	devServer: { compress: true	},
+	devtool: "source-map",
 	plugins: [
 		new webpack.ProgressPlugin(),
 		new webpack.ProvidePlugin({ classNames: "classnames" }),
@@ -30,7 +31,7 @@ module.exports = {
 		}),
 		new CompressionPlugin(),
 		new HtmlWebpackInlineSourcePlugin(),
-		new HtmlWebpackHarddiskPlugin()
+		new HtmlWebpackHarddiskPlugin() 
 		// new webpack.HotModuleReplacementPlugin()
 	],
 	resolve: {

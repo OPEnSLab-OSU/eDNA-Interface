@@ -71,7 +71,7 @@
 		"no-unused-vars": [
 			"warn",
 			{
-				"argsIgnorePattern": "_|props",
+				"argsIgnorePattern": "_|props|h",
 				"ignoreRestSiblings": true
 			}
 		],

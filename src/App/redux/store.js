@@ -5,7 +5,7 @@ import rootReducer from "./reducers";
 
 const logger = store => next => action => {
 	next(action);
-	console.log(store.getState().tasks);
+	// console.log(store.getState().tasks);
 };
 
 const valveStatusExtracter = store => next => action => {
@@ -19,8 +19,7 @@ const valveStatusExtracter = store => next => action => {
 	next(action);
 };
 
-export const store = createStore(rootReducer, 
-	applyMiddleware(
-		logger,
-		valveStatusExtracter
-	));
+export default createStore(rootReducer, applyMiddleware(
+	logger,
+	valveStatusExtracter
+));

@@ -10,16 +10,18 @@ const initialStateTimelineData = {
 	current: "stop" 
 };
 
+
 const initialValveData = {
 	all: Array(24).fill(0).map((_, id) => ({ id, status: "sampled" })),
 	current: -1,
 	selected: []
 };
 
-const dummyTasks = ["Task 1", "Task 2", "Task 3"].map(t => Schema.Task({ [Schema.keys.TASK_NAME]: t }));
+let task_array = ["Task 1", "Task 2", "Task 3"].map(t => Schema.Task.cast({ [Schema.keys.TASK_NAME]: t }));
+task_array = [];
 
 const initialTasks = {
-	all: [],
+	all: task_array,
 	selected: null
 };
 

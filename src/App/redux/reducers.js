@@ -10,41 +10,38 @@ import {
 import { combineReducers } from "redux";
 import Schema from "App/Schema";
 
-function panelReducer(panels = initialPanelVisibility, action) {
+function panelReducer(state = initialPanelVisibility, action) {
 	const { TOGGLE_PANEL } = actionTypes;
 	const { type, panel } = action;
 
 	switch (type) {
 	case TOGGLE_PANEL:
-		return {
-			...panels,
-			[panel]: !panels[panel],
-		};
+		return { ...state, [panel]: !state[panel], };
 	default:
-		return panels;	
+		return state;	
 	}
 }
 
-function taskReducer(tasks = initialTasks, action) {
+function taskReducer(state = initialTasks, action) {
 	const { UPDATE_TASKLIST, UPDATE_TASK, ADD_TASK, SELECT_TASK } = actionTypes;
 	const { type, name, payload } = action;
 
-	const updatedTask = {
-		...tasks,
-		all: tasks.all.map(t => t.name === name ? Schema.Task({ ...t, ...payload }) : t)
-	};
-
 	switch (type) {
-	case UPDATE_TASK:	
-		return updatedTask;
+	case UPDATE_TASK: {
+		const newTasks = state.all.map(t => {
+			return t.name === name ? Schema.Task.cast(payload) : t;
+		});
+
+		return { ...state, all: newTasks };
+	}
 	case ADD_TASK:
-		return { ...tasks, all: [...tasks.all, Schema.Task(action.task)] };
+		return { ...state, all: [...state.all, Schema.Task.cast(action.task)] };
 	case SELECT_TASK:
-		return { ...tasks, selected: name };
+		return { ...state, selected: name };
 	case UPDATE_TASKLIST:
-		return { ...tasks, all: action.tasks };
+		return { ...state, all: action.tasks };
 	default:
-		return tasks;
+		return state;
 	}
 }
 
@@ -60,47 +57,42 @@ function stateTimelineReducer(state = initialStateTimelineData, action) {
 	}
 }
 
-function valveReducer(valves = initialValveData, action) {
+function valveReducer(state = initialValveData, action) {
 	const { TOGGLE_VALVE_SELECTION, VALVE_STATUS_UPDATE } = actionTypes;
-	const { type, valveId } = action;
+	const { type, valveId, payload } = action;
 
 	switch (type) {
 	case TOGGLE_VALVE_SELECTION: {
-		const index = valves.selected.findIndex(id => id === valveId);
+		const selected = state.selected;
+		const index = selected.findIndex(id => id === valveId);
 		if (index > -1) { 
-			return {
-				...valves,
-				selected: valves.selected.filter(id => id !== valveId)
-			};
+			return { ...state, selected: selected.filter(id => id !== valveId) };
 		} else {
-			return {
-				...valves,
-				selected: [...valves.selected, valveId]
-			};
+			return { ...state, selected: [...selected, valveId] };
 		}
 	}
 	case VALVE_STATUS_UPDATE:
-		return { ...valves, all: action.payload };
+		return { ...state, all: payload };
 	default:
-		return valves;
+		return state;
 	}
 }
 
 
-function stateConfigReducer(configs = initialStateConfigs, action) {
-	return configs;
+function stateConfigReducer(state = initialStateConfigs, action) {
+	return state;
 }
 
 
-function statusReducer(status = Schema.Status(), action) {
+function statusReducer(state = Schema.Status.default(), action) {
 	const { STATUS_UPDATE } = actionTypes;
 	const { type, payload } = action;
 
 	switch (type) {
 	case STATUS_UPDATE:
-		return Schema.Status(payload);
+		return Schema.Status.cast(payload);
 	default:
-		return status;
+		return state;
 	}
 }
 
@@ -116,22 +108,15 @@ function connectionReducer(connection = initialConnection, action) {
 		CONNECTION_TIMEOUT 
 	} = actionTypes;
 
+	const { attempts } = connection;
+
 	switch (action.type) {
 	case CONNECTION_CONNECT:	
-		return {
-			statusText: "connecting",
-			attempts: 0
-		};
+		return { statusText: "connecting", attempts: 0 };
 	case CONNECTION_SUCCESS:
-		return {
-			statusText: "online",
-			attempts: 0
-		};
+		return { statusText: "online", attempts: 0 };
 	case CONNECTION_TIMEOUT:
-		return {
-			statusText: connection.attempts >= 3 ? "offline" : "timeout",
-			attempts: connection.attempts + 1
-		};
+		return { statusText: attempts >= 3 ? "offline" : "timeout", attempts: attempts + 1 };
 	default:
 		return connection;
 	}

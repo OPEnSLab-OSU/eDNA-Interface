@@ -3,7 +3,9 @@ import { Fragment, h, render } from "preact";
 import { App } from "App";
 
 import { Provider } from "react-redux";
-import { store } from "App/redux/store";
+import store from "App/redux/store";
+
+
 
 
 // const Reset = css`
@@ -51,6 +53,7 @@ import { store } from "App/redux/store";
 // 		border-spacing: 0;
 // 	}
 // `;
+
 
 render(
 	<Fragment>

@@ -9,43 +9,34 @@ import { useDispatch, useSelector } from "react-redux";
 import { addTask, selectTask, updateTask, updateTaskList } from "../../App/redux/actions";
 import { base } from "App/Static";
 
-import Schema from "../../App/Schema";
+import Schema from "App/Schema";
+import API from "App/API";
 
-export function TaskListing(props) {
+export function TaskListing() {
 	const [editingMode, setEditingMode] = useState(false);
+	const toggleEditingMode = () => setEditingMode(!editingMode);
+
 	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
-	let tasks = useSelector(state => state.tasks);
+	const tasks = useSelector(state => state.tasks);
 
-	const handleTaskSelection = (name) => {
-		fetch(new URL("/api/get-task", base), {
-			method: "POST",
-			body: JSON.stringify({ name })
-		}).then(res => res.json()).then(task => {
-			dispatch(updateTask(task.name, task));
-			dispatch(selectTask(task.name));
-		});
+	const handleTaskSelection = async (name) => {
+		const task = await API.post("api/task/get").body(JSON.stringify({ name })).send();
+		dispatch(updateTask(task.name, task));
+		dispatch(selectTask(task.name));
 	};
 
-	const handleTaskAdd = () => {
-		if (editingMode) {
+	const handleTaskAdd = () => setEditingMode(mode => !mode);
+	const handleTaskCreate = async (values) => {
+		const { [Schema.keys.TASK_NAME]: newTaskName } = values;
+		const response = await API.post("api/task/create").body(JSON.stringify(values)).send();
+		if (response.success) {
+			dispatch(updateTaskList(response.payload));
+			dispatch(selectTask(newTaskName));
 			setEditingMode(false);
 		} else {
-			setEditingMode(true);
+			console.log(response.error);
 		}
-	};
-
-	const handleSubmit = (values) => {
-		const { [Schema.keys.TASK_NAME]: newTaskName } = values;
-		fetch(new URL("/api/create-task", base), {
-			method: "POST",
-			body: JSON.stringify(values)
-		}).then(res => res.json()).then(tasks => {
-			dispatch(updateTaskList(tasks));
-			dispatch(selectTask(newTaskName));
-		});
-
-		setEditingMode(false);
 	}; 
 	
 	return (
@@ -60,14 +51,16 @@ export function TaskListing(props) {
 			</div>
 			<ul>
 				{tasks.all.map((task, i) => (
-					<li key={i} className={classNames({ "selected": tasks.selected === task.name })} onClick={() => handleTaskSelection(task.name)}>
+					<li key={i} className={classNames({ "selected": tasks.selected === task.name })} 
+						onClick={() => handleTaskSelection(task.name)}>
 						{task.name}
 					</li>
 				))}
 
+
 				{editingMode && 
 					<li className={classNames("edit")}>
-						<Formik initialValues={{ [Schema.keys.TASK_NAME]: "" }} onSubmit={handleSubmit}>{(formik) =>
+						<Formik initialValues={{ [Schema.keys.TASK_NAME]: "" }} onSubmit={handleTaskCreate}>{(formik) =>
 							<Form>
 								<input className="task"
 									name={Schema.keys.TASK_NAME}
@@ -76,8 +69,10 @@ export function TaskListing(props) {
 									autoFocus 
 									{...formik.getFieldProps(Schema.keys.TASK_NAME)}
 								/>
-								<input type="submit" style={{ visibility: "hidden", position: "absolute" }} /> {/* this is need to make submit via enter work */}
-								<button className="button cancel" onClick={() => setEditingMode(false)}>
+
+								{/* this is need to make submit via enter work */}
+								<input type="submit" style={{ visibility: "hidden", position: "absolute" }} /> 
+								<button className="button cancel" onClick={toggleEditingMode}>
 									Cancel
 								</button>
 							</Form>

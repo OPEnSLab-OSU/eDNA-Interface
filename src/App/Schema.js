@@ -1,3 +1,14 @@
+
+import * as yup from "yup";
+
+
+//
+// ──────────────────────────────────────────────── I ──────────
+//   :::::: K E Y S : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────
+//
+
+
 const _ = {
 	SENSOR_BARO: "barometric",
 	SENSOR_DEPTH: "waterDepth",
@@ -9,13 +20,6 @@ const _ = {
 	STATE_ID: "stateId",
 	STATE_INDEX: "stateIndex",
 	STATE_NAME: "stateName",
-	TASK_CURRENT_NAME: "taskCurrentName",
-	TASK_NAME: "name",
-	TASK_NOTES: "notes",
-	TASK_SCHEDULE: "schedule",
-	TASK_STATUS: "status",
-	TASK_TIME_BETWEEN: "timeBetween",
-	TASK_VALVES: "valves",
 	TIME_UTC: "timeUTC",
 	VALVE_CURRENT: "valveCurrent",
 	VALVE_DRY_TIME: "valveDryTime",
@@ -30,52 +34,188 @@ const _ = {
 	VALVE_SCHEDULE: "valveSchedule",
 	VALVE_STATUS: "valveStatus",
 	VALVES: "valves",
-	VALVES_COUNT: "valvesCount"
+	VALVES_COUNT: "valvesCount",
+	TASK_NAME: "name",
+	TASK_STATUS: "status",
+	TASK_SCHEDULE: "schedule",
+	TASK_VALVES: "valves",
+	TASK_TIME_BETWEEN: "timeBetween",
+	TASK_NOTES: "notes"
 };
 
 
+//
+// ──────────────────────────────────────────────── II ──────────
+//   :::::: T A S K : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────
+//
 
-function Valve(data = {}) {
-	return { 
-		id: data[_.VALVE_ID],
-		group: data[_.VALVE_GROUP],
-		status: data[_.VALVE_STATUS],
-		schedule: data[_.VALVE_SCHEDULE],
-		flushTime: data[_.VALVE_FLUSH_TIME],
-		flushVolume: data[_.VALVE_FLUSH_VOLUME],
-		sampleTime: data[_.VALVE_SAMPLE_TIME],
-		samplePressure: data[_.VALVE_SAMPLE_PRESSURE],
-		sampleVolume: data[_.VALVE_SAMPLE_VOLUME],
-		dryTime: data[_.VALVE_DRY_TIME], 
-		preserveTime: data[_.VALVE_PRESERVE_TIME],
-	};
-}
 
-function Task(data = {}) {
-	return {
-		name: data[_.TASK_NAME],
-		status: data[_.TASK_STATUS],
-		scheduleDate: data[_.TASK_SCHEDULE],
-		scheduleTime: data[_.TASK_SCHEDULE],
-		valves: data[_.TASK_VALVES] ?? [],
-		timeBetween: data[_.TASK_TIME_BETWEEN],
-		notes: data[_.TASK_NOTES]
-	};
-}
+const TaskSchema = yup.object({
+	name: yup.string()
+		.trim()
+		.required(),
+	
+	// status represents the operational status of the task
+	status: yup.number()
+		.required()
+		.min(0)
+		.default(0),
 
-function Status(data = {}) {
-	return {
-		currentState: data[_.STATE_CURRENT_NAME],
-		valves: data[_.VALVES],
-		time: data[_.TIME_UTC],
-		pressure: data[_.SENSOR_PRESSURE],
-		temperature: data[_.SENSOR_TEMP],
-		barometric: data[_.SENSOR_BARO],
-		waterVolume: data[_.SENSOR_VOLUME],
-		waterFlow: data[_.SENSOR_FLOW],
-		waterDepth: data[_.SENSOR_DEPTH]
-	};
-}
+	schedule: yup.number()
+		.required()
+		.default(0)
+		.transform(function(current, raw)  {
+			return this.isType(current) && current && current * 1000 || raw;
+		}),
+	
+	date: yup.string()
+		.ensure()
+		.when(["schedule"], (schedule, schema) => {
+			const date = new Date(schedule);
+			const components = [1970, date.getMonth() + 1, date.getDate()];
+			const value = components.map(c => c.toString().padStart(2, "0")).join("-");
+			return schema.default(value);
+		}),
 
-export default { keys: _, Valve, Task, Status };
+	time: yup.string()
+		.ensure()
+		.when(["schedule"], (schedule, schema) => {
+			const date = new Date(schedule);
+			const components = [date.getHours(), date.getMinutes()];
+			const value = components.map(c => c.toString().padStart(2, "0")).join(":");
+			return schema.default(value);
+		}),
+
+	valves: yup.array(yup.number())
+		.ensure(),
+
+	timeBetween: yup.number()
+		.default(0),
+
+	hour: yup.number()
+		.min(0)
+		.when("timeBetween", (timeBetween, schema) => {
+			return schema.default(Math.trunc(timeBetween % 86400 / 3600));
+		}),
+
+	minute: yup.number()
+		.min(0)
+		.when("timeBetween", (timeBetween, schema) => {
+			return schema.default(Math.trunc(timeBetween % 3600 / 60));
+		}),
+	
+	second: yup.number()
+		.min(0)
+		.when("timeBetween", (timeBetween, schema) => {
+			return schema.default(Math.trunc(timeBetween % 60));
+		}),
+	
+	notes: yup.string()
+		.nullable()
+})
+	// Aliases
+	.from(_.TASK_SCHEDULE, "schedule")
+	.from(_.TASK_TIME_BETWEEN, "timeBetween");
+
+
+
+//
+// ────────────────────────────────────────────────── III ──────────
+//   :::::: V A V L E : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────
+//
+
+	
+const ValveSchema = yup.object({
+	id: yup.number()
+		.min(0)
+		.default(0),
+
+	task: yup.string()
+		.default(undefined),
+
+	status: yup.number()
+		.positive()
+		.default(0),
+
+	flushTime: yup.number()
+		.positive()
+		.default(0),
+
+	flushVolume: yup.number()
+		.positive()
+		.default(0),
+
+	sampleTime: yup.number()
+		.positive()
+		.default(0),
+
+	samplePressure: yup.number()
+		.min(0)
+		.default(0),
+
+	sampleVolume: yup.number()
+		.min(0)
+		.default(0),
+
+	dryTime: yup.number()
+		.min(0)
+		.default(0),
+
+	preserveTime: yup.number()
+		.min(0)
+		.default(0)
+})
+	.from(_.VALVE_STATUS, "status")
+	.from(_.VALVE_GROUP, "task");
+
+
+
+//
+// ──────────────────────────────────────────────────── IV ──────────
+//   :::::: S T A T U S : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────────
+//
+
+	
+const StatusSchema = yup.object({
+	currentState: yup.string()
+		.trim()
+		.nullable()
+		.required(),
+	
+	valves: yup.array(yup.number().min(0))
+		.ensure()
+		.required(),
+	
+	time: yup.number()
+		.min(0)
+		.default(undefined),
+	
+	pressure: yup.number()
+		.default(undefined),
+	
+	temperature: yup.number()
+		.default(undefined),
+	
+	barometric: yup.number()
+		.default(undefined),
+	
+	waterVolume: yup.number()
+		.default(undefined),
+
+	waterFlow: yup.number()
+		.default(undefined),
+
+	waterDepth: yup.number()
+		.default(undefined)
+});
+
+export default {
+	keys: _,
+	Valve: ValveSchema, 
+	Task: TaskSchema,
+	Status: StatusSchema
+};
 

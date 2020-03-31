@@ -2,11 +2,10 @@ import { Fragment, h } from "preact";
 import { useContext, useEffect, useReducer, useState } from "preact/hooks";
 import { Formik, useField, useFormik, useFormikContext } from "formik";
 
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { actions, toggleValveSelection } from "App/redux/actions";
 
-import { BasicTextField } from "Components/TextField";
-
+import { BasicTextField } from "Components";
 
 
 function Config(props) {
@@ -20,8 +19,8 @@ function Config(props) {
 			<div className="content">
 				{config.configs.map((section, i) => (
 					<BasicTextField key={i} 
-						title={section.name} 
 						type={type}
+						title={section.name} 
 						helpertext={section.description} 
 					/>
 				))}
@@ -31,22 +30,19 @@ function Config(props) {
 }
 
 
-function StateConfig(props) {
+function StateConfig(_) {
 	const configs = useSelector(state => state.stateConfigs);
-	const flushConfig = configs.flush;
-	const sampleConfig = configs.sample;
-	const cleanConfig = configs.clean;
-	const preserveConfig = configs.preserve;
+	const { flush, sample, clean, preserve } = configs;
 
 	return (
 		<div className="stateconfig">
 			<div className="column">
-				<Config config={flushConfig} index={0} type="number" />
-				<Config config={sampleConfig} index={1} type="number"/>
+				<Config config={flush} index={0} type="number" />
+				<Config config={sample} index={1} type="number"/>
 			</div>
 			<div className="column">
-				<Config config={cleanConfig} index={2} type="number"/>
-				<Config config={preserveConfig} index={3} type="number" />
+				<Config config={clean} index={2} type="number"/>
+				<Config config={preserve} index={3} type="number" />
 			</div>
 		</div>
 	);

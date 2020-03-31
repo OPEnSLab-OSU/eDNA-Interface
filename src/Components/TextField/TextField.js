@@ -7,6 +7,7 @@ export const TextFieldComponent = (props) => {
 		helpertext, 
 		className, 
 		required = true, 
+		error,
 		...componentProps 
 	} = props;
 
@@ -14,7 +15,7 @@ export const TextFieldComponent = (props) => {
 	// We have both className and class props so remove class
 	delete componentProps.class; 
 
-	const inputDOM = <input className={"input"}required={required} {...componentProps}/>;
+	const inputDOM = <input className={"input"} required={required} {...componentProps}/>;
 	const inputComponent = props.children ? props.children(componentProps) : inputDOM;
 
 	return (
@@ -22,6 +23,7 @@ export const TextFieldComponent = (props) => {
 			{helpertext && <p className={"helpertext"}>{helpertext}</p>}
 			{inputComponent}
 			{<label className="title">{title}</label>}
+			{error && <p className="error">{error}</p>}
 		</div>
 	); 
 };

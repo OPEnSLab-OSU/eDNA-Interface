@@ -52,23 +52,20 @@ function statusItemsFrom(status) {
 function StatusItem(props) {
 	const { name, properties } = props;
 	return (
-		<li>
-			<div className="item">
-				<div className="title">{name}</div>
-				{properties.map((property, i) => (
-					<div key={i} className="property">
-						<i className="name">{property.name}</i>
-						<i className="value">{property.value ?? "------"}</i>
-					</div>
-				))}
-			</div>
+		<li className="item">
+			<div className="title">{name}</div>
+			{properties.map((property, i) => (
+				<div key={i} className="property">
+					<i className="name">{property.name}</i>
+					<i className="value">{property.value ?? "------"}</i>
+				</div>
+			))}
 		</li>
 	);
 }
 export function Status(props) {
 	const panels = useSelector(state => state.panels);
 	const status = useSelector(state => state.status);
-	console.log("asdfadfasdfasdf", status);
 	const statusItems = statusItemsFrom(status);
 
 	const { connection, setStatusUpdating } = props;

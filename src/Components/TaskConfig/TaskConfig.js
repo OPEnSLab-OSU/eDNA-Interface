@@ -2,72 +2,73 @@
 
 import { Fragment, h } from "preact";
 import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { Formik, useField, useFormik, useFormikContext } from "formik";
-import { BasicTextField, TextFieldComponent } from "Components/TextField";
+import { Form, Formik, useFormikContext } from "formik";
 import { useSelector } from "react-redux";
+import Switch from "react-switch";
+import * as yup from "yup";
 
+import { BasicTextArea, FormikControlledTextField, TaskScheduleTimeFields } from "./Fields";
+import Schema from "App/Schema";
 
-function TaskScheduleTimeFields(props) {
-	const { getFieldProps } = useFormikContext();
-	return (
-		<TextFieldComponent className="textfield time" {...props}>{(_) => 
-			<Fragment>
-				{["hour", "minute", "second"].map(t => 
-					<input key={t} name={t} 
-						className="input" 
-						type="number" 
-						placeholder={t + "s"} 
-						required {...getFieldProps(t)}/>
-				)}
-			</Fragment>
-		}</TextFieldComponent>
-	);
+function FormikListner() {
+	const { values } = useFormikContext();
+	try {
+		console.log("OnChange: ", values);
+		// console.log("Cast: ", cast);
+	} catch (error) {
+		// console.log("Casting error");
+	}
+
+	return null;
 }
 
-function BasicTextArea(props) {
-	const { getFieldProps } = useFormikContext();
-	return (
-		<TextFieldComponent className="textfield textarea" {...props}>{ (rest) =>
-			<textarea name="notes" className={"input"} {...rest} {...getFieldProps("notes")}/>
-		}</TextFieldComponent>
-	);
-}
-
-function FormikControlledTextField(props) {
-	const [field, meta, helpers] = useField(props);
-	return (
-		<BasicTextField {...field} {...props}/>
-	);
-}
 export function TaskConfig(props) {
 	const valves = useSelector(state => state.valves);
 	const selectedValves = valves.selected.join(", ");
-	const expanded = props.expanded ?? true;
 	const tasks = useSelector(state => state.tasks);
 	const allTasks = tasks.all;
 	const selectedTask = allTasks.find(t => t.name === tasks.selected) ?? {};
+	const expanded = props.expanded ?? true;
 
-	if (!selectedTask) {
-		return null;
-	}
+	const handleSubmit = (values) => {
+		if (!selectedTask.status) {
+			// const validated = TaskSchema.cast(values);
+			// console.log(transformed);
+		} else {
 
-	const formValues = {
-		name: selectedTask.name,
-		scheduleDate: selectedTask.scheduleDate || null,
-		hour: selectedTask.scheduleDate || null,
-		minute: selectedTask.scheduleDate || null,
-		second: selectedTask.scheduleDate || null,
-		valves: selectedTask.valves + valves.selected,
-		notes: ""
+		}
 	};
 
+
+	const formikConfig = {
+		initialValues: selectedTask,
+		// initialValues: {},
+		onSubmit: handleSubmit,
+		enableReinitialize: true,
+		validationSchema: Schema.Task
+	};
+
+	console.log("Selected Task: ", selectedTask);
+
 	return (
-		<Formik initialValues={formValues} enableReinitialize>{(formik) => (
-			<form className={classNames("taskconfig", { "expanded": expanded })}>
+		<Formik {...formikConfig}>{(formik) => (
+			<Form className={classNames("taskconfig", { "expanded": expanded })}>
+				<FormikListner />
 				<div className="headline">
 					<div className="title">
-						Task Settings
+						{selectedTask.name}
 					</div>
+					<button className="save button" disabled={!selectedTask.status}>
+						Save
+					</button>
+					<Switch
+						className="react-switch"
+						onChange={formik.handleSubmit}
+						width={48}
+						height={24}
+						checked={selectedTask.status}
+						onColor="#00b3b3"
+					/>
 				</div>
 				
 				<FormikControlledTextField 
@@ -78,13 +79,13 @@ export function TaskConfig(props) {
 					type="text" required/>
 
 				<FormikControlledTextField
-					name="scheduleDate"
+					name="date"
 					title="Schedule Date *"
 					helpertext="Specific date when to run this group (YYYY-MM-DD)"
 					type="date"/>
 
 				<FormikControlledTextField
-					name="scheduleTime"
+					name="time"
 					title="Schedule Time *"
 					helpertext="Specific time when to run this group (HH:MM)"
 					type="time"/>
@@ -93,10 +94,10 @@ export function TaskConfig(props) {
 					name="valves"
 					title="Valves *"
 					helpertext="Valves assigned to this task"
-					type="text" placeholder="e.g. 1,2,3,4,5" value={selectedValves}/>
+					type="text" placeholder="e.g. 1,2,3,4,5"/>
 
 				<TaskScheduleTimeFields 
-					title="Time Between *"
+					title="Time Between"
 					helpertext="Controls how long until the next sample in the group"/>
 		
 				<BasicTextArea 
@@ -104,7 +105,7 @@ export function TaskConfig(props) {
 					title="Notes"
 					subtitle="Additional information associated with this group up to 250 characters" 
 					type="text" helpertext="Describe the task (optional)"/>
-			</form>
+			</Form>
 		)}</Formik>
 	);
 }

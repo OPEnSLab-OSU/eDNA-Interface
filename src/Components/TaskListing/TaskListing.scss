@@ -66,10 +66,10 @@
 		justify-content: space-between;
 
 		input.task {
-			border: none;
 			font-family: Verdana;
 			width: 100%;
 			padding: 0 8px;
+			border: 1px solid lightgrey;
 		}
 
 		button.cancel {
