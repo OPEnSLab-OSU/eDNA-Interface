@@ -1,17 +1,20 @@
-import { h } from "preact";
+import { Fragment, h } from "preact";
 import { useContext, useState } from "preact/hooks";
 import { useSelector } from "react-redux"; 
 
 
 
 function StateNode(props) {
-	const { name, current, color } = props;
+	const { name, color } = props;
+
 	return (
-		<div className={classNames("state-node", "card", { current })}
+		<button 
+			className={classNames("state-node")}
 			style={`color: ${color}`}
-		>
-			{name}
-		</div>
+			disabled={color === null}>
+			{props.position}
+			<div className="state-label">{name}</div>
+		</button>
 	);
 }
 
@@ -23,11 +26,15 @@ export function StateTimeline() {
 	return (
 		<div className="state-timeline"> 
 			{names.map((name, i) => (
-				<StateNode 
-					key={name} name={name} 
-					color={nodeColors[i % names.length]}
-					current={name === states.current}
-				/>
+				<Fragment key={name}>
+					<StateNode key={name} 
+						name={name} 
+						color={name === states.current ? nodeColors[i % names.length] : null}
+						position={i}
+					/>
+
+					{i !== names.length - 1 && <hr />}
+				</Fragment>
 			))}
 		</div>
 	);

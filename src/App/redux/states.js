@@ -1,10 +1,11 @@
-export const initialPanelState = {
+import Schema from "App/Schema";
+
+const initialPanelVisibility = {
 	status: true, 
 	task: true
 };
 
-
-export const initialStateTimeline = { 
+const initialStateTimelineData = { 
 	names: ["stop", "flush", "sample", "clean", "preserve"],
 	current: "stop" 
 };

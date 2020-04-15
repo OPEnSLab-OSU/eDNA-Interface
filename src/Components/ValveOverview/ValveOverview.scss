@@ -1,0 +1,49 @@
+@use "~Sass/mixins" as mix;
+@use "~M/components/color-variables" as material;
+
+.valve-overview {
+	display: grid;
+	grid-template-columns: repeat(12, 1fr);
+	grid-template-rows: repeat(2, 40px);
+	gap: 16px;
+	padding: 24px 0;
+	// padding-top: 0;
+	font-size: 1.4rem;
+	cursor: pointer;
+
+	.valve-node {
+		@include mix.flex-center;
+		@include mix.card;
+		border-radius: 4px;
+		color: white;
+		background: rgb(40, 45, 60);
+		min-width: 24px;
+		transition: transform 200ms ease;
+
+		position: relative;
+
+		&:disabled {
+			background: rgba(40, 45, 60, 0.5);
+		}
+
+		&.current {
+			background: #2ee59d;
+			transform: translateY(-4px);
+		}
+
+		.badge {
+			@include mix.flex-center;
+			@include mix.card;
+			padding: 0;
+			margin: 0;
+			// padding-top: 2px;
+			position: absolute;
+			width: 24px;
+			height: 24px;
+			right: -12px;
+			top: -12px;
+			border-radius: 12px;
+			background: orangered;
+		}
+	}
+}

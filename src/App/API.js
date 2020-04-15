@@ -47,7 +47,6 @@ class APIBuilder {
 const get = (path, options = {}) => new APIBuilder(path, { method: "GET", ...options });
 const post = (path, options = {}) => new APIBuilder(path, { method: "POST", ...options });
 
-
 async function getStatus(timeout) {
 	try {
 		const payload = await get("api/status").withTimeout(timeout).send();

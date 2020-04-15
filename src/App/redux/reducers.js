@@ -1,23 +1,29 @@
-import { types } from "./actions";
-import { initialPanelState, initialStateTimeline } from "./states";
+import { actionTypes } from "./actions";
+import {
+	initialPanelVisibility,
+	initialStateConfigs,
+	initialStateTimelineData,
+	initialTasks,
+	initialValveData
+} from "./states";
 
 import { combineReducers } from "redux";
+import Schema from "App/Schema";
 
-const { TOGGLE_PANEL } = types;
-function panelReducer(state = initialPanelState, action) {
-	switch (action.type) {
+function panelReducer(state = initialPanelVisibility, action) {
+	const { TOGGLE_PANEL } = actionTypes;
+	const { type, panel } = action;
+
+	switch (type) {
 	case TOGGLE_PANEL:
-		return {
-			...state,
-			[action.panel]: !state[action.panel],
-		};
+		return { ...state, [panel]: !state[panel], };
 	default:
 		return state;	
 	}
 }
 
 function taskReducer(state = initialTasks, action) {
-	const { UPDATE_TASKLIST, UPDATE_TASK, ADD_TASK } = actionTypes;
+	const { UPDATE_TASKLIST, UPDATE_TASK } = actionTypes;
 	const { type, tasklist, taskInfo } = action;
 
 	switch (type) {
@@ -79,19 +85,6 @@ function stateConfigReducer(state = initialStateConfigs, action) {
 	return state;
 }
 
-const { STATE_JUMP } = types;
-function stateTimelineReducer(state = initialStateTimeline, action) {
-	switch (action.type) {
-	case STATE_JUMP:
-			
-		break;
-	
-	default:
-		break;
-	}
-	return state;
-}
-
 function loadingScreenReducer(state = { hide: true, show: false }, action) {
 	const { LOADING_SCREEN } = actionTypes;
 	const { type, value } = action;
@@ -100,6 +93,44 @@ function loadingScreenReducer(state = { hide: true, show: false }, action) {
 		return { hide: !value, show: value };
 	default:
 		return state;
+	}
+}
+
+function statusReducer(state = Schema.Status.default(), action) {
+	const { STATUS_UPDATE } = actionTypes;
+	const { type, payload } = action;
+
+	switch (type) {
+	case STATUS_UPDATE:
+		return Schema.Status.cast(payload);
+	default:
+		return state;
+	}
+}
+
+const initialConnection = {
+	statusText: "offline",
+	attempts: 0
+};
+
+function connectionReducer(connection = initialConnection, action) {
+	const {
+		CONNECTION_CONNECT, 
+		CONNECTION_SUCCESS,
+		CONNECTION_TIMEOUT 
+	} = actionTypes;
+
+	const { attempts } = connection;
+
+	switch (action.type) {
+	case CONNECTION_CONNECT:	
+		return { statusText: "connecting", attempts: 0 };
+	case CONNECTION_SUCCESS:
+		return { statusText: "online", attempts: 0 };
+	case CONNECTION_TIMEOUT:
+		return { statusText: attempts >= 3 ? "offline" : "timeout", attempts: attempts + 1 };
+	default:
+		return connection;
 	}
 }
 

@@ -1,9 +1,8 @@
 @use '~Theme' as *;
 @use "~Sass/mixins" as mix;
 
-.taskconfig {
+@mixin task-button {
 	@include mix.card;
-
 	background: white;
 	display: grid;
 	gap: 24px;
@@ -12,11 +11,31 @@
 	overflow-y: scroll;
 	position: relative;
 
-	margin-bottom: 2.4rem;
-	overflow-y: scroll;
+	background: rgb(5, 177, 177);
 
+	color: white;
+	border: none;
+	border-radius: 4px;
+
+	&:disabled,
+	&[disabled] {
+		background: #cccccc !important;
+		color: #666666;
+		cursor: default;
+	}
+}
+
+.taskconfig {
+	@include mix.card;
+
+	background: white;
 	display: grid;
-	gap: 2.4rem;
+	gap: 24px;
+	grid-area: taskconfig;
+	margin-bottom: 24px;
+	overflow-y: scroll;
+	position: relative;
+	width: 340px;
 
 	grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
 
@@ -65,11 +84,22 @@
 }
 
 .textfield.time {
-	flex-direction: row;
-	justify-content: space-between;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 0 8px;
+	// flex-direction: row;
+	// justify-content: space-between;
+
+	.title {
+		grid-column: 1/-1;
+	}
+
+	.helpertext {
+		grid-column: 1/-1;
+	}
 
 	.input {
-		width: 30%;
+		width: 100%;
 		overflow: hidden;
 	}
 }
@@ -77,10 +107,14 @@
 .textfield.textarea {
 	grid-column: 1/-1;
 	.input {
-		border: 0.1rem outset $input-border;
+		border-style: none;
+		border-color: Transparent;
+		overflow: auto;
+		outline: none;
+
+		border: 0.1rem solid $input-border;
 		border-radius: 0.4rem;
 		padding: 0.8rem;
-		margin-top: 2.6rem;
 		min-height: 20rem;
 		resize: none;
 

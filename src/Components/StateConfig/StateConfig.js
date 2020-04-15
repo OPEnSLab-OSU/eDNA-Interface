@@ -1,7 +1,6 @@
 import { Fragment, h } from "preact";
 import { useContext, useEffect, useReducer, useState } from "preact/hooks";
 import { Formik, useField, useFormik, useFormikContext } from "formik";
-
 import { useDispatch, useSelector } from "react-redux";
 import { actions, setDisplayLoadingScreen, toggleValveSelection } from "App/redux/actions";
 

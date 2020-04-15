@@ -34,7 +34,7 @@ export async function sendRequestWithTimeout(ms, url, options = {}) {
 			reject({ error: true });
 		};
 
-		xhr.send();
+		xhr.send(options.body);
 	});
 }
 
@@ -53,6 +53,6 @@ export function timeoutPromise(ms, promise) {
 	]);
 }
 
-export function fetchWithTimeout(ms, resource, init) {
-	return timeoutPromise(ms, fetch(resource, init));
+export function fetchWithTimeout(ms, url, options) {
+	return timeoutPromise(ms, fetch(url, options));
 }

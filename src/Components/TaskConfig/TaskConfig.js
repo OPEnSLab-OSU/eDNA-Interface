@@ -14,21 +14,14 @@ import {  } from "App/redux/actions";
 
 import { FaRegTrashAlt } from "react-icons/fa";
 
-function TaskScheduleTimeFields(props) {
-	const { getFieldProps } = useFormikContext();
-	return (
-		<TextFieldComponent className="textfield time" {...props}>{ (_) => 
-			<Fragment>
-				{["hour", "minute", "second"].map(t => 
-					<input key={t} name={t} 
-						className="input" 
-						type="number" 
-						placeholder={t + "s"} 
-						required {...getFieldProps(t)}/>
-				)}
-			</Fragment>
-		}</TextFieldComponent>
-	);
+function FormikListner() {
+	const { values } = useFormikContext();
+	try {
+		console.log("OnChange: ", values);
+		// console.log("Cast: ", cast);
+	} catch (error) {
+		// console.log("Casting error");
+	}
 }
 
 function secondsToDhms(seconds) {
@@ -54,7 +47,7 @@ function calculateRuntime(values) {
 	return secondsToDhms(flushTime + sampleTime + dryTime + preserveTime);
 }
 
-export function TaskConfig(props) {
+function TaskConfig(props) {
 	const formik = useFormikContext();
 
 	return (
@@ -133,3 +126,5 @@ export function TaskConfig(props) {
 		</Form>
 	);
 }
+
+export { TaskConfig };

@@ -1,13 +1,16 @@
 @use "~Theme" as *;
-@use "~Sass/mixins" as *;
+@use "~Sass/mixins" as mix;
+@use "~M/components/color-variables" as material;
 
 $expandedWidth: 24rem;
 
 .status {
+	@include mix.card;
+	overflow-x: hidden;
 	background: $status-background;
 	grid-area: status;
 	width: 8rem;
-	transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1);
+	transition: width 200ms cubic-bezier(0.4, 0, 0.2, 1) 200ms;
 	height: 100vh;
 
 	&.expanded,
@@ -19,19 +22,91 @@ $expandedWidth: 24rem;
 		display: grid;
 		grid-auto-flow: row;
 		height: 100%;
+		grid-template-rows: repeat(4, min-content) 1fr;
 
-		.item {
-			@include flex-center;
-			height: 8rem;
-			font-size: 1.6rem;
+		& > .item:first-child {
+			font-size: 2rem;
+			letter-spacing: 16px;
+			text-transform: uppercase;
+			display: flex;
+			justify-content: center; // font-weight: bold;;
+			// padding-bottom: 32px;
+			// padding-top: 64px;
 
-			&.active {
-				background: darken($color: $status-background, $amount: 10%);
+			i {
+				letter-spacing: normal;
+				background: $accent-focus;
+				color: white;
+				padding: 0 8px;
+				border-radius: 4px;
+				margin: 0 16px 0 0;
 			}
 		}
 
-		.item:last-child {
-			align-self: flex-end;
+		.item {
+			padding: 24px;
+			display: grid;
+			gap: 16px;
+			align-self: flex-start;
+
+			.title {
+				text-transform: uppercase;
+				font-size: 1.2rem;
+				font-weight: bold;
+				border-bottom: 1px solid lightgrey;
+				padding-bottom: 8px;
+			}
+
+			.property {
+				display: grid;
+				grid-template-columns: 40% 60%;
+				justify-content: center;
+				font-size: 1.2rem;
+
+				.name {
+					color: material.color("grey", "darken-4");
+					text-transform: capitalize;
+				}
+
+				.value {
+					color: material.color("grey", "darken-1");
+					text-align: center;
+				}
+			}
+
+			&.active {
+				// background: darken($color: $status-background, $amount: 10%);
+			}
+		}
+
+		.connection {
+			button {
+				display: flex;
+				align-items: center;
+				background: none;
+				font-size: 1.4rem;
+				text-transform: capitalize;
+				letter-spacing: 0.1rem;
+				padding: 8px 0;
+			}
+
+			.dot {
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				border-radius: 999px;
+				background: orange;
+				margin-right: 8px;
+				margin-top: -4px;
+
+				&.online {
+					background: $accent-focus;
+				}
+
+				&.offline {
+					background: red;
+				}
+			}
 		}
 	}
 }

@@ -1,0 +1,24 @@
+{
+	"compilerOptions": {
+		"module": "commonjs",
+		"target": "es2016",
+		"jsx": "preserve",
+		"baseUrl": ".",
+		"paths": {
+			"App": ["./src/App"],
+			"App/*": ["./src/App/*"],
+			"Components": ["./src/Components"],
+			"Components/*": ["./src/Components/*"],
+			"Util": [".src/Util"],
+			"Util/*": [".src/Util/*"]
+		}
+	},
+	"exclude": [
+		"node_modules",
+		"**/node_modules/*",
+		"dist",
+		"**/dist/*",
+		"public",
+		"**public/*"
+	]
+}

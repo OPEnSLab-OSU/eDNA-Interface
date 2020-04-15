@@ -1,3 +1,5 @@
+@use "./theme.scss" as *;
+
 @mixin flex-center {
 	display: flex;
 	align-items: center;
@@ -5,6 +7,39 @@
 }
 
 @mixin card {
-	box-shadow: 0 4px 6px 0 rgba(0, 0, 0, 0.1);
+	box-shadow: 0 0.4rem 0.6rem 0 rgba(0, 0, 0, 0.1);
 	border-radius: 0.4rem;
+}
+
+@mixin button {
+	letter-spacing: 0.15px;
+	text-transform: uppercase;
+
+	&:not([disabled]) {
+		color: $accent-focus;
+	}
+}
+
+@mixin input {
+	margin-top: 0.8rem;
+	font-size: 1.4rem;
+	height: 3rem;
+	border: none;
+	border: 1px solid $input-border;
+	border-radius: 4px;
+	padding: 8px;
+
+	&:invalid {
+		box-shadow: none;
+	}
+
+	&:focus ~ .title {
+		color: $accent-focus;
+	}
+
+	&:focus {
+		box-shadow: none;
+		outline: none;
+		border-color: $accent-focus;
+	}
 }

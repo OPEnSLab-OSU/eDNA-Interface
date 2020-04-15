@@ -1,5 +1,4 @@
 import { h } from "preact";
-
 import { useCallback, useEffect, useRef, useState } from "preact/hooks";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { apiConnect, selectTask, setDisplayLoadingScreen, updateTask, updateTaskList } from "./redux/actions";
@@ -43,6 +42,7 @@ function useStatusUpdating() {
 }
 
 export function App() {
+	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
 	const connection = useSelector(state => state.connection);
 	const loadingScreen = useSelector(state => state.displayLoadingScreen);
@@ -61,10 +61,15 @@ export function App() {
 
 	return (
 		<div className="app">
-			<Status />
-			<main className="main">
+			{panels.status && 
+				<Status connection={connection} setStatusUpdating={setStatusUpdating}/>
+			}
+
+			<main className={classNames("main", { "showTask": panels.task })}>
 				<Dropbar />
 				<StateTimeline />
+				<ValveOverview />
+				<StateConfig />
 			</main>
 
 			{panels.task &&

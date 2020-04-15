@@ -1,5 +1,3 @@
-
-
 const types = { 
 	TOGGLE_PANEL: "",
 	STATE_JUMP: "",
@@ -16,12 +14,13 @@ const types = {
 	LOADING_SCREEN: ""
 };
 
+Object.keys(types).forEach(k => types[k] = k);
 
 function togglePanel(panel) {
 	return { type: types.TOGGLE_PANEL, panel };
 }
 
-function stateJump(newState) {
+function stateTransition(newState) {
 	return { type: types.STATE_JUMP, newState };
 }
 

@@ -1,18 +1,15 @@
 import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { AppContext } from "App";
-import { Formik, useField, useFormik, useFormikContext } from "formik";
-import { BasicTextField } from "Components/TextField";
+import { useState } from "preact/hooks";
+import { Form, Formik } from "formik";
 
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectTask, setDisplayLoadingScreen } from "../../App/redux/actions";
+import Schema from "App/Schema";
+import API from "App/API";
 
-import { selectTask, setDisplayLoadingScreen, updateTask, updateTaskList } from "../../App/redux/actions";
-
-export function TaskListing(props) {
-	// const [{ groups }] = useContext(AppContext);
-
-	const groups = useSelector(state => state.groups);
-	console.log(groups);
+export function TaskListing() {
+	const [editingMode, setEditingMode] = useState(false);
+	const toggleEditingMode = () => setEditingMode(!editingMode);
 
 	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
@@ -66,7 +63,6 @@ export function TaskListing(props) {
 						{task.name}
 					</li>
 				))}
-
 				{editingMode && 
 					<li className={classNames("edit")}>
 						<Formik initialValues={{ [Schema.keys.TASK_NAME]: "" }} onSubmit={handleTaskCreate}>{(formik) =>
@@ -89,6 +85,7 @@ export function TaskListing(props) {
 					</li>
 				}
 			</ul>
+			<div className="underbar"></div>
 		</div>
 	);
 }
