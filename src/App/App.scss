@@ -62,6 +62,26 @@ a,
 
 .main {
 	grid-area: main;
+	height: 100%;
+	padding: 24px;
+	overflow-y: scroll;
+	min-width: 600px;
+
+	&.showTask {
+		padding-right: 388px;
+	}
+}
+
+.task-panel {
+	position: absolute;
+	right: 24px;
+	width: 340px;
+	// height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
+.tasklisting {
 }
 
 .taskconfig {

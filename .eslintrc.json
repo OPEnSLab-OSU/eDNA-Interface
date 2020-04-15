@@ -71,7 +71,9 @@
 		"no-unused-vars": [
 			"warn",
 			{
-				"argsIgnorePattern": "_"
+				"varsIgnorePattern": "_|props|h",
+				"argsIgnorePattern": "_|props|h",
+				"ignoreRestSiblings": true
 			}
 		],
 		"sort-imports": ["error", { "ignoreDeclarationSort": true }],

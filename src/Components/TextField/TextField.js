@@ -5,8 +5,9 @@ export const TextFieldComponent = (props) => {
 	const {
 		title, 
 		helpertext, 
-		className, 
-		required = true, 
+		className,
+		required, 
+		error,
 		...componentProps 
 	} = props;
 

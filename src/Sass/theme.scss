@@ -9,4 +9,23 @@ $background: m.color("blue-grey", "lighten-5");
 $status-background: white;
 
 $input-border: m.color("grey", "lighten-1");
-$accent-focus: #2ee59d;
+// $accent-focus: #2ee59d;
+$accent-focus: lighten(teal, 10%);
+@debug $accent-focus;
+// $accents: #173f5f, #20639b, #3caea3, #ed553b;
+// $accents: #6aab9c, #fa9284, #e06c78, #5874dc, #384e78;
+// $accents: #264d59, #43978d, #f9ad6a, #d46c4e;
+$accents: #20639b, darken(coral, 10%), #173f5f, #264d59, rgb(134, 1, 1);
+
+@for $i from 1 to length($accents) + 1 {
+	.background-accent-#{$i} {
+		// background: coral
+		background: lighten(nth($accents, $i), 0%);
+	}
+}
+
+// @for $i from 1 through 3 {
+// 	ul:nth-child(3n + #{$i}) {
+// 	  background-color: lighten($base-color, $i * 5%);
+// 	}
+//   }

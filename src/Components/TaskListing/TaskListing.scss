@@ -7,7 +7,12 @@
 	grid-auto-rows: min-content;
 	padding: 0;
 	font-size: 13px;
-	background: white;
+	grid-area: tasklisting;
+	margin-bottom: 24px;
+	margin-top: 24px;
+	// overflow-y: scroll;
+	position: relative;
+	z-index: 999;
 
 	margin-top: 2.4rem;
 	margin-bottom: 2.4rem;
