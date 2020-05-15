@@ -7,6 +7,7 @@ export const TextFieldComponent = (props) => {
 		className,
 		required, 
 		error,
+		errors,
 		...componentProps 
 	} = props;
 
@@ -24,6 +25,7 @@ export const TextFieldComponent = (props) => {
 			{inputComponent}
 			{<label className="title">{title}</label>}
 			{error && <p className="error">{error}</p>}
+			{errors && errors.map(e => <p className="error" key={e}>{e}</p>)}
 		</div>
 	); 
 };

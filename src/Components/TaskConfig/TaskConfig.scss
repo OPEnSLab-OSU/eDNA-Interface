@@ -31,7 +31,7 @@
 	background: white;
 	display: grid;
 	gap: 24px;
-	grid-area: taskconfig;
+	// grid-area: taskconfig;
 	margin-bottom: 24px;
 	overflow-y: scroll;
 	position: relative;
@@ -87,14 +87,16 @@
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 0 8px;
-	// flex-direction: row;
-	// justify-content: space-between;
 
 	.title {
 		grid-column: 1/-1;
 	}
 
 	.helpertext {
+		grid-column: 1/-1;
+	}
+
+	.error {
 		grid-column: 1/-1;
 	}
 
@@ -120,6 +122,25 @@
 
 		&:focus {
 			border-color: $accent-focus;
+		}
+	}
+}
+
+.textfield.valves {
+	.valve-badge-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+		grid-auto-rows: 36px;
+		margin-top: 12px;
+		gap: 8px;
+
+		.valve-badge {
+			display: flex;
+			flex-grow: 1;
+			border-radius: 4px;
+			justify-content: center;
+			align-items: center;
+			background: lightgrey;
 		}
 	}
 }

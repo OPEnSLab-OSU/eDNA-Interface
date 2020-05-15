@@ -1,7 +1,5 @@
-import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
+import { h } from "preact";
 import { useDispatch, useSelector } from "react-redux";
-
 import { setDisplayLoadingScreen, togglePanel } from "App/redux/actions";
 
 import API from "App/API";

@@ -39,6 +39,7 @@
 			background: transparent;
 			grid-column: 1/-1;
 			border-bottom: 1px solid lightgrey;
+			text-transform: capitalize;
 
 			.square {
 				position: absolute;

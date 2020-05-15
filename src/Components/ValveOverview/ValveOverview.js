@@ -1,26 +1,27 @@
-import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { AppContext } from "App";
-import { Formik, useField, useFormik, useFormikContext } from "formik";
-import { BasicTextField } from "Components/TextField";
-
+import { h } from "preact";
+import { useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
-
-
-import { actions } from "App/redux/actions";
-import { toggleValveSelection } from "../../App/redux/actions";
+import { toggleTaskValve, toggleValveSelection, updateTask } from "App/redux/actions";
 
 
 function ValveNode(props) {
 	const { id, status } = props;
 	const [selected, setSelected] = useState(false);
 	const dispatch = useDispatch();
-	const valves = useSelector(state => state.valves);
-	const valvesSelected = valves.selected;
-	const queue = valvesSelected.findIndex(valveId => valveId === id);
+
+	const tasks = useSelector(state => state.tasks);
+	const taskname = useSelector(state => state.selectedTask);
+	const task = tasks[taskname];
+
+	const queue = task.valves.findIndex(valveId => valveId === id);
 
 	const toggle = () => {
-		dispatch(toggleValveSelection(id));
+		if (task.status != 0){
+			return;
+		}
+
+		dispatch(toggleTaskValve(taskname, id));
+		// dispatch(toggleValveSelection(id));
 		setSelected(!selected);
 	};
 	
@@ -40,10 +41,16 @@ export function ValveOverview() {
 	const top = valves.all.filter(v => v.id < midPoint);
 	const bottom = valves.all.filter(v => v.id >= midPoint);
 
-	return (
-		<div className="valve-overview">
-			{top.map(v => <ValveNode key={v.id} {...v}/>)}
-			{bottom.reverse().map(v => <ValveNode key={v.id} {...v}/>)}
-		</div>
-	);
+	const tasks = useSelector(state => state.tasks);
+	const taskname = useSelector(state => state.selectedTask);
+	const task = tasks[taskname];
+
+	if (task)
+
+		return (
+			<div className="valve-overview">
+				{top.map(v => <ValveNode key={v.id} {...v}/>)}
+				{bottom.reverse().map(v => <ValveNode key={v.id} {...v}/>)}
+			</div>
+		);
 }

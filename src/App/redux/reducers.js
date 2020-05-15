@@ -10,6 +10,10 @@ import {
 import { combineReducers } from "redux";
 import Schema from "App/Schema";
 
+function ifElse(condition, value1, value2) {
+	return condition ? value1 : value2;
+}
+
 function panelReducer(state = initialPanelVisibility, action) {
 	const { TOGGLE_PANEL } = actionTypes;
 	const { type, panel } = action;
@@ -23,12 +27,27 @@ function panelReducer(state = initialPanelVisibility, action) {
 }
 
 function taskReducer(state = initialTasks, action) {
-	const { UPDATE_TASKLIST, UPDATE_TASK } = actionTypes;
-	const { type, tasklist, taskInfo } = action;
+	const {
+		UPDATE_TASKLIST, 
+		UPDATE_TASK,
+		TASK_TOGGLE_VALVE
+	} = actionTypes;
+	const { type, tasklist, taskInfo, name, valveId } = action;
 
 	switch (type) {
 	case UPDATE_TASK: 
 		return { ...state, [taskInfo.name]: taskInfo };
+	case TASK_TOGGLE_VALVE: {
+		const task = state[name];
+		const valves = task.valves;
+		const index = valves.findIndex(id => id === valveId);
+		const new_task = ifElse(index > -1, 
+			{ ...task, valves: valves.filter(id => id !== valveId) },
+			{ ...task, valves: [...valves, valveId] }
+		);
+
+		return { ...state, [name]: new_task };
+	}
 	case UPDATE_TASKLIST:
 		return tasklist;
 	default:
@@ -60,8 +79,13 @@ function stateTimelineReducer(state = initialStateTimelineData, action) {
 }
 
 function valveReducer(state = initialValveData, action) {
-	const { TOGGLE_VALVE_SELECTION, VALVE_STATUS_UPDATE } = actionTypes;
-	const { type, valveId, payload } = action;
+	const {
+		TOGGLE_VALVE_SELECTION, 
+		VALVE_STATUS_UPDATE,
+		CLEAR_VALVE_SELECTION,
+		SET_VALVE_SELECTIONS
+	} = actionTypes;
+	const { type, valveId, payload, valveIds } = action;
 
 	switch (type) {
 	case TOGGLE_VALVE_SELECTION: {
@@ -73,6 +97,10 @@ function valveReducer(state = initialValveData, action) {
 			return { ...state, selected: [...selected, valveId] };
 		}
 	}
+	case CLEAR_VALVE_SELECTION: 
+		return { ...state, selected: [] };
+	case SET_VALVE_SELECTIONS:
+		return { ...state, selected: valveIds };
 	case VALVE_STATUS_UPDATE:
 		return { ...state, all: payload };
 	default:

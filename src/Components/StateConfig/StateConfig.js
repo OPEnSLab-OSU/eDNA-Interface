@@ -1,8 +1,7 @@
-import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { Formik, useField, useFormik, useFormikContext } from "formik";
+import { h } from "preact";
+import { Formik, useField } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { actions, setDisplayLoadingScreen, toggleValveSelection } from "App/redux/actions";
+import { clearValveSelection, setDisplayLoadingScreen, setValveSelections, toggleValveSelection } from "App/redux/actions";
 
 import { BasicTextField, TaskConfig } from "Components";
 import API from "App/API";
@@ -100,7 +99,7 @@ function Config(props) {
 const TaskValidationSchema = yup.object({
 	name: yup.string()
 		.trim()
-		.required(),
+		.required("Task name is required and must be unique"),
 	// status represents the operational status of the task
 	status: yup.number()
 		.required()
@@ -111,44 +110,45 @@ const TaskValidationSchema = yup.object({
 	time: yup.string()
 		.ensure(),
 	valves: yup.array(yup.number())
+		.required()
 		.ensure(),
 	hour: yup.number()
-		.min(0),
+		.required()
+		.min(0, "Hour must be a positive number"),
 	minute: yup.number()
-		.min(0),
+		.min(0, "Minute must be a positive number"),
 	second: yup.number()
-		.min(0),
+		.min(0, "Second must be a positive number"),
 	notes: yup.string()
 		.nullable()
 });
 
 function StateConfig(_) {
 	const dispatch = useDispatch();
+
 	const tasks = useSelector(state => state.tasks);
-	const selectedTaskName = useSelector(state => state.selectedTask);
-	const selectedTask = tasks[selectedTaskName];
-	if (!selectedTask) {
+	const taskname = useSelector(state => state.selectedTask);
+	const task = tasks[taskname];
+	if (!task) {
 		return null;
 	}
 
 	const handleFormSubmit = async (values, ) => {
+		console.log(await TaskValidationSchema.validate(values));
 		try {
 			dispatch(setDisplayLoadingScreen(true));
 			if (values.status === 0) {
 	
-				if (selectedTask.name !== values.name) {
+				if (task.name !== values.name) {
 					values["newName"] = values.name;
-					values["name"] = selectedTask.name;
+					values["name"] = task.name;
 				}
-	
+
 				const schedule = new Date(`${values.date}T${values.time}:00`);
 				values["schedule"] = Math.floor(schedule.getTime() / 1000);
-				
-				console.log(schedule, schedule.getTime());
-				console.trace(values);
-	
+		
 				if (schedule <= new Date()) {
-					throw "Must be in the future";
+					console.log("Must be in the future");
 				}
 	
 				switch (values.submitAction) {
@@ -159,13 +159,14 @@ function StateConfig(_) {
 					await API.store.deleteTaskWithName(values.name);
 					break;
 				case "SCHEDULE":
-					await API.store.uploadAndScheduleTask(values);
+					await API.store.scheduleTask(values.name);
 					break;
 				default:
-					throw "Unexpected action";
+					console.log("Unexpected action");
 				}
 			}
 
+			dispatch(clearValveSelection());
 			dispatch(setDisplayLoadingScreen(false));
 		} catch {
 			dispatch(setDisplayLoadingScreen(false));
@@ -173,15 +174,14 @@ function StateConfig(_) {
 	};
 
 	const formikConfig = {
-		initialValues: Schema.Task.cast(selectedTask),
+		initialValues: Schema.Task.cast(task),
+		validationSchema: TaskValidationSchema,
 		enableReinitialize: true,
-		validationSchema: TaskValidationSchema
 	};
 
-	
 	const { flush, sample, dry, preserve } = StateConfigs;
 	return (
-		<Formik {...formikConfig} onSubmit={handleFormSubmit}>{(formik) => (
+		<Formik {...formikConfig} onSubmit={handleFormSubmit}>{(_) => (
 			<div className="stateconfig">
 				<div className="column">
 					<TaskConfig expanded={true}/>

@@ -1,32 +1,18 @@
 
 
-import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { Form, Formik, useFormikContext } from "formik";
-import { useDispatch, useSelector } from "react-redux";
+import { h } from "preact";
+import { useDispatch } from "react-redux";
+import { Form, useFormikContext } from "formik";
 import Switch from "react-switch";
-import * as yup from "yup";
 
-import { BasicTextArea, FormikControlledTextField, TaskScheduleTimeFields } from "./Fields";
+import { BasicTextArea, FormikControlledTextField, TaskScheduleTimeFields, TaskValveFields } from "./Fields";
 import Schema from "App/Schema";
-import API from "App/API";
-import {  } from "App/redux/actions";
 
 import { FaRegTrashAlt } from "react-icons/fa";
 
-function FormikListner() {
-	const { values } = useFormikContext();
-	try {
-		console.log("OnChange: ", values);
-		// console.log("Cast: ", cast);
-	} catch (error) {
-		// console.log("Casting error");
-	}
-}
-
 function secondsToDhms(seconds) {
 	seconds = Number(seconds);
-	if (seconds == 0) {
+	if (seconds == 0) {	
 		return "0 second";
 	}
 	
@@ -42,13 +28,14 @@ function secondsToDhms(seconds) {
 	return dDisplay + hDisplay + mDisplay + sDisplay;
 }
 
-function calculateRuntime(values) {
+function displayRuntime(values) {
 	const { flushTime, sampleTime, dryTime, preserveTime } = values;
 	return secondsToDhms(flushTime + sampleTime + dryTime + preserveTime);
 }
 
 function TaskConfig(props) {
 	const formik = useFormikContext();
+	const disabled_field = formik.values.status != 0;
 
 	return (
 		<Form className={classNames("taskconfig", { "expanded": true })}>
@@ -56,7 +43,7 @@ function TaskConfig(props) {
 				<div className="title">
 					{formik.values.name}
 					<br />
-					<span>{"max duration=" + calculateRuntime(formik.values)}</span>
+					<span>{"max duration=" + displayRuntime(formik.values)}</span>
 				</div>
 
 				<button 
@@ -94,35 +81,42 @@ function TaskConfig(props) {
 				title="Task Name *"
 				placeholder="Untitled"
 				helpertext="Name used to identify the valve group"
-				type="text"/>
+				type="text"
+				disabled={disabled_field}/>
 
 			<FormikControlledTextField
 				name="date"
 				title="Schedule Date *"
 				helpertext="Specific date when to run this group (YYYY-MM-DD)"
-				type="date"/>
+				type="date"
+				disabled={disabled_field}/>
 
 			<FormikControlledTextField
 				name="time"
 				title="Schedule Time *"
 				helpertext="Specific time when to run this group (HH:MM)"
-				type="time"/>
+				type="time"
+				required 
+				disabled={disabled_field}/>
 
-			<FormikControlledTextField
+			<TaskValveFields
 				name="valves"
 				title="Valves *"
 				helpertext="Valves assigned to this task"
-				type="text" placeholder="e.g. 1,2,3,4,5"/>
+				type="text" placeholder="e.g. 1,2,3,4,5"
+				disabled={disabled_field}/>
 
 			<TaskScheduleTimeFields 
 				title="Time Between"
-				helpertext="Controls how long until the next sample in the group"/>
+				helpertext="Controls how long until the next sample in the group"
+				disabled={disabled_field}/>
 		
 			<BasicTextArea 
 				name="notes"
 				title="Notes"
 				subtitle="Additional information associated with this group up to 250 characters" 
-				type="text" helpertext="Describe the task (optional)"/>
+				type="text" helpertext="Describe the task (optional)"
+				disabled={disabled_field}/>
 		</Form>
 	);
 }

@@ -64,16 +64,13 @@ const TaskSchema = yup.object({
 
 	schedule: yup.number()
 		.required()
-		.default(0)
-		.transform(function(current, raw)  {
-			return this.isType(current) && current && current * 1000 || raw;
-		}),
+		.default(0),
 	
 	date: yup.string()
 		.ensure()
 		.when(["schedule"], (schedule, schema) => {
-			const date = new Date(schedule);
-			const components = [1970, date.getMonth() + 1, date.getDate()];
+			const date = new Date(schedule * 1000);
+			const components = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
 			const value = components.map(c => c.toString().padStart(2, "0")).join("-");
 			return schema.default(value);
 		}),
@@ -81,7 +78,7 @@ const TaskSchema = yup.object({
 	time: yup.string()
 		.ensure()
 		.when(["schedule"], (schedule, schema) => {
-			const date = new Date(schedule);
+			const date = new Date(schedule * 1000);
 			const components = [date.getHours(), date.getMinutes()];
 			const value = components.map(c => c.toString().padStart(2, "0")).join(":");
 			return schema.default(value);

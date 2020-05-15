@@ -2,10 +2,15 @@
 import store from "./redux/store";
 import { apiSuccess, apiTimeout, selectTask, updateStatus, updateTask, updateTaskList } from "./redux/actions";
 import { base } from "./Static";
-import { pick } from "Util";
+
+
 const { dispatch } = store;
 
-const convertArrayToObject = (array, key) => {
+function objectToQueryString(obj) {
+	return Object.keys(obj).map(key => key + "=" + obj[key]).join("&");
+}
+
+const arrayToObject = (array, key) => {
 	return array.reduce((obj, item) => ({
 		...obj,
 		[item[key]]: item,
@@ -34,6 +39,10 @@ class APIBuilder {
 		return this.body(JSON.stringify(payload));
 	}
 
+	query(params) {
+		this.path += "?" + objectToQueryString(params);
+	}
+
 	async send() {
 		if (this.controller) {
 			setTimeout(() => this.controller.abort(), this.timeout - 10);  
@@ -49,9 +58,10 @@ const post = (path, options = {}) => new APIBuilder(path, { method: "POST", ...o
 
 async function getStatus(timeout) {
 	try {
-		const payload = await get("api/status").withTimeout(timeout).send();
-		dispatch(updateStatus(payload));
+		const status = await get("api/status").withTimeout(timeout).send();
+		dispatch(updateStatus(status));
 		dispatch(apiSuccess());
+		return status;
 	} catch (error) {
 		dispatch(apiTimeout());
 		throw error;
@@ -59,14 +69,19 @@ async function getStatus(timeout) {
 }
 
 async function getTaskList() {
-	const taskrefs = await get("api/tasks").send();
-	const taskList = convertArrayToObject(taskrefs, "name");
+	const tasks = await get("api/tasks").send();
+	const taskList = arrayToObject(tasks, "name");
 	dispatch(updateTaskList(taskList)); // Replace the entire tasklist
+	return tasks;
 }
 
 async function getTaskWithName(name) {
-	const task = await post("api/task/get").body(JSON.stringify({ name })).send();
-	dispatch(updateTask(task));
+	const response = await post("api/task/get").body(JSON.stringify({ name })).send();
+	if (response.success) {
+		dispatch(updateTask(response.payload));
+	}
+	
+	return response;
 }
 
 async function uploadTask(values, path = "api/task/save") {
@@ -82,12 +97,12 @@ async function uploadTask(values, path = "api/task/save") {
 	return response;
 }
 
-async function uploadAndScheduleTask(values) {
-	return await uploadTask(values, "api/task/schedule");
+async function scheduleTask(name) {
+	return await post("api/task/schedule").json({ name }).send();
 }
 
 async function createTaskWithName(name) {
-	const response = await post("api/task/create").body(JSON.stringify({ name })).send();
+	const response = await post("api/task/create").json({ name }).send();
 	if (response.success) {
 		dispatch(updateTask(response.payload));
 	}
@@ -96,23 +111,27 @@ async function createTaskWithName(name) {
 }
 
 async function deleteTaskWithName(name) {
-	const response = await post("api/task/delete").body(JSON.stringify({ name })).send();
+	const response = await post("api/task/delete").json({ name }).send();
 	if (response.success) {
 		const taskList = store.getState().tasks;
 		delete taskList[name];
 		dispatch(updateTaskList(taskList));
 	}
+
+	return response;
 }
 
 export default {
 	get,
 	post,
+
+	// APIs that modifies Store upon success 
 	store: {
 		getStatus, 
 		getTaskList,
 		getTaskWithName,
 		uploadTask,
-		uploadAndScheduleTask,
+		scheduleTask,
 		createTaskWithName,
 		deleteTaskWithName
 	} 

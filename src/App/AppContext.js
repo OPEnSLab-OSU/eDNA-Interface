@@ -1,7 +1,4 @@
-import {
-	createContext,
-	h 
-} from "preact";
+import { createContext, h } from "preact";
 
 const AppContext = createContext();
 const AppContextProvider = AppContext.Provider;

@@ -1,4 +1,4 @@
-import { Fragment, h } from "preact";
+import { h } from "preact";
 import { useState } from "preact/hooks";
 import { Form, Formik } from "formik";
 
@@ -14,12 +14,10 @@ export function TaskListing() {
 	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
 	const tasks = useSelector(state => state.tasks);
-	const selectedName = useSelector(state => state.selectedTask);
-	const selected = tasks[selectedName];
-
-	// console.trace(tasks);
-
-	// NOTE: Handlers 
+	const selectedTaskName = useSelector(state => state.selectedTask);
+	const selectedTask = tasks[selectedTaskName];
+	
+	// NOTE: Handlers s
 	const handleTaskSelection = async (name) => {
 		dispatch(setDisplayLoadingScreen(true));
 		await API.store.getTaskWithName(name);
@@ -43,47 +41,46 @@ export function TaskListing() {
 		}
 		dispatch(setDisplayLoadingScreen(false));
 	}; 
-
-	const taskList = Object.values(tasks).sort((a, b) => b.name < a.name);
 	
 	return (
 		<div className="tasklisting">
 			<div className="headline">
 				<div className="title">Tasks</div>
+
+				{/* CONDITIONAL: conditional rendering */}
 				{panels.task && 
-					<button type="button" className="create-group" onClick={handleTaskAdd}>
-						+ Task
-					</button>
-				}
+				<button type="button" className="create-group" onClick={handleTaskAdd}>
+					Create
+				</button>}
 			</div>
 			<ul>
-				{taskList.map((task, i) => (
-					<li key={i} className={classNames({ "selected": selected && selected.name === task.name })} 
-						onClick={() => handleTaskSelection(task.name)}>
-						{task.name}
+				{Object.values(tasks).sort((a, b) => b.name < a.name).map(({ name }) => (
+					<li key={name} className={classNames({ "selected": selectedTask && selectedTask.name === name })} 
+						onClick={() => handleTaskSelection(name)}>
+						{name}
 					</li>
 				))}
-				{editingMode && 
-					<li className={classNames("edit")}>
-						<Formik initialValues={{ [Schema.keys.TASK_NAME]: "" }} onSubmit={handleTaskCreate}>{(formik) =>
-							<Form>
-								<input className="task"
-									name={Schema.keys.TASK_NAME}
-									ref={ref => ref && ref.focus()} 
-									type="text" 
-									autoFocus 
-									{...formik.getFieldProps(Schema.keys.TASK_NAME)}
-								/>
 
-								{/* this is need to make submit via enter work */}
-								<input type="submit" style={{ visibility: "hidden", position: "absolute" }} /> 
-								<button className="button cancel" onClick={toggleEditingMode}>
-									Cancel
-								</button>
-							</Form>
-						}</Formik>
-					</li>
-				}
+				{/* CONDITIONAL: conditional rendering */}
+				{editingMode && 
+				<li className={classNames("edit")}>
+					<Formik initialValues={{ name: "" }} onSubmit={handleTaskCreate}>{(formik) =>
+						<Form>
+							<input className="task"
+								name={"name"}
+								ref={ref => ref && ref.focus()} 
+								autoFocus 
+								{...formik.getFieldProps("name")}
+							/>
+
+							{/* this is need to make submit via enter work */}
+							<input type="submit" style={{ visibility: "hidden", position: "absolute" }} /> 
+							<button className="button cancel" onClick={toggleEditingMode}>
+								Cancel
+							</button>
+						</Form>
+					}</Formik>
+				</li>}
 			</ul>
 			<div className="underbar"></div>
 		</div>
