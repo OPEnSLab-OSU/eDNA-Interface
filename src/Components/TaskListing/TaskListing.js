@@ -14,8 +14,8 @@ export function TaskListing() {
 	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
 	const tasks = useSelector(state => state.tasks);
-	const selectedTaskName = useSelector(state => state.selectedTask);
-	const selectedTask = tasks[selectedTaskName];
+	const taskname = useSelector(state => state.selectedTask);
+	const task = tasks[taskname];
 	
 	// NOTE: Handlers s
 	const handleTaskSelection = async (name) => {
@@ -54,11 +54,12 @@ export function TaskListing() {
 				</button>}
 			</div>
 			<ul>
-				{Object.values(tasks).sort((a, b) => b.name < a.name).map(({ name }) => (
-					<li key={name} className={classNames({ "selected": selectedTask && selectedTask.name === name })} 
+				{Object.values(tasks).sort((a, b) => b.name < a.name).map(({ name, status }) => (
+					<li key={name} className={classNames({ "selected": task && task.name === name })} 
 						onClick={() => handleTaskSelection(name)}>
-						{name}
+						{name}<span class="right">{status == 1 ? "active" : null}</span>
 					</li>
+
 				))}
 
 				{/* CONDITIONAL: conditional rendering */}

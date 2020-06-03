@@ -67,9 +67,9 @@
 		}
 
 		.delete-button {
-			color: rgb(248, 81, 69) !important;
-			display: flex;
-			align-items: center;
+			&:not([disabled]) {
+				color: rgb(248, 81, 69);
+			}
 		}
 	}
 

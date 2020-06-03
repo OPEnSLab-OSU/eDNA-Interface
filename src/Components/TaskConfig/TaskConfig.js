@@ -10,7 +10,7 @@ import Schema from "App/Schema";
 
 import { FaRegTrashAlt } from "react-icons/fa";
 
-function secondsToDhms(seconds) {
+function secondsToTimeString(seconds) {
 	seconds = Number(seconds);
 	if (seconds == 0) {	
 		return "0 second";
@@ -30,12 +30,12 @@ function secondsToDhms(seconds) {
 
 function displayRuntime(values) {
 	const { flushTime, sampleTime, dryTime, preserveTime } = values;
-	return secondsToDhms(flushTime + sampleTime + dryTime + preserveTime);
+	return secondsToTimeString(flushTime + sampleTime + dryTime + preserveTime);
 }
 
 function TaskConfig(props) {
 	const formik = useFormikContext();
-	const disabled_field = formik.values.status != 0;
+	const isTaskActive = formik.values.status === 1;
 
 	return (
 		<Form className={classNames("taskconfig", { "expanded": true })}>
@@ -43,36 +43,35 @@ function TaskConfig(props) {
 				<div className="title">
 					{formik.values.name}
 					<br />
-					<span>{"max duration=" + displayRuntime(formik.values)}</span>
+					<span>{"max operating duration per valve=" + displayRuntime(formik.values)}</span>
 				</div>
 
 				<button 
 					className="button save-button" 
-					disabled={false} 
+					disabled={isTaskActive} 
 					type="button"
 					onClick={() => {
-						formik.setFieldValue("submitAction", "SAVE_AS_DRAFT");
+						formik.setFieldValue("submitAction", "SAVE");
 						formik.submitForm();
-					}}>Save as draft</button>
+					}}>save</button>
 
 				<button className="button delete-button"
 					type="button"
+					disabled={isTaskActive}
 					onClick={() => {
 						formik.setFieldValue("submitAction", "DELETE");
 						formik.submitForm();
-					}}>
-					delete
-				</button>
+					}}>delete</button>
 
 				<Switch
 					className="react-switch"
 					width={48}
 					height={24}
-					checked={formik.values.status}
+					checked={formik.values.status === 1}
 					onColor="#00b3b3"
-					onChange={() => {
-						formik.setFieldValue("submitAction", "SCHEDULE");
-						formik.handleSubmit();
+					onChange={(checked) => {
+						formik.setFieldValue("submitAction", checked ? "SCHEDULE" : "UNSCHEDULE");
+						formik.submitForm();
 					}}/>
 			</div>
 				
@@ -82,14 +81,14 @@ function TaskConfig(props) {
 				placeholder="Untitled"
 				helpertext="Name used to identify the valve group"
 				type="text"
-				disabled={disabled_field}/>
+				disabled={isTaskActive}/>
 
 			<FormikControlledTextField
 				name="date"
 				title="Schedule Date *"
 				helpertext="Specific date when to run this group (YYYY-MM-DD)"
 				type="date"
-				disabled={disabled_field}/>
+				disabled={isTaskActive}/>
 
 			<FormikControlledTextField
 				name="time"
@@ -97,26 +96,26 @@ function TaskConfig(props) {
 				helpertext="Specific time when to run this group (HH:MM)"
 				type="time"
 				required 
-				disabled={disabled_field}/>
+				disabled={isTaskActive}/>
 
 			<TaskValveFields
 				name="valves"
 				title="Valves *"
 				helpertext="Valves assigned to this task"
 				type="text" placeholder="e.g. 1,2,3,4,5"
-				disabled={disabled_field}/>
+				disabled={isTaskActive}/>
 
 			<TaskScheduleTimeFields 
 				title="Time Between"
 				helpertext="Controls how long until the next sample in the group"
-				disabled={disabled_field}/>
+				disabled={isTaskActive}/>
 		
 			<BasicTextArea 
 				name="notes"
 				title="Notes"
 				subtitle="Additional information associated with this group up to 250 characters" 
 				type="text" helpertext="Describe the task (optional)"
-				disabled={disabled_field}/>
+				disabled={isTaskActive}/>
 		</Form>
 	);
 }

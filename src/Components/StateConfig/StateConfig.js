@@ -1,7 +1,7 @@
 import { h } from "preact";
 import { Formik, useField } from "formik";
 import { useDispatch, useSelector } from "react-redux";
-import { clearValveSelection, setDisplayLoadingScreen, setValveSelections, toggleValveSelection } from "App/redux/actions";
+import { clearValveSelection, setDisplayLoadingScreen, updateTask } from "App/redux/actions";
 
 import { BasicTextField, TaskConfig } from "Components";
 import API from "App/API";
@@ -64,7 +64,7 @@ function capitalizeFirst(str) {
 }
 
 function FormikConfigField(props) {
-	const { configName,  ...property } = props;
+	const { configName, disabled,  ...property } = props;
 	const [fields, meta] = useField(configName + capitalizeFirst(property.alias ?? property.name));
 
 	return <BasicTextField
@@ -72,12 +72,14 @@ function FormikConfigField(props) {
 		title={property.name} 
 		helpertext={property.description} 
 		error={meta.touched && meta.error}
+		disabled={disabled}
 		{...fields}
 	/>;
 }
 
 function Config(props) {
-	const { config, colorIndex } = props;
+	const { config, colorIndex, disabled } = props;
+
 	return (
 		<div className="config">
 			<h2 className={classNames("headline", "background-accent-" + (colorIndex + 1))}>
@@ -88,6 +90,7 @@ function Config(props) {
 				{config.properties.map((property, i) => (
 					<FormikConfigField key={i}
 						configName={config.name}
+						disabled={disabled}
 						{...property}
 					/>
 				))}
@@ -133,37 +136,63 @@ function StateConfig(_) {
 		return null;
 	}
 
-	const handleFormSubmit = async (values, ) => {
-		console.log(await TaskValidationSchema.validate(values));
+	const submit = async (values) => {
+		switch (values.submitAction) {
+		case "SAVE":
+			await API.store.uploadTask(values);
+			break;
+		case "DELETE":
+			await API.store.deleteTaskWithName(values.name);
+			break;
+		case "SCHEDULE": {
+			const response = await API.store.scheduleTask(values.name);
+			if (response.success) {
+				dispatch(updateTask(response.payload));
+			}
+		}
+			break;
+		default:
+			console.trace("Unexpected action: ", values.submitAction);
+		}
+	};
+
+	const unschedule = async (values) => {
+		switch (values.submitAction) {
+		case "UNSCHEDULE":{
+			const response = await API.store.unscheduleTask(values.name);
+			if (response.success) {
+				dispatch(updateTask(response.payload));
+			}
+		}
+			break;
+		default:
+			console.trace("Unexpected action: ", values.submitAction);
+		}
+	};
+
+	const handleFormSubmit = async (values, helpers) => {
 		try {
 			dispatch(setDisplayLoadingScreen(true));
-			if (values.status === 0) {
-	
+			if (values.status === 1) {
+				unschedule(values);
+			} else {
+
+				// Detect name change. This is important since name is used to identification
 				if (task.name !== values.name) {
 					values["newName"] = values.name;
 					values["name"] = task.name;
 				}
 
+				// Change schedule back from milli to second
 				const schedule = new Date(`${values.date}T${values.time}:00`);
 				values["schedule"] = Math.floor(schedule.getTime() / 1000);
-		
+				
+				// Time validation
 				if (schedule <= new Date()) {
 					console.log("Must be in the future");
 				}
-	
-				switch (values.submitAction) {
-				case "SAVE_AS_DRAFT":
-					await API.store.uploadTask(values);
-					break;
-				case "DELETE":
-					await API.store.deleteTaskWithName(values.name);
-					break;
-				case "SCHEDULE":
-					await API.store.scheduleTask(values.name);
-					break;
-				default:
-					console.log("Unexpected action");
-				}
+
+				submit(values);
 			}
 
 			dispatch(clearValveSelection());
@@ -187,12 +216,12 @@ function StateConfig(_) {
 					<TaskConfig expanded={true}/>
 				</div>
 				<div className="column">
-					<Config config={flush} colorIndex={0}/>
-					<Config config={sample} colorIndex={1}/>
+					<Config config={flush} colorIndex={0} disabled={task.status == 1}/>
+					<Config config={sample} colorIndex={1} disabled={task.status == 1}/>
 				</div>
 				<div className="column">
-					<Config config={dry} colorIndex={2}/>
-					<Config config={preserve} colorIndex={3} />
+					<Config config={dry} colorIndex={2} disabled={task.status == 1}/>
+					<Config config={preserve} colorIndex={3} disabled={task.status == 1}/>
 				</div>
 			</div>
 		)}</Formik>

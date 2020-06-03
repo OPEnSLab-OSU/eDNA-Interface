@@ -16,12 +16,11 @@ function ValveNode(props) {
 	const queue = task.valves.findIndex(valveId => valveId === id);
 
 	const toggle = () => {
-		if (task.status != 0){
+		if (task.status == 1){
 			return;
 		}
 
 		dispatch(toggleTaskValve(taskname, id));
-		// dispatch(toggleValveSelection(id));
 		setSelected(!selected);
 	};
 	
@@ -45,12 +44,14 @@ export function ValveOverview() {
 	const taskname = useSelector(state => state.selectedTask);
 	const task = tasks[taskname];
 
-	if (task)
+	if (!task)   {
+		return null;
+	}
 
-		return (
-			<div className="valve-overview">
-				{top.map(v => <ValveNode key={v.id} {...v}/>)}
-				{bottom.reverse().map(v => <ValveNode key={v.id} {...v}/>)}
-			</div>
-		);
+	return (
+		<div className="valve-overview">
+			{top.map(v => <ValveNode key={v.id} {...v}/>)}
+			{bottom.reverse().map(v => <ValveNode key={v.id} {...v}/>)}
+		</div>
+	);
 }

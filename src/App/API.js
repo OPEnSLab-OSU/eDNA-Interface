@@ -101,6 +101,10 @@ async function scheduleTask(name) {
 	return await post("api/task/schedule").json({ name }).send();
 }
 
+async function unscheduleTask(name) {
+	return await post("api/task/unschedule").json({ name }).send();
+}
+
 async function createTaskWithName(name) {
 	const response = await post("api/task/create").json({ name }).send();
 	if (response.success) {
@@ -132,6 +136,7 @@ export default {
 		getTaskWithName,
 		uploadTask,
 		scheduleTask,
+		unscheduleTask,
 		createTaskWithName,
 		deleteTaskWithName
 	} 

@@ -49,11 +49,18 @@
 		font-size: inherit;
 		font-family: inherit;
 		padding: 16px 24px;
+		position: relative;
 
 		&:hover {
 			background: rgb(230, 230, 230);
 			cursor: pointer;
 		}
+	}
+
+	li .right {
+		position: absolute;
+		right: 24px;
+		color: $accent-focus;
 	}
 
 	li.selected {
