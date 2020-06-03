@@ -1,19 +1,22 @@
 import { h } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { apiConnect, selectTask } from "./redux/actions";
+import { apiConnect } from "./redux/actions";
 
-import { Dropbar, StateConfig, StateTimeline, Status, TaskListing, ValveOverview } from "Components";
+import { Dropbar, StateTimeline, Status, TaskListing, TopLevelConfig, ValveOverview } from "Components";
 
 import API from "./API"; 
 import { LoadingScreen } from "Components";
 
+// ────────────────────────────────────────────────────────────────────────────────
+// Get status update from the server every second. Stop the update if receive three
+// consecutive failed attempts.
+// ────────────────────────────────────────────────────────────────────────────────
 function useStatusUpdating() {
 	const store = useStore();
 	const dispatch = useDispatch();
 	const [statusUpdating, setStatusUpdating] = useState(false);
 
-	// Status update effect 
 	useEffect(() => {
 		if (!statusUpdating) {
 			return;
@@ -48,14 +51,12 @@ export function App() {
 	const loadingScreen = useSelector(state => state.loadingScreen);
 	const [_, setStatusUpdating] = useStatusUpdating();
 
-	// console.log("Loading screen: ", loadingScreen.show);
-
-	// Get taskrefs
+	// Get list of tasks from the server
 	useEffect(() => {
 		(async function startup() {
 			await API.store.getTaskList();
-			await API.store.getTaskWithName("Task 1");
-			dispatch(selectTask("Task 1"));
+			// await API.store.getTaskWithName("Task 1");
+			// dispatch(selectTask("Task 1"));
 		})();
 	}, []);
 
@@ -69,7 +70,7 @@ export function App() {
 				<Dropbar />
 				<StateTimeline />
 				<ValveOverview />
-				<StateConfig />
+				<TopLevelConfig />
 			</main>
 
 			{panels.task &&

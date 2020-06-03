@@ -124,11 +124,20 @@ async function uploadTask(values, path = "api/task/save") {
 }
 
 async function scheduleTask(name) {
-	return await post("api/task/schedule").json({ name }).send();
+	const response = await post("api/task/schedule").json({ name }).send();
+	if (response.success) {
+		store.dispatch(updateTask(response.payload));
+	}
+	return response;
 }
 
 async function unscheduleTask(name) {
-	return await post("api/task/unschedule").json({ name }).send();
+	const response = post("api/task/unschedule").json({ name }).send();
+	if (response.success) {
+		store.dispatch(updateTask(response.payload));
+	}
+
+	return response;
 }
 
 async function createTaskWithName(name) {

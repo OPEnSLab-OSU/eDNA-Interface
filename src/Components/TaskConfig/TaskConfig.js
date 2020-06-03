@@ -3,12 +3,26 @@
 import { h } from "preact";
 import { useDispatch } from "react-redux";
 import { Form, useFormikContext } from "formik";
+
+import Schema from "App/Schema";
 import Switch from "react-switch";
 
-import { BasicTextArea, FormikControlledTextField, TaskScheduleTimeFields, TaskValveFields } from "./Fields";
-import Schema from "App/Schema";
-
 import { FaRegTrashAlt } from "react-icons/fa";
+import { zip } from "Util";
+
+import {
+	BasicTextArea,
+	FormikControlledTextField,
+	TaskScheduleTimeFields,
+	TaskValveFields
+} from "./Fields";
+
+
+//
+// ────────────────────────────────────────────────────── I ──────────
+//   :::::: H E L P E R S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────
+//
 
 function secondsToTimeString(seconds) {
 	seconds = Number(seconds);
@@ -20,19 +34,26 @@ function secondsToTimeString(seconds) {
 	const h = Math.floor(seconds % (3600 * 24) / 3600);
 	const m = Math.floor(seconds % 3600 / 60);
 	const s = Math.floor(seconds % 60);
-
-	return [
-		d > 0 ? d + (d === 1 ? " day, " : " days, ") : "",
-		h > 0 ? h + (h === 1 ? " hour, " : " hours, ") : "",
-		m > 0 ? m + (m === 1 ? " minute, " : " minutes, ") : "",
-		s > 0 ? s + (s === 1 ? " second" : " seconds") : ""
-	].join();
+	
+	const values = [d, h, m, s];
+	const tokens = ["day", "hour", "minute", "second"];
+	
+	return zip(values, tokens)
+		.filter(e => e[0] > 0)
+		.forEach(e => e[0] > 1 ? e.join(" ") : e.join(" ") + "s")
+		.join();
 }
 
 function displayRuntime(values) {
 	const { flushTime, sampleTime, dryTime, preserveTime } = values;
 	return secondsToTimeString(flushTime + sampleTime + dryTime + preserveTime);
 }
+
+//
+// ──────────────────────────────────────────────────────────── II ──────────
+//   :::::: T A S K C O N F I G : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────────────────
+//
 
 function TaskConfig(props) {
 	const formik = useFormikContext();
@@ -98,7 +119,7 @@ function TaskConfig(props) {
 				type="time"
 				required 
 				disabled={isTaskActive}/>
-
+			
 			<TaskValveFields
 				name="valves"
 				title="Valves *"

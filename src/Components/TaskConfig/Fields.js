@@ -1,4 +1,4 @@
-import { h } from "preact";
+import { Fragment, h } from "preact";
 import { useField, useFormikContext } from "formik";
 import { BasicTextField, TextFieldComponent } from "Components/TextField/";
 
@@ -12,14 +12,14 @@ function TaskScheduleTimeFields(props) {
 
 	return (
 		<TextFieldComponent className="textfield time" {...props} errors={errors}>{(_) => 
-			<>{["hour", "minute", "second"].map(t => 
+			<Fragment>{["hour", "minute", "second"].map(t => 
 				<input key={t} name={t} 
 					className="input" 
 					type="number" 
 					placeholder={t + "s"} 
 					required {...getFieldProps(t)}
 					disabled={props.disabled ?? false}/>
-			)}</>
+			)}</Fragment>
 		}</TextFieldComponent>
 	);
 }

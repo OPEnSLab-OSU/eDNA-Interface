@@ -76,10 +76,10 @@ function tasks(state = initialTasks, action) {
 // ────────────────────────────────────────────────────────────────────────────────
 function selectedTask(state = null, action) {
 	const { SELECT_TASK } = actionTypes;
-	const { type, name } = action;
+	const { type, taskId } = action;
 	switch (type) {
 	case SELECT_TASK:
-		return name;
+		return taskId;
 	default:
 		return state;
 	}
