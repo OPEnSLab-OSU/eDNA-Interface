@@ -5,16 +5,31 @@ import {
 	initialStateTimelineData,
 	initialTasks,
 	initialValveData
-} from "./states";
+} from "./initial-states";
 
 import { combineReducers } from "redux";
 import Schema from "App/Schema";
+
+//
+// ────────────────────────────────────────────────────── I ──────────
+//   :::::: H E L P E R S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────
+//
+
 
 function ifElse(condition, value1, value2) {
 	return condition ? value1 : value2;
 }
 
-function panelReducer(state = initialPanelVisibility, action) {
+//
+// ──────────────────────────────────────────────────────── II ──────────
+//   :::::: R E D U C E R S : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────────────
+//
+
+
+
+function panels(state = initialPanelVisibility, action) {
 	const { TOGGLE_PANEL } = actionTypes;
 	const { type, panel } = action;
 
@@ -26,7 +41,7 @@ function panelReducer(state = initialPanelVisibility, action) {
 	}
 }
 
-function taskReducer(state = initialTasks, action) {
+function tasks(state = initialTasks, action) {
 	const {
 		UPDATE_TASKLIST, 
 		UPDATE_TASK,
@@ -55,7 +70,7 @@ function taskReducer(state = initialTasks, action) {
 	}
 }
 
-function selectedTaskReducer(state = null, action) {
+function selectedTask(state = null, action) {
 	const { SELECT_TASK } = actionTypes;
 	const { type, name } = action;
 	switch (type) {
@@ -66,7 +81,7 @@ function selectedTaskReducer(state = null, action) {
 	}
 }
 
-function stateTimelineReducer(state = initialStateTimelineData, action) {
+function states(state = initialStateTimelineData, action) {
 	const { STATE_JUMP } = actionTypes;
 	const { type } = action;
 
@@ -78,7 +93,7 @@ function stateTimelineReducer(state = initialStateTimelineData, action) {
 	}
 }
 
-function valveReducer(state = initialValveData, action) {
+function valves(state = initialValveData, action) {
 	const {
 		TOGGLE_VALVE_SELECTION, 
 		VALVE_STATUS_UPDATE,
@@ -113,7 +128,7 @@ function stateConfigReducer(state = initialStateConfigs, action) {
 	return state;
 }
 
-function loadingScreenReducer(state = { hide: true, show: false }, action) {
+function displayLoadingScreen(state = { hide: true, show: false }, action) {
 	const { LOADING_SCREEN } = actionTypes;
 	const { type, value } = action;
 	switch (type) {
@@ -124,7 +139,7 @@ function loadingScreenReducer(state = { hide: true, show: false }, action) {
 	}
 }
 
-function statusReducer(state = Schema.Status.default(), action) {
+function status(state = Schema.Status.default(), action) {
 	const { STATUS_UPDATE } = actionTypes;
 	const { type, payload } = action;
 
@@ -141,7 +156,7 @@ const initialConnection = {
 	attempts: 0
 };
 
-function connectionReducer(connection = initialConnection, action) {
+function connection(connection = initialConnection, action) {
 	const {
 		CONNECTION_CONNECT, 
 		CONNECTION_SUCCESS,
@@ -163,14 +178,14 @@ function connectionReducer(connection = initialConnection, action) {
 }
 
 const rootReducer = combineReducers({ 
-	panels: panelReducer, 
-	tasks: taskReducer,
-	selectedTask: selectedTaskReducer,
-	states: stateTimelineReducer,
-	valves: valveReducer,
-	status: statusReducer,
-	connection: connectionReducer,
-	displayLoadingScreen: loadingScreenReducer
+	panels, 
+	tasks,
+	selectedTask,
+	states: states,
+	valves,
+	status,
+	connection,
+	displayLoadingScreen
 });
 
 export default rootReducer;
