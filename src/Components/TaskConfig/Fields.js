@@ -1,4 +1,4 @@
-import { Fragment, h } from "preact";
+import { h } from "preact";
 import { useField, useFormikContext } from "formik";
 import { BasicTextField, TextFieldComponent } from "Components/TextField/";
 
@@ -6,11 +6,8 @@ import { BasicTextField, TextFieldComponent } from "Components/TextField/";
 function TaskScheduleTimeFields(props) {
 	const { getFieldProps, getFieldMeta } = useFormikContext();
 	const fields = ["hour", "minute", "second"];
-	const mapsFieldsToProps = fields.map(getFieldProps);
+	// const mapsFieldsToProps = fields.map(getFieldProps);
 	const mapsFieldsToMetas = fields.map(getFieldMeta);
-	// console.log(mapsFieldsToProps);
-	// console.log(mapsFieldsToMetas);
-
 	const errors = mapsFieldsToMetas.filter(m => m.error).map(m => m.error);
 
 	return (

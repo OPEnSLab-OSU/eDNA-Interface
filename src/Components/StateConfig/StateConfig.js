@@ -103,7 +103,6 @@ const TaskValidationSchema = yup.object({
 	name: yup.string()
 		.trim()
 		.required("Task name is required and must be unique"),
-	// status represents the operational status of the task
 	status: yup.number()
 		.required()
 		.min(0)

@@ -1,9 +1,9 @@
 import { h } from "preact";
-import { useCallback, useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
 import { useDispatch, useSelector, useStore } from "react-redux";
-import { apiConnect, selectTask, setDisplayLoadingScreen, updateTask, updateTaskList } from "./redux/actions";
+import { apiConnect, selectTask } from "./redux/actions";
 
-import { Dropbar, StateConfig, StateTimeline, Status, TaskConfig, TaskListing, ValveOverview } from "Components";
+import { Dropbar, StateConfig, StateTimeline, Status, TaskListing, ValveOverview } from "Components";
 
 import API from "./API"; 
 import { LoadingScreen } from "Components";
@@ -45,7 +45,7 @@ export function App() {
 	const dispatch = useDispatch();
 	const panels = useSelector(state => state.panels);
 	const connection = useSelector(state => state.connection);
-	const loadingScreen = useSelector(state => state.displayLoadingScreen);
+	const loadingScreen = useSelector(state => state.loadingScreen);
 	const [_, setStatusUpdating] = useStatusUpdating();
 
 	// console.log("Loading screen: ", loadingScreen.show);

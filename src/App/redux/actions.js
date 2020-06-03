@@ -9,7 +9,7 @@ const types = {
 	STATE_JUMP: "",
 	TOGGLE_VALVE_SELECTION: "",
 	STATUS_UPDATE: "",
-	VALVE_STATUS_UPDATE: "",
+	UPDATE_VALVE_STATUS: "",
 	CONNECTION_CONNECT: "",
 	CONNECTION_TIMEOUT: "",
 	CONNECTION_SUCCESS: "",
@@ -20,7 +20,7 @@ const types = {
 	LOADING_SCREEN: "",
 	CLEAR_VALVE_SELECTION: "",
 	SET_VALVE_SELECTIONS: "",
-	TASK_TOGGLE_VALVE: ""
+	TOGGLE_TASK_VALVE: ""
 };Object.keys(types).forEach(k => types[k] = k);
 
 
@@ -55,8 +55,12 @@ function updateStatus(payload) {
 }
 
 function updateValveStatus(payload) {
-	return { type: types.VALVE_STATUS_UPDATE, payload };
+	return { type: types.UPDATE_VALVE_STATUS, payload };
 }
+
+// ────────────────────────────────────────────────────────────────────────────────
+// Connection 
+// ────────────────────────────────────────────────────────────────────────────────
 
 function apiConnect() {
 	return { type: types.CONNECTION_CONNECT };
@@ -70,23 +74,27 @@ function apiSuccess() {
 	return { type: types.CONNECTION_SUCCESS };
 }
 
-function updateTask(taskInfo) {
-	return { type: types.UPDATE_TASK, taskInfo };
+// ────────────────────────────────────────────────────────────────────────────────
+// Tasks
+// ────────────────────────────────────────────────────────────────────────────────
+
+function updateTask(data) {
+	return { type: types.UPDATE_TASK, data };
 }
 
-function toggleTaskValve(name, valveId) {
-	return { type: types.TASK_TOGGLE_VALVE, name, valveId };
+function toggleTaskValve(taskId, valveId) {
+	return { type: types.TOGGLE_TASK_VALVE, taskId, valveId };
 }
 
 function updateTaskList(tasklist) {
 	return { type: types.UPDATE_TASKLIST, tasklist };
 }
 
-function selectTask(name) {
-	return { type: types.SELECT_TASK, name };
+function selectTask(taskId) {
+	return { type: types.SELECT_TASK, taskId };
 }
 
-function setDisplayLoadingScreen(bool) {
+function setLoadingScreen(bool) {
 	return { type: types.LOADING_SCREEN, value: bool };
 }
 
@@ -110,7 +118,7 @@ export {
 	toggleTaskValve,
 	selectTask,
 	updateTaskList,
-	setDisplayLoadingScreen,
+	setLoadingScreen as setDisplayLoadingScreen,
 	apiConnect,
 	apiTimeout,
 	apiSuccess,
