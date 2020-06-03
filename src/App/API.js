@@ -1,15 +1,31 @@
 
 import store from "./redux/store";
-import { apiSuccess, apiTimeout, selectTask, updateStatus, updateTask, updateTaskList } from "./redux/actions";
 import { base } from "./Static";
+import {
+	apiSuccess,
+	apiTimeout, 
+	selectTask, 
+	updateStatus, 
+	updateTask, 
+	updateTaskList 
+} from "./redux/actions";
 
 
-const { dispatch } = store;
+//
+// ────────────────────────────────────────────────────── I ──────────
+//   :::::: H E L P E R S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────
+//
+
 
 function objectToQueryString(obj) {
 	return Object.keys(obj).map(key => key + "=" + obj[key]).join("&");
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
+// The server sends tasklist as an array. This method convert array of objects to 
+// a single level object using the given key as direct properties
+// ────────────────────────────────────────────────────────────────────────────────
 const arrayToObject = (array, key) => {
 	return array.reduce((obj, item) => ({
 		...obj,
@@ -53,32 +69,42 @@ class APIBuilder {
 	}
 }
 
-const get = (path, options = {}) => new APIBuilder(path, { method: "GET", ...options });
+//
+// ────────────────────────────────────────────── II ──────────
+//   :::::: A P I : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────
+//
+
+const get  = (path, options = {}) => new APIBuilder(path, { method: "GET", ...options });
 const post = (path, options = {}) => new APIBuilder(path, { method: "POST", ...options });
 
 async function getStatus(timeout) {
 	try {
 		const status = await get("api/status").withTimeout(timeout).send();
-		dispatch(updateStatus(status));
-		dispatch(apiSuccess());
+		store.dispatch(updateStatus(status));
+		store.dispatch(apiSuccess());
 		return status;
 	} catch (error) {
-		dispatch(apiTimeout());
+		store.dispatch(apiTimeout());
 		throw error;
 	} 
 }
 
+
+// ────────────────────────────────────────────────────────────────────────────────
+// This method replaces the entire tasklist with the one from the server
+// ────────────────────────────────────────────────────────────────────────────────
 async function getTaskList() {
 	const tasks = await get("api/tasks").send();
 	const taskList = arrayToObject(tasks, "name");
-	dispatch(updateTaskList(taskList)); // Replace the entire tasklist
+	store.dispatch(updateTaskList(taskList)); 
 	return tasks;
 }
 
 async function getTaskWithName(name) {
 	const response = await post("api/task/get").body(JSON.stringify({ name })).send();
 	if (response.success) {
-		dispatch(updateTask(response.payload));
+		store.dispatch(updateTask(response.payload));
 	}
 	
 	return response;
@@ -90,8 +116,8 @@ async function uploadTask(values, path = "api/task/save") {
 		const updatedTask = response.payload;
 		const { [values.name]: removed, ...taskList } = store.getState().tasks;
 		taskList[updatedTask.name] = updatedTask;
-		dispatch(updateTaskList(taskList));
-		dispatch(selectTask(updatedTask.name));
+		store.dispatch(updateTaskList(taskList));
+		store.dispatch(selectTask(updatedTask.name));
 	}
 
 	return response;
@@ -108,7 +134,7 @@ async function unscheduleTask(name) {
 async function createTaskWithName(name) {
 	const response = await post("api/task/create").json({ name }).send();
 	if (response.success) {
-		dispatch(updateTask(response.payload));
+		store.dispatch(updateTask(response.payload));
 	}
 
 	return response;
@@ -119,7 +145,7 @@ async function deleteTaskWithName(name) {
 	if (response.success) {
 		const taskList = store.getState().tasks;
 		delete taskList[name];
-		dispatch(updateTaskList(taskList));
+		store.dispatch(updateTaskList(taskList));
 	}
 
 	return response;
@@ -129,7 +155,7 @@ export default {
 	get,
 	post,
 
-	// APIs that modifies Store upon success 
+	// APIs that modifies redux store upon success 
 	store: {
 		getStatus, 
 		getTaskList,
