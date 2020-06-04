@@ -15,7 +15,7 @@ module.exports = {
 		path: outputPath,
 		filename: "bundle.js",
 		hotUpdateChunkFilename: "hot/hot-update.js",
-		hotUpdateMainFilename: "hot/hot-update.json"
+		hotUpdateMainFilename: "hot/hot-update.json",
 	},
 	devServer: { compress: true	},
 	devtool: "source-map",
@@ -27,14 +27,15 @@ module.exports = {
 			template: path.resolve(__dirname, "src/Template/index.html"),
 			filename: "index.html",
 			inlineSource: ".(js|css)$",
-			alwaysWriteToDisk: true
+			alwaysWriteToDisk: true,
 		}),
 		new CompressionPlugin(),
 		new HtmlWebpackInlineSourcePlugin(),
-		new HtmlWebpackHarddiskPlugin() 
+		new HtmlWebpackHarddiskPlugin(), 
 		// new webpack.HotModuleReplacementPlugin()
 	],
 	resolve: {
+		extensions: [ ".tsx", ".ts", ".js" ],
 		alias: {
 			// Preact compatability layer for existing React libraries
 			"react": "preact/compat",
@@ -47,20 +48,25 @@ module.exports = {
 			M: path.resolve(__dirname, "src/Libraries/Materialize"),
 			Util: path.resolve(__dirname, "src/Util"),
 			Theme: path.resolve(__dirname, "src/Sass/theme.scss"),
-			Sass: path.resolve(__dirname, "src/Sass")
-		}
+			Sass: path.resolve(__dirname, "src/Sass"),
+		},
 	  },
 	module: {
 		rules: [
 			{
+				test: /\.tsx?$/,
+				exclude: [path.resolve(__dirname, "node_modules")],
+				loader: "ts-loader",
+			},
+			{
 				test: /\.jsx?$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
-				loader: "babel-loader"
+				loader: "babel-loader",
 			},
 			{
 				test: /\.css$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
-				loaders: ["style-loader", "css-loader"]
+				loaders: ["style-loader", "css-loader"],
 			},
 			{
 				test: /\.scss$/,
@@ -69,10 +75,10 @@ module.exports = {
 					loader: "postcss-loader",
 					options: {
 					  sourceMap: true,
-					  config: { path: "postcss.config.js" }
-					}
-				  }, "sass-loader"]
-			}
-		]
-	}
+					  config: { path: "postcss.config.js" },
+					},
+				  }, "sass-loader"],
+			},
+		],
+	},
 };

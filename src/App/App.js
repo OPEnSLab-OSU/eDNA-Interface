@@ -3,9 +3,16 @@ import { useEffect, useState } from "preact/hooks";
 import { useDispatch, useSelector, useStore } from "react-redux";
 import { apiConnect } from "./redux/actions";
 
-import { Dropbar, StateTimeline, Status, TaskListing, TopLevelConfig, ValveOverview } from "Components";
+import {
+	Dropbar,
+	StateTimeline,
+	Status,
+	TaskListing,
+	TopLevelConfig,
+	ValveOverview,
+} from "Components";
 
-import API from "./API"; 
+import API from "./API";
 import { LoadingScreen } from "Components";
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -21,7 +28,7 @@ function useStatusUpdating() {
 		if (!statusUpdating) {
 			return;
 		}
-			
+
 		const timeout = 1000;
 		const statusUpdate = async (timerId = null) => {
 			try {
@@ -30,8 +37,8 @@ function useStatusUpdating() {
 				if (store.getState().connection.statusText === "offline") {
 					clearInterval(timerId);
 					setStatusUpdating(false);
-				} 
-			} 
+				}
+			}
 		};
 
 		dispatch(apiConnect());
@@ -46,9 +53,9 @@ function useStatusUpdating() {
 
 export function App() {
 	const dispatch = useDispatch();
-	const panels = useSelector(state => state.panels);
-	const connection = useSelector(state => state.connection);
-	const loadingScreen = useSelector(state => state.loadingScreen);
+	const panels = useSelector((state) => state.panels);
+	const connection = useSelector((state) => state.connection);
+	const loadingScreen = useSelector((state) => state.loadingScreen);
 	const [_, setStatusUpdating] = useStatusUpdating();
 
 	// Get list of tasks from the server
@@ -62,22 +69,25 @@ export function App() {
 
 	return (
 		<div className="app">
-			{panels.status && 
-				<Status connection={connection} setStatusUpdating={setStatusUpdating}/>
-			}
+			{panels.status && (
+				<Status
+					connection={connection}
+					setStatusUpdating={setStatusUpdating}
+				/>
+			)}
 
-			<main className={classNames("main", { "showTask": panels.task })}>
+			<main className={classNames("main", { showTask: panels.task })}>
 				<Dropbar />
 				<StateTimeline />
 				<ValveOverview />
 				<TopLevelConfig />
 			</main>
 
-			{panels.task &&
+			{panels.task && (
 				<div className="task-panel">
 					<TaskListing />
 				</div>
-			}
+			)}
 
 			<LoadingScreen hide={loadingScreen.hide} />
 		</div>

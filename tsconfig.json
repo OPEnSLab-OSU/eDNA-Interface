@@ -1,9 +1,9 @@
 {
 	"compilerOptions": {
-		"module": "commonjs",
-		"target": "es2016",
-		"jsx": "preserve",
 		"baseUrl": ".",
+		"jsx": "react",
+		"jsxFactory": "h",
+		"module": "commonJS",
 		"paths": {
 			"App": ["./src/App"],
 			"App/*": ["./src/App/*"],
@@ -11,7 +11,9 @@
 			"Components/*": ["./src/Components/*"],
 			"Util": [".src/Util"],
 			"Util/*": [".src/Util/*"]
-		}
+		},
+		"sourceMap": true,
+		"target": "es2016"
 	},
 	"exclude": [
 		"node_modules",

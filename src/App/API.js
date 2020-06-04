@@ -1,17 +1,15 @@
-
 import store from "./redux/store";
 import { base } from "./Static";
 
 import { BaseTaskSchema } from "App/Schema";
 import {
 	apiSuccess,
-	apiTimeout, 
-	selectTask, 
-	updateStatus, 
-	updateTask, 
-	updateTaskList, 
+	apiTimeout,
+	selectTask,
+	updateStatus,
+	updateTask,
+	updateTaskList,
 } from "./redux/actions";
-
 
 //
 // ────────────────────────────────────────────────────── I ──────────
@@ -19,9 +17,10 @@ import {
 // ────────────────────────────────────────────────────────────────
 //
 
-
 function objectToQueryString(obj) {
-	return Object.keys(obj).map(key => key + "=" + obj[key]).join("&");
+	return Object.keys(obj)
+		.map((key) => key + "=" + obj[key])
+		.join("&");
 }
 
 const createTaskFromAPI = (data) => {
@@ -29,26 +28,37 @@ const createTaskFromAPI = (data) => {
 	if (!task) {
 		return null;
 	}
-	
+
 	const date = new Date(task.schedule * 1000);
-	const dateComponents = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+	const dateComponents = [
+		date.getFullYear(),
+		date.getMonth() + 1,
+		date.getDate(),
+	];
 	const timeComponents = [date.getHours(), date.getMinutes()];
-	return { 
-		...task, 
-		date: dateComponents.map(c => c.toString().padStart(2, "0")).join("-"),
-		time: timeComponents.map(c => c.toString().padStart(2, "0")).join(":"),
+	return {
+		...task,
+		date: dateComponents
+			.map((c) => c.toString().padStart(2, "0"))
+			.join("-"),
+		time: timeComponents
+			.map((c) => c.toString().padStart(2, "0"))
+			.join(":"),
 	};
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
-// The server sends tasklist as an array. This method convert array of objects to 
+// The server sends tasklist as an array. This method convert array of objects to
 // a single level object using the given key as direct properties
 // ────────────────────────────────────────────────────────────────────────────────
 const arrayToObject = (array, key) => {
-	return array.reduce((obj, item) => ({
-		...obj,
-		[item[key]]: item,
-	}), {});
+	return array.reduce(
+		(obj, item) => ({
+			...obj,
+			[item[key]]: item,
+		}),
+		{},
+	);
 };
 
 //
@@ -63,7 +73,7 @@ class APIBuilder {
 		this.options = options;
 	}
 
-	withTimeout(millis)  {
+	withTimeout(millis) {
 		this.controller = new AbortController();
 		this.timeout = millis;
 		this.options = { ...this.options, signal: this.controller.signal };
@@ -85,7 +95,7 @@ class APIBuilder {
 
 	async send() {
 		if (this.controller) {
-			setTimeout(() => this.controller.abort(), this.timeout - 10);  
+			setTimeout(() => this.controller.abort(), this.timeout - 10);
 		}
 
 		const response = await fetch(new URL(this.path, base), this.options);
@@ -93,9 +103,11 @@ class APIBuilder {
 	}
 }
 
-const get  = (path, options = {}) => new APIBuilder(path, { method: "GET", ...options });
-const post = (path, options = {}) => new APIBuilder(path, { method: "POST", ...options });
-	
+const get = (path, options = {}) =>
+	new APIBuilder(path, { method: "GET", ...options });
+const post = (path, options = {}) =>
+	new APIBuilder(path, { method: "POST", ...options });
+
 async function getStatus(timeout) {
 	try {
 		const status = await get("api/status").withTimeout(timeout).send();
@@ -105,9 +117,8 @@ async function getStatus(timeout) {
 	} catch (error) {
 		store.dispatch(apiTimeout());
 		throw error;
-	} 
+	}
 }
-
 
 // ────────────────────────────────────────────────────────────────────────────────
 // This method replaces the entire tasklist with the one from the server
@@ -115,16 +126,18 @@ async function getStatus(timeout) {
 async function getTaskList() {
 	const tasks = await get("api/tasks").send();
 	const taskList = arrayToObject(tasks, "name");
-	store.dispatch(updateTaskList(taskList)); 
+	store.dispatch(updateTaskList(taskList));
 	return tasks;
 }
 
 async function getTaskWithName(name) {
-	const response = await post("api/task/get").body(JSON.stringify({ name })).send();
+	const response = await post("api/task/get")
+		.body(JSON.stringify({ name }))
+		.send();
 	if (response.success) {
 		store.dispatch(updateTask(response.payload));
 	}
-	
+
 	return response;
 }
 
@@ -182,9 +195,9 @@ export default {
 	get,
 	post,
 
-	// APIs that modifies redux store upon success 
+	// APIs that modifies redux store upon success
 	store: {
-		getStatus, 
+		getStatus,
 		getTaskList,
 		getTaskWithName,
 		uploadTask,
@@ -192,5 +205,5 @@ export default {
 		unscheduleTask,
 		createTaskWithName,
 		deleteTaskWithName,
-	}, 
+	},
 };
