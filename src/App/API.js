@@ -1,6 +1,8 @@
 
 import store from "./redux/store";
 import { base } from "./Static";
+
+import { BaseTaskSchema } from "App/Schema";
 import {
 	apiSuccess,
 	apiTimeout, 
@@ -22,6 +24,22 @@ function objectToQueryString(obj) {
 	return Object.keys(obj).map(key => key + "=" + obj[key]).join("&");
 }
 
+const createTaskFromAPI = (data) => {
+	const task = BaseTaskSchema.cast(data);
+	if (!task) {
+		return null;
+	}
+	
+	const date = new Date(task.schedule * 1000);
+	const dateComponents = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+	const timeComponents = [date.getHours(), date.getMinutes()];
+	return { 
+		...task, 
+		date: dateComponents.map(c => c.toString().padStart(2, "0")).join("-"),
+		time: timeComponents.map(c => c.toString().padStart(2, "0")).join(":")
+	};
+};
+
 // ────────────────────────────────────────────────────────────────────────────────
 // The server sends tasklist as an array. This method convert array of objects to 
 // a single level object using the given key as direct properties
@@ -32,6 +50,12 @@ const arrayToObject = (array, key) => {
 		[item[key]]: item,
 	}), {});
 };
+
+//
+// ────────────────────────────────────────────── II ──────────
+//   :::::: A P I : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────
+//
 
 class APIBuilder {
 	constructor(path, options) {
@@ -69,15 +93,9 @@ class APIBuilder {
 	}
 }
 
-//
-// ────────────────────────────────────────────── II ──────────
-//   :::::: A P I : :  :   :    :     :        :          :
-// ────────────────────────────────────────────────────────
-//
-
 const get  = (path, options = {}) => new APIBuilder(path, { method: "GET", ...options });
 const post = (path, options = {}) => new APIBuilder(path, { method: "POST", ...options });
-
+	
 async function getStatus(timeout) {
 	try {
 		const status = await get("api/status").withTimeout(timeout).send();

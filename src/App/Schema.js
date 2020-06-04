@@ -1,5 +1,6 @@
 
 import * as yup from "yup";
+import { array, number, object, string } from "yup";
 
 
 //
@@ -50,23 +51,81 @@ const _ = {
 // ──────────────────────────────────────────────────────────
 //
 
+// ────────────────────────────────────────────────────────────────────────────────
+// This schema is only used to ensure data integrity from JSON API and should be
+// for validation purpose.
+// ────────────────────────────────────────────────────────────────────────────────
+const BaseTaskSchema = object({
+	name: string()
+		.trim()
+		.required(),
+	
+	status: number()
+		.required()
+		.min(0),
 
-const TaskSchema = yup.object({
-	name: yup.string()
+	schedule: number()
+		.required(),
+
+	valves: array(number())
+		.ensure(),
+
+	timeBetween: number()
+		.required()
+		.default(0),
+
+	notes: string()
+		.nullable(),
+
+	flushTime: number()
+		.positive()
+		.default(0),
+
+	flushVolume: number()
+		.positive()
+		.default(0),
+
+	sampleTime: number()
+		.positive()
+		.default(0),
+
+	samplePressure: number()
+		.min(0)
+		.default(0),
+
+	sampleVolume: number()
+		.min(0)
+		.default(0),
+
+	dryTime: number()
+		.min(0)
+		.default(0),
+
+	preserveTime: number()
+		.min(0)
+		.default(0)
+})	
+	// Aliases
+	.from(_.TASK_SCHEDULE, "schedule")
+	.from(_.TASK_TIME_BETWEEN, "timeBetween");
+
+
+const TaskSchema = object({
+	name: string()
 		.trim()
 		.required(),
 	
 	// status represents the operational status of the task
-	status: yup.number()
+	status: number()
 		.required()
 		.min(0)
 		.default(0),
 
-	schedule: yup.number()
+	schedule: number()
 		.required()
 		.default(0),
 	
-	date: yup.string()
+	date: string()
 		.ensure()
 		.when(["schedule"], (schedule, schema) => {
 			const date = new Date(schedule * 1000);
@@ -75,7 +134,7 @@ const TaskSchema = yup.object({
 			return schema.default(value);
 		}),
 
-	time: yup.string()
+	time: string()
 		.ensure()
 		.when(["schedule"], (schedule, schema) => {
 			const date = new Date(schedule * 1000);
@@ -84,89 +143,37 @@ const TaskSchema = yup.object({
 			return schema.default(value);
 		}),
 
-	valves: yup.array(yup.number())
+	valves: array(number())
 		.ensure(),
 
-	timeBetween: yup.number()
+	timeBetween: number()
 		.default(0),
 
-	hour: yup.number()
+	hour: number()
 		.min(0)
 		.when("timeBetween", (timeBetween, schema) => {
 			return schema.default(Math.trunc(timeBetween % 86400 / 3600));
 		}),
 
-	minute: yup.number()
+	minute: number()
 		.min(0)
 		.when("timeBetween", (timeBetween, schema) => {
 			return schema.default(Math.trunc(timeBetween % 3600 / 60));
 		}),
 	
-	second: yup.number()
+	second: number()
 		.min(0)
 		.when("timeBetween", (timeBetween, schema) => {
 			return schema.default(Math.trunc(timeBetween % 60));
 		}),
 	
-	notes: yup.string()
-		.nullable()
+	notes: string()
+		.nullable(),
+	
 })
 	// Aliases
 	.from(_.TASK_SCHEDULE, "schedule")
 	.from(_.TASK_TIME_BETWEEN, "timeBetween");
-
-
-
-//
-// ────────────────────────────────────────────────── III ──────────
-//   :::::: V A V L E : :  :   :    :     :        :          :
-// ────────────────────────────────────────────────────────────
-//
-
-	
-const ValveSchema = yup.object({
-	id: yup.number()
-		.min(0)
-		.default(0),
-
-	task: yup.string()
-		.default(undefined),
-
-	status: yup.number()
-		.positive()
-		.default(0),
-
-	flushTime: yup.number()
-		.positive()
-		.default(0),
-
-	flushVolume: yup.number()
-		.positive()
-		.default(0),
-
-	sampleTime: yup.number()
-		.positive()
-		.default(0),
-
-	samplePressure: yup.number()
-		.min(0)
-		.default(0),
-
-	sampleVolume: yup.number()
-		.min(0)
-		.default(0),
-
-	dryTime: yup.number()
-		.min(0)
-		.default(0),
-
-	preserveTime: yup.number()
-		.min(0)
-		.default(0)
-})
-	.from(_.VALVE_STATUS, "status")
-	.from(_.VALVE_GROUP, "task");
-
 
 
 //
@@ -176,42 +183,41 @@ const ValveSchema = yup.object({
 //
 
 	
-const StatusSchema = yup.object({
-	currentState: yup.string()
+const StatusSchema = object({
+	currentState: string()
 		.trim()
 		.nullable()
 		.required(),
 	
-	valves: yup.array(yup.number().min(0))
+	valves: array(number().min(0))
 		.ensure()
 		.required(),
 	
-	time: yup.number()
+	time: number()
 		.min(0)
-		.default(undefined),
+		.default(null),
 	
-	pressure: yup.number()
-		.default(undefined),
+	pressure: number()
+		.default(null),
 	
-	temperature: yup.number()
-		.default(undefined),
+	temperature: number()
+		.default(null),
 	
-	barometric: yup.number()
-		.default(undefined),
+	barometric: number()
+		.default(null),
 	
-	waterVolume: yup.number()
-		.default(undefined),
+	waterVolume: number()
+		.default(null),
 
-	waterFlow: yup.number()
-		.default(undefined),
+	waterFlow: number()
+		.default(null),
 
-	waterDepth: yup.number()
-		.default(undefined)
+	waterDepth: number()
+		.default(null)
 });
 
 export default {
 	keys: _,
-	Valve: ValveSchema, 
 	Task: TaskSchema,
 	Status: StatusSchema
 };
