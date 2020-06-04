@@ -65,7 +65,7 @@ function TaskConfig(props) {
 				<div className="title">
 					{formik.values.name}
 					<br />
-					<span>{"max operating duration per valve=" + displayRuntime(formik.values)}</span>
+					<span>{`max operating duration per valve=${displayRuntime(formik.values)}`}</span>
 				</div>
 
 				<button 

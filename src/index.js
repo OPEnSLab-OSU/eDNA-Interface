@@ -1,12 +1,7 @@
 import { Fragment, h, render } from "preact";
-
 import { App } from "App";
-
 import { Provider } from "react-redux";
 import store from "App/redux/store";
-
-
-
 
 // const Reset = css`
 // 	html, body, div, span, applet, object, iframe,
@@ -54,13 +49,12 @@ import store from "App/redux/store";
 // 	}
 // `;
 
-
-render(
+const Application = (
 	<Fragment>
 		<Provider store={store}>
 			<App />
 		</Provider>
 	</Fragment>
-	, document.body);
+);
 
-// render((<Fragment><Global styles={Base} /><Showcase /></Fragment>), document.body);
+render(Application, document.body);

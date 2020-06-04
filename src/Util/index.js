@@ -14,6 +14,6 @@ const pick = (...props) => o => props.reduce((a, e) => {
 // ────────────────────────────────────────────────────────────────────────────────
 // Combine two arrays into an array of tuple. See Python's zip for details.
 // ────────────────────────────────────────────────────────────────────────────────
-const zip = (a: Array, b: Array) => a.map((k, i) => [k, b[i]]);
+const zip = (a, b) => a.map((k, i) => [k, b[i]]);
 
 export { pick, zip };

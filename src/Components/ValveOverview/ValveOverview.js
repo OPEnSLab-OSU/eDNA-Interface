@@ -1,7 +1,7 @@
 import { h } from "preact";
 import { useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
-import { toggleTaskValve, toggleValveSelection, updateTask } from "App/redux/actions";
+import { toggleTaskValve } from "App/redux/actions";
 
 
 function ValveNode(props) {
@@ -34,7 +34,8 @@ function ValveNode(props) {
 		</button>
 	);
 }
-export function ValveOverview() {
+
+function ValveOverview() {
 	const valves = useSelector(state => state.valves);
 	const midPoint = valves.all.length;
 	const top = valves.all.filter(v => v.id < midPoint);
@@ -55,3 +56,5 @@ export function ValveOverview() {
 		</div>
 	);
 }
+
+export { ValveOverview };

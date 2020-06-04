@@ -23,9 +23,7 @@ function FormikConfigField(props) {
 	/>;
 }
 
-function StateConfig(props) {
-	const { config, colorIndex, disabled } = props;
-
+function StateConfig({ config, colorIndex, disabled }) {
 	return (
 		<div className="config">
 			<h2 className={classNames("headline", "background-accent-" + (colorIndex + 1))}>

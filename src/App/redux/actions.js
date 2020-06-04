@@ -38,6 +38,10 @@ function stateTransition(newState) {
 	return { type: types.STATE_JUMP, newState };
 }
 
+// ────────────────────────────────────────────────────────────────────────────────
+// ValveOverview 
+// ────────────────────────────────────────────────────────────────────────────────
+
 function toggleValveSelection(valveId) {
 	return { type: types.TOGGLE_VALVE_SELECTION, valveId };
 } 
@@ -50,12 +54,17 @@ function clearValveSelection() {
 	return { type: types.CLEAR_VALVE_SELECTION };
 }
 
-function updateStatus(payload) {
-	return { type: types.STATUS_UPDATE, payload };
-}
 
 function updateValveStatus(payload) {
 	return { type: types.UPDATE_VALVE_STATUS, payload };
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+// Status 
+// ────────────────────────────────────────────────────────────────────────────────
+
+function updateStatus(payload) {
+	return { type: types.STATUS_UPDATE, payload };
 }
 
 // ────────────────────────────────────────────────────────────────────────────────

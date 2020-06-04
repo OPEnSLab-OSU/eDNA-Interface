@@ -8,13 +8,15 @@ export function Dropbar() {
 	const panels = useSelector(state => state.panels);
 	const dispatch = useDispatch();
 
+	// timeZoneOffset is used to report local time in server
 	const updateRTC = async () => {
+		const payload = {
+			utc: Math.floor(Date.now() / 1000), 
+			timezoneOffset: new Date().getTimezoneOffset() 
+		};
+
 		dispatch(setDisplayLoadingScreen(true));
-		await API.post("api/rtc/update")
-			.json({
-				utc: Math.floor(Date.now() / 1000), 
-				timezoneOffset: new Date().getTimezoneOffset() 
-			}).send();
+		await API.post("api/rtc/update").json(payload).send();
 		dispatch(setDisplayLoadingScreen(false));
 	};
 
