@@ -9,5 +9,11 @@ $background: m.color("grey", "lighten-2");
 $status-background: white;
 
 $input-border: m.color("grey", "lighten-1");
-// $accent-focus: #2ee59d;
 $accent-focus: lighten(teal, 10%);
+$accents: #20639b, darken(coral, 10%), #173f5f, #264d59, rgb(134, 1, 1);
+
+@for $i from 1 to length($accents) + 1 {
+	.background-accent-#{$i} {
+		background: lighten(nth($accents, $i), 0%);
+	}
+}

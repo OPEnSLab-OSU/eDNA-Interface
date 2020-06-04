@@ -1,20 +1,22 @@
 import { h } from "preact";
-import {} from "preact/hooks";
 
 export const TextFieldComponent = (props) => {
 	const {
 		title, 
 		helpertext, 
-		className, 
-		required = true, 
+		className,
+		required, 
+		error,
+		errors,
 		...componentProps 
 	} = props;
 
 	// Maybe a duplicate from preact/compat layer
-	// We have both className and class props so remove class
+	// We have both className and class props, so remove class
+	// Need to do this inorder to fix css dependancy ordering
 	delete componentProps.class; 
 
-	const inputDOM = <input className={"input"}required={required} {...componentProps}/>;
+	const inputDOM = <input className={"input"} required={required} {...componentProps}/>;
 	const inputComponent = props.children ? props.children(componentProps) : inputDOM;
 
 	return (
@@ -22,6 +24,8 @@ export const TextFieldComponent = (props) => {
 			{helpertext && <p className={"helpertext"}>{helpertext}</p>}
 			{inputComponent}
 			{<label className="title">{title}</label>}
+			{error && <p className="error">{error}</p>}
+			{errors && errors.map(e => <p className="error" key={e}>{e}</p>)}
 		</div>
 	); 
 };

@@ -1,46 +1,91 @@
 @use "~Sass/mixins" as mix;
+@use "~Theme" as *;
+
+@mixin task-button {
+	@include mix.card;
+	min-width: 80px;
+	text-align: center;
+	text-transform: uppercase;
+	font-size: 1.2rem;
+	padding: 8px;
+	background: rgb(5, 177, 177);
+	color: white;
+	border: none;
+	border-radius: 4px;
+}
 
 .tasklisting {
 	@include mix.card;
-	grid-area: tasklisting;
-	display: grid;
-	grid-auto-rows: min-content;
-	padding: 0;
-	font-size: 13px;
+
 	background: white;
+	display: grid;
+	font-size: 13px;
+	grid-area: tasklisting;
+	margin-bottom: 24px;
+	margin-top: 24px;
+	position: relative;
+	z-index: 999;
 
 	margin-top: 2.4rem;
 	margin-bottom: 2.4rem;
 
 	.headline {
+		background: inherit;
+		border-bottom: 1px solid lightgrey;
 		display: flex;
+		height: 60px;
 		justify-content: space-between;
+		padding: 0 24px;
 		position: sticky;
 		top: 0;
 		z-index: 999;
-		border-bottom: 1px solid lightgrey;
-		padding: 0 24px;
-		height: 60px;
 
 		.create-group {
-			@include mix.card;
-			min-width: 80px;
-			text-align: center;
-			text-transform: uppercase;
-			font-size: 1.2rem;
-			padding: 8px;
-			background: rgb(5, 177, 177);
-			color: white;
-			border: none;
-			border-radius: 4px;
+			@include task-button;
 		}
 	}
 
 	li {
+		font-size: inherit;
+		font-family: inherit;
 		padding: 16px 24px;
+		position: relative;
+
 		&:hover {
 			background: rgb(230, 230, 230);
 			cursor: pointer;
+		}
+	}
+
+	li .right {
+		position: absolute;
+		right: 24px;
+		color: $accent-focus;
+	}
+
+	li.selected {
+		padding: 16px 22px;
+		border-left: 2px solid $accent-focus;
+		background: rgb(230, 230, 230);
+	}
+
+	li.edit form {
+		display: grid;
+		grid-template-columns: 1fr auto;
+		gap: 16px;
+		justify-content: space-between;
+
+		input.task {
+			font-family: Verdana;
+			width: 100%;
+			padding: 0 8px;
+			border: 1px solid lightgrey;
+		}
+
+		button.cancel {
+			@include task-button;
+			width: 40px;
+			background: tomato;
 		}
 	}
 }

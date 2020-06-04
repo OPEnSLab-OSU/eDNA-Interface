@@ -1,43 +1,53 @@
-import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { AppContext } from "App";
-import { Formik, useField, useFormik, useFormikContext } from "formik";
-import { BasicTextField } from "Components/TextField";
-
+import { h } from "preact";
+import { useState } from "preact/hooks";
 import { useDispatch, useSelector } from "react-redux";
-
-
-import { actions } from "App/redux/actions";
-import { toggleValveSelection } from "../../App/redux/actions";
+import { toggleTaskValve } from "App/redux/actions";
 
 
 function ValveNode(props) {
-	const { id } = props;
+	const { id, status } = props;
 	const [selected, setSelected] = useState(false);
 	const dispatch = useDispatch();
-	const valvesSelected = useSelector(state => state.valves.selected);
-	const order = valvesSelected.findIndex(valveId => valveId === id);
+
+	const tasks = useSelector(state => state.tasks);
+	const taskname = useSelector(state => state.selectedTask);
+	const task = tasks[taskname];
+
+	const queue = task.valves.findIndex(valveId => valveId === id);
 
 	const toggle = () => {
-		dispatch(toggleValveSelection(id));
+		if (task.status == 1){
+			return;
+		}
+
+		dispatch(toggleTaskValve(taskname, id));
 		setSelected(!selected);
 	};
 	
 	return (
 		<button 
 			className={classNames("valve-node", { "selected": selected })} 
-			onClick={toggle}>
+			onClick={toggle}
+			disabled={status === "sampled"}>
 			{id}
-			{order > -1 ? <div className="badge">{order}</div> : null}
+			{queue > -1 ? <div className="badge">{queue + 1}</div> : null}
 		</button>
 	);
 }
-export function ValveOverview() {
+
+function ValveOverview() {
 	const valves = useSelector(state => state.valves);
-	const dispatch = useDispatch();
 	const midPoint = valves.all.length;
 	const top = valves.all.filter(v => v.id < midPoint);
 	const bottom = valves.all.filter(v => v.id >= midPoint);
+
+	const tasks = useSelector(state => state.tasks);
+	const taskname = useSelector(state => state.selectedTask);
+	const task = tasks[taskname];
+
+	if (!task)   {
+		return null;
+	}
 
 	return (
 		<div className="valve-overview">
@@ -46,3 +56,5 @@ export function ValveOverview() {
 		</div>
 	);
 }
+
+export { ValveOverview };

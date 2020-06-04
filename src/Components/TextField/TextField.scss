@@ -23,6 +23,11 @@
 		font-size: 1.2rem;
 		color: m.color("grey", "darken-1");
 	}
+
+	.error {
+		color: tomato;
+		padding-top: 8px;
+	}
 }
 
 .input {

@@ -1,5 +1,4 @@
 import { Fragment, h } from "preact";
-import { useContext, useState } from "preact/hooks";
 import { useSelector } from "react-redux"; 
 
 
@@ -21,7 +20,7 @@ function StateNode(props) {
 const nodeColors = ["#173F5F", "#20639B", "#3CAEA3", "#ED553B"];
 
 export function StateTimeline() {
-	const states = useSelector(state => state.states);
+	const states = useSelector(state => state.stateTimeline);
 	const names = states.names;
 	return (
 		<div className="state-timeline"> 
@@ -29,7 +28,7 @@ export function StateTimeline() {
 				<Fragment key={name}>
 					<StateNode key={name} 
 						name={name} 
-						color={name === states.current ? nodeColors[i % names.length]: null}
+						color={name === states.current ? nodeColors[i % names.length] : null}
 						position={i}
 					/>
 

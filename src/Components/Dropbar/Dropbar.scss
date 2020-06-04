@@ -3,10 +3,8 @@
 .dropbar {
 	grid-area: dropbar;
 	position: relative;
-	padding: 0 24px;
 
 	.nav {
-		padding-top: 32px;
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-auto-flow: column;

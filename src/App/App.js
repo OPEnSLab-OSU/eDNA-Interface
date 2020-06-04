@@ -1,68 +1,85 @@
 import { h } from "preact";
-import { useEffect, useRef, useState } from "preact/hooks";
+import { useEffect, useState } from "preact/hooks";
+import { useDispatch, useSelector, useStore } from "react-redux";
+import { apiConnect } from "./redux/actions";
 
-import { Status } from "Components/StatusPanel";
-import { TaskConfig } from "Components/TaskConfig";
-import { TaskListing } from "Components/TaskListing";
-import { Dropbar } from "Components/Dropbar";
-import { StateTimeline } from "Components/StateTimeline";
-import { StateConfig } from "Components/StateConfig";
+import { Dropbar, StateTimeline, Status, TaskListing, TopLevelConfig, ValveOverview } from "Components";
 
-import { useDispatch, useSelector } from "react-redux";
-import { ValveOverview } from "../Components/ValveOverview";
+import API from "./API"; 
+import { LoadingScreen } from "Components";
 
-import { sleep } from "Util/timeout";
-import { fetchWithTimeout } from "../Util/timeout";
+// ────────────────────────────────────────────────────────────────────────────────
+// Get status update from the server every second. Stop the update if receive three
+// consecutive failed attempts.
+// ────────────────────────────────────────────────────────────────────────────────
+function useStatusUpdating() {
+	const store = useStore();
+	const dispatch = useDispatch();
+	const [statusUpdating, setStatusUpdating] = useState(false);
 
-import { updateStatus } from "./redux/actions";
+	useEffect(() => {
+		if (!statusUpdating) {
+			return;
+		}
+			
+		const timeout = 1000;
+		const statusUpdate = async (timerId = null) => {
+			try {
+				await API.store.getStatus(timeout);
+			} catch (error) {
+				if (store.getState().connection.statusText === "offline") {
+					clearInterval(timerId);
+					setStatusUpdating(false);
+				} 
+			} 
+		};
 
+		dispatch(apiConnect());
+		statusUpdate();
 
-const base = new URL("http://192.168.1.1");
-const controller = new AbortController();
+		const timer = setInterval(() => statusUpdate(timer), timeout);
+		return () => clearInterval(timer);
+	}, [statusUpdating]);
 
-function fetchStatus() {
-	const signal = controller.signal;
-
-	window.onunload = () => {
-		controller.abort();
-	};
-	
-	setTimeout(() => {
-		controller.abort();
-	}, 3000);
-
-	const url = new URL("api/status", base);
-	return fetch(url, { signal }).then(response => response.json());
+	return [statusUpdating, setStatusUpdating];
 }
 
 export function App() {
-	const panels = useSelector(state => state.panels);
 	const dispatch = useDispatch();
+	const panels = useSelector(state => state.panels);
+	const connection = useSelector(state => state.connection);
+	const loadingScreen = useSelector(state => state.loadingScreen);
+	const [_, setStatusUpdating] = useStatusUpdating();
 
+	// Get list of tasks from the server
 	useEffect(() => {
-		const timerId = setInterval(() => {
-			fetchStatus().then(payload => {
-				dispatch(updateStatus(payload));
-			}).catch(error => {
-				console.log("Timeout", error);
-			});
-		}, 3000);
-		return () => {
-			clearInterval(timerId);
-		};
+		(async function startup() {
+			await API.store.getTaskList();
+			// await API.store.getTaskWithName("Task 1");
+			// dispatch(selectTask("Task 1"));
+		})();
 	}, []);
 
 	return (
 		<div className="app">
-			<Status connectionStatus={status}/>
-			<main className="main">
+			{panels.status && 
+				<Status connection={connection} setStatusUpdating={setStatusUpdating}/>
+			}
+
+			<main className={classNames("main", { "showTask": panels.task })}>
 				<Dropbar />
 				<StateTimeline />
 				<ValveOverview />
-				<StateConfig />
+				<TopLevelConfig />
 			</main>
-			<TaskConfig expanded={panels.task}/>
-			<TaskListing />
+
+			{panels.task &&
+				<div className="task-panel">
+					<TaskListing />
+				</div>
+			}
+
+			<LoadingScreen hide={loadingScreen.hide} />
 		</div>
 	);
 }

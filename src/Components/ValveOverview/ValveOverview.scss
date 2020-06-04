@@ -6,7 +6,7 @@
 	grid-template-columns: repeat(12, 1fr);
 	grid-template-rows: repeat(2, 40px);
 	gap: 16px;
-	padding: 24px;
+	padding: 24px 0;
 	// padding-top: 0;
 	font-size: 1.4rem;
 	cursor: pointer;
@@ -22,6 +22,10 @@
 
 		position: relative;
 
+		&:disabled {
+			background: rgba(40, 45, 60, 0.5);
+		}
+
 		&.current {
 			background: #2ee59d;
 			transform: translateY(-4px);
@@ -33,9 +37,10 @@
 			padding: 0;
 			margin: 0;
 			// padding-top: 2px;
+			font-size: 12px;
 			position: absolute;
-			width: 24px;
-			height: 24px;
+			width: 20px;
+			height: 20px;
 			right: -12px;
 			top: -12px;
 			border-radius: 12px;

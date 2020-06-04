@@ -34,7 +34,7 @@ export async function sendRequestWithTimeout(ms, url, options = {}) {
 			reject({ error: true });
 		};
 
-		xhr.send();
+		xhr.send(options.body);
 	});
 }
 

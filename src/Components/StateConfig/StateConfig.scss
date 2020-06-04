@@ -4,7 +4,6 @@
 .stateconfig {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-	margin: 24px;
 	margin-top: 0;
 	gap: 24px;
 
@@ -22,21 +21,37 @@
 	.config {
 		@include mix.card;
 
-		display: grid;
-		gap: 24px;
 		background: white;
-		padding-bottom: 24px;
+
+		.content {
+			display: grid;
+			gap: 24px;
+			grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+			padding: 24px;
+		}
 
 		.headline {
 			border-radius: 4px 4px 0 0;
-			padding: 16px;
-			background: orange;
-			color: white;
+			padding: 16px 24px;
+			color: black;
 			letter-spacing: 0.1rem;
+			position: relative;
+			background: transparent;
+			grid-column: 1/-1;
+			border-bottom: 1px solid lightgrey;
+			text-transform: capitalize;
+
+			.square {
+				position: absolute;
+				width: 24px;
+				height: 24px;
+				right: 12px;
+				border-radius: 4px;
+			}
 		}
 
 		.textfield {
-			padding: 0 24px;
+			justify-content: space-between;
 
 			.input {
 				@include mix.input;

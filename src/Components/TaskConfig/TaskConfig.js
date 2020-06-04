@@ -1,85 +1,145 @@
 
 
-import { Fragment, h } from "preact";
-import { useContext, useEffect, useReducer, useState } from "preact/hooks";
-import { Formik, useField, useFormik, useFormikContext } from "formik";
-import { BasicTextField, TextFieldComponent } from "Components/TextField";
-import { useSelector } from "react-redux";
+import { h } from "preact";
+import { useDispatch } from "react-redux";
+import { Form, useFormikContext } from "formik";
+
+import Schema from "App/Schema";
+import Switch from "react-switch";
+
+import { FaRegTrashAlt } from "react-icons/fa";
+import { zip } from "Util";
+
+import {
+	BasicTextArea,
+	FormikControlledTextField,
+	TaskScheduleTimeFields,
+	TaskValveFields
+} from "./Fields";
 
 
-function TaskScheduleTimeFields(props) {
-	const { getFieldProps } = useFormikContext();
-	return (
-		<TextFieldComponent className="textfield time" {...props}>{ (_) => 
-			<Fragment>
-				{["hour", "minute", "second"].map(t => 
-					<input key={t} name={t} 
-						className="input" 
-						type="number" 
-						placeholder={t + "s"} 
-						required {...getFieldProps(t)}/>
-				)}
-			</Fragment>
-		}</TextFieldComponent>
-	);
+//
+// ────────────────────────────────────────────────────── I ──────────
+//   :::::: H E L P E R S : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────────
+//
+
+function secondsToTimeString(seconds) {
+	seconds = Number(seconds);
+	if (seconds == 0) {	
+		return "0 second";
+	}
+	
+	const d = Math.floor(seconds / (3600 * 24));
+	const h = Math.floor(seconds % (3600 * 24) / 3600);
+	const m = Math.floor(seconds % 3600 / 60);
+	const s = Math.floor(seconds % 60);
+	
+	const values = [d, h, m, s];
+	const tokens = ["day", "hour", "minute", "second"];
+	
+	return zip(values, tokens)
+		.filter(e => e[0] > 0)
+		.forEach(e => e[0] > 1 ? e.join(" ") : e.join(" ") + "s")
+		.join();
 }
 
-function BasicTextArea(props) {
-	const { getFieldProps } = useFormikContext();
-	return (
-		<TextFieldComponent className="textfield textarea" {...props}>{ (rest) =>
-			<textarea name="notes" className={"input"} {...rest} {...getFieldProps("notes")}/>
-		}</TextFieldComponent>
-	);
+function displayRuntime(values) {
+	const { flushTime, sampleTime, dryTime, preserveTime } = values;
+	return secondsToTimeString(flushTime + sampleTime + dryTime + preserveTime);
 }
-export function TaskConfig(props) {
-	const valves = useSelector(state => state.valves);
-	const selectedValves = valves.selected.join(", ");
-	const expanded = props.expanded ?? true;
+
+//
+// ──────────────────────────────────────────────────────────── II ──────────
+//   :::::: T A S K C O N F I G : :  :   :    :     :        :          :
+// ──────────────────────────────────────────────────────────────────────
+//
+
+function TaskConfig(props) {
+	const formik = useFormikContext();
+	const isTaskActive = formik.values.status === 1;
+
 	return (
-		<Formik initialValues={{}}>{ (formik) => (
-			<form className={classNames("taskconfig", { "expanded": expanded })}>
-				<div className="headline">
-					<div className="title">
-						Task Settings
-					</div>
+		<Form className={classNames("taskconfig", { "expanded": true })}>
+			<div className="headline">
+				<div className="title">
+					{formik.values.name}
+					<br />
+					<span>{`max operating duration per valve=${displayRuntime(formik.values)}`}</span>
 				</div>
+
+				<button 
+					className="button save-button" 
+					disabled={isTaskActive} 
+					type="button"
+					onClick={() => {
+						formik.setFieldValue("submitAction", "SAVE");
+						formik.submitForm();
+					}}>save</button>
+
+				<button className="button delete-button"
+					type="button"
+					disabled={isTaskActive}
+					onClick={() => {
+						formik.setFieldValue("submitAction", "DELETE");
+						formik.submitForm();
+					}}>delete</button>
+
+				<Switch
+					className="react-switch"
+					width={48}
+					height={24}
+					checked={formik.values.status === 1}
+					onColor="#00b3b3"
+					onChange={(checked) => {
+						formik.setFieldValue("submitAction", checked ? "SCHEDULE" : "UNSCHEDULE");
+						formik.submitForm();
+					}}/>
+			</div>
 				
-				<BasicTextField 
-					name="name" 
-					title="Task Name *"
-					placeholder="Untitled"
-					helpertext="Name used to identify the valve group"
-					type="text" required {...formik.getFieldProps("name")}/>
+			<FormikControlledTextField 
+				name="name" 
+				title="Task Name *"
+				placeholder="Untitled"
+				helpertext="Name used to identify the valve group"
+				type="text"
+				disabled={isTaskActive}/>
 
-				<BasicTextField
-					name="scheduleDate"
-					title="Schedule Date *"
-					helpertext="Specific date when to run this group (YYYY-MM-DD)"
-					type="date"/>
+			<FormikControlledTextField
+				name="date"
+				title="Schedule Date *"
+				helpertext="Specific date when to run this group (YYYY-MM-DD)"
+				type="date"
+				disabled={isTaskActive}/>
 
-				<BasicTextField
-					name="scheduleTime"
-					title="Schedule Time *"
-					helpertext="Specific time when to run this group (HH:MM)"
-					type="time"/>
+			<FormikControlledTextField
+				name="time"
+				title="Schedule Time *"
+				helpertext="Specific time when to run this group (HH:MM)"
+				type="time"
+				required 
+				disabled={isTaskActive}/>
+			
+			<TaskValveFields
+				name="valves"
+				title="Valves *"
+				helpertext="Valves assigned to this task"
+				type="text" placeholder="e.g. 1,2,3,4,5"
+				disabled={isTaskActive}/>
 
-				<BasicTextField
-					name="valves"
-					title="Valves *"
-					helpertext="Valves assigned to this task"
-					type="text" placeholder="e.g. 1,2,3,4,5" value={selectedValves}/>
-
-				<TaskScheduleTimeFields 
-					title="Time Between *"
-					helpertext="Controls how long until the next sample in the group"/>
+			<TaskScheduleTimeFields 
+				title="Time Between"
+				helpertext="Controls how long until the next sample in the group"
+				disabled={isTaskActive}/>
 		
-				<BasicTextArea 
-					name="notes"
-					title="Notes"
-					subtitle="Additional information associated with this group up to 250 characters" 
-					type="text" placeholder="Describe what this group is for memo"/>
-			</form>
-		)}</Formik>
+			<BasicTextArea 
+				name="notes"
+				title="Notes"
+				subtitle="Additional information associated with this group up to 250 characters" 
+				type="text" helpertext="Describe the task (optional)"
+				disabled={isTaskActive}/>
+		</Form>
 	);
 }
+
+export { TaskConfig };

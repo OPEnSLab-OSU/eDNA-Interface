@@ -1,26 +1,76 @@
 @use '~Theme' as *;
 @use "~Sass/mixins" as mix;
 
-.taskconfig {
+@mixin task-button {
 	@include mix.card;
-	grid-area: taskconfig;
 	background: white;
+	display: grid;
+	gap: 24px;
+	// grid-area: taskconfig;
+	// margin-bottom: 24px;
+	overflow-y: scroll;
 	position: relative;
 
-	margin-bottom: 2.4rem;
-	overflow-y: scroll;
+	background: rgb(5, 177, 177);
 
+	color: white;
+	border: none;
+	border-radius: 4px;
+
+	&:disabled,
+	&[disabled] {
+		background: #cccccc !important;
+		color: #666666;
+		cursor: default;
+	}
+}
+
+.taskconfig {
+	@include mix.card;
+
+	background: white;
 	display: grid;
-	gap: 2.4rem;
+	gap: 24px;
+	// grid-area: taskconfig;
+	margin-bottom: 24px;
+	overflow-y: scroll;
+	position: relative;
+	width: 340px;
+
+	grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
 
 	.headline {
-		display: flex;
-		justify-content: space-between;
-		position: sticky;
-		top: 0;
-		background: white;
-		z-index: 999;
+		display: grid;
+		grid-template-columns: 1fr;
+		grid-auto-flow: column;
+		gap: 12px;
+		background: inherit;
 		border-bottom: 1px solid lightgrey;
+		grid-column: 1/-1;
+
+		& > *:first-child {
+			// background: red;
+			flex-grow: 1;
+		}
+
+		span {
+			font-size: 12px;
+			font-style: italic;
+			font-weight: 400;
+			color: grey;
+		}
+
+		.button {
+			@include mix.button;
+			font-size: 12px;
+			font-weight: 500;
+		}
+
+		.delete-button {
+			&:not([disabled]) {
+				color: rgb(248, 81, 69);
+			}
+		}
 	}
 
 	.textfield {
@@ -37,14 +87,16 @@
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
 	gap: 0 8px;
-	// flex-direction: row;
-	// justify-content: space-between;
 
 	.title {
 		grid-column: 1/-1;
 	}
 
 	.helpertext {
+		grid-column: 1/-1;
+	}
+
+	.error {
 		grid-column: 1/-1;
 	}
 
@@ -55,6 +107,7 @@
 }
 
 .textfield.textarea {
+	grid-column: 1/-1;
 	.input {
 		border-style: none;
 		border-color: Transparent;
@@ -64,12 +117,30 @@
 		border: 0.1rem solid $input-border;
 		border-radius: 0.4rem;
 		padding: 0.8rem;
-		margin-top: 2.6rem;
 		min-height: 20rem;
 		resize: none;
 
 		&:focus {
 			border-color: $accent-focus;
+		}
+	}
+}
+
+.textfield.valves {
+	.valve-badge-container {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(36px, 1fr));
+		grid-auto-rows: 36px;
+		margin-top: 12px;
+		gap: 8px;
+
+		.valve-badge {
+			display: flex;
+			flex-grow: 1;
+			border-radius: 4px;
+			justify-content: center;
+			align-items: center;
+			background: lightgrey;
 		}
 	}
 }

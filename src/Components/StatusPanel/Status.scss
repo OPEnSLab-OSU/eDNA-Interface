@@ -30,6 +30,8 @@ $expandedWidth: 24rem;
 			text-transform: uppercase;
 			display: flex;
 			justify-content: center; // font-weight: bold;;
+			// padding-bottom: 32px;
+			// padding-top: 64px;
 
 			i {
 				letter-spacing: normal;
@@ -77,8 +79,34 @@ $expandedWidth: 24rem;
 			}
 		}
 
-		.item:last-child {
-			align-self: flex-end;
+		.connection {
+			button {
+				display: flex;
+				align-items: center;
+				background: none;
+				font-size: 1.4rem;
+				text-transform: capitalize;
+				letter-spacing: 0.1rem;
+				padding: 8px 0;
+			}
+
+			.dot {
+				display: inline-block;
+				width: 16px;
+				height: 16px;
+				border-radius: 999px;
+				background: orange;
+				margin-right: 8px;
+				margin-top: -4px;
+
+				&.online {
+					background: $accent-focus;
+				}
+
+				&.offline {
+					background: red;
+				}
+			}
 		}
 	}
 }

@@ -17,6 +17,7 @@ button,
 	cursor: pointer;
 	border: none;
 	box-shadow: none;
+	background: none;
 }
 
 li,
@@ -36,9 +37,7 @@ a,
 	font-size: 1.4rem;
 	font-weight: bold;
 	letter-spacing: 0.15px;
-	// text-transform: uppercase;
 	border-bottom: 1px solid rgb(230, 230, 230);
-	// letter-spacing: 0.0333rem;
 }
 
 .app {
@@ -46,38 +45,66 @@ a,
 	grid-template-columns: min-content 1fr min-content;
 	grid-template-rows: min-content 1fr;
 	grid-template-areas:
-		"status main tasklisting"
-		"status main taskconfig";
+		"status main main"
+		"status main main";
 
-	padding-right: 2.4rem;
 	overflow: hidden;
-
 	height: 100vh;
 	background: $background;
 }
 
 .main {
 	grid-area: main;
-	display: flex;
-	flex-direction: column;
-	// grid-auto-flow: column;
 	height: 100%;
-	padding-bottom: 24px;
+	padding: 24px;
 	overflow-y: scroll;
 	min-width: 600px;
-	// margin-bottom: 24px;
+
+	&.showTask {
+		padding-right: 388px;
+	}
+}
+
+.task-panel {
+	position: absolute;
+	right: 24px;
+	width: 340px;
+	display: flex;
+	flex-direction: column;
+}
+
+.tasklisting {
 }
 
 .taskconfig {
-	width: 0;
 	transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1);
 	overflow-x: hidden;
+	height: 100%;
 }
 
 .taskconfig.expanded {
-	width: 34rem;
+	width: 100%;
 }
 
 i {
 	font-style: normal;
+}
+
+@media only screen and (max-width: 800px) {
+	.status {
+		display: none;
+	}
+
+	.app {
+		display: block;
+	}
+
+	.main {
+		padding: 24px;
+		margin: auto;
+	}
+
+	.task-panel {
+		display: none;
+	}
 }

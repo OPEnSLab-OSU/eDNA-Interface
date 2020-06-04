@@ -20,7 +20,7 @@
 		"ecmaVersion": 2020,
 		"sourceType": "module"
 	},
-	"plugins": ["react", "emotion"],
+	"plugins": ["react"],
 	"settings": {
 		"react": {
 			"pragma": "h",
@@ -46,7 +46,6 @@
 				},
 				"ImportDeclaration": {
 					"multiline": true,
-					"minProperties": 5,
 					"consistent": true
 				},
 				"ExportDeclaration": {
@@ -62,6 +61,7 @@
 				"allowAllPropertiesOnSameLine": true
 			}
 		],
+		"space-infix-ops": "error",
 		"comma-spacing": [
 			"error",
 			{
@@ -71,12 +71,14 @@
 		"no-unused-vars": [
 			"warn",
 			{
-				"argsIgnorePattern": "_"
+				"varsIgnorePattern": "_|props|h",
+				"argsIgnorePattern": "_|props|h",
+				"ignoreRestSiblings": true
 			}
 		],
 		"sort-imports": ["error", { "ignoreDeclarationSort": true }],
 		"no-fallthrough": "off",
-		"no-console": 1,
+		"no-console": 0,
 		"no-empty": 0,
 		"semi": 2,
 		"keyword-spacing": 2,
