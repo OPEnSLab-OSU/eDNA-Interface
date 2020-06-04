@@ -41,7 +41,7 @@ const _ = {
 	TASK_SCHEDULE: "schedule",
 	TASK_VALVES: "valves",
 	TASK_TIME_BETWEEN: "timeBetween",
-	TASK_NOTES: "notes"
+	TASK_NOTES: "notes",
 };
 
 
@@ -103,79 +103,11 @@ const BaseTaskSchema = object({
 
 	preserveTime: number()
 		.min(0)
-		.default(0)
+		.default(0),
 })	
 	// Aliases
 	.from(_.TASK_SCHEDULE, "schedule")
 	.from(_.TASK_TIME_BETWEEN, "timeBetween");
-
-
-const TaskSchema = object({
-	name: string()
-		.trim()
-		.required(),
-	
-	// status represents the operational status of the task
-	status: number()
-		.required()
-		.min(0)
-		.default(0),
-
-	schedule: number()
-		.required()
-		.default(0),
-	
-	date: string()
-		.ensure()
-		.when(["schedule"], (schedule, schema) => {
-			const date = new Date(schedule * 1000);
-			const components = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
-			const value = components.map(c => c.toString().padStart(2, "0")).join("-");
-			return schema.default(value);
-		}),
-
-	time: string()
-		.ensure()
-		.when(["schedule"], (schedule, schema) => {
-			const date = new Date(schedule * 1000);
-			const components = [date.getHours(), date.getMinutes()];
-			const value = components.map(c => c.toString().padStart(2, "0")).join(":");
-			return schema.default(value);
-		}),
-
-	valves: array(number())
-		.ensure(),
-
-	timeBetween: number()
-		.default(0),
-
-	hour: number()
-		.min(0)
-		.when("timeBetween", (timeBetween, schema) => {
-			return schema.default(Math.trunc(timeBetween % 86400 / 3600));
-		}),
-
-	minute: number()
-		.min(0)
-		.when("timeBetween", (timeBetween, schema) => {
-			return schema.default(Math.trunc(timeBetween % 3600 / 60));
-		}),
-	
-	second: number()
-		.min(0)
-		.when("timeBetween", (timeBetween, schema) => {
-			return schema.default(Math.trunc(timeBetween % 60));
-		}),
-	
-	notes: string()
-		.nullable(),
-	
-})
-	// Aliases
-	.from(_.TASK_SCHEDULE, "schedule")
-	.from(_.TASK_TIME_BETWEEN, "timeBetween");
-
-
 //
 // ──────────────────────────────────────────────────── IV ──────────
 //   :::::: S T A T U S : :  :   :    :     :        :          :
@@ -213,12 +145,12 @@ const StatusSchema = object({
 		.default(null),
 
 	waterDepth: number()
-		.default(null)
+		.default(null),
 });
 
 export default {
 	keys: _,
-	Task: TaskSchema,
-	Status: StatusSchema
+	Task: BaseTaskSchema,
+	Status: StatusSchema,
 };
 

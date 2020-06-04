@@ -9,7 +9,7 @@ import {
 	selectTask, 
 	updateStatus, 
 	updateTask, 
-	updateTaskList 
+	updateTaskList, 
 } from "./redux/actions";
 
 
@@ -36,7 +36,7 @@ const createTaskFromAPI = (data) => {
 	return { 
 		...task, 
 		date: dateComponents.map(c => c.toString().padStart(2, "0")).join("-"),
-		time: timeComponents.map(c => c.toString().padStart(2, "0")).join(":")
+		time: timeComponents.map(c => c.toString().padStart(2, "0")).join(":"),
 	};
 };
 
@@ -191,6 +191,6 @@ export default {
 		scheduleTask,
 		unscheduleTask,
 		createTaskWithName,
-		deleteTaskWithName
-	} 
+		deleteTaskWithName,
+	}, 
 };
