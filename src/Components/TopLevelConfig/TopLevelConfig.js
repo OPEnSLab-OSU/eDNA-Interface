@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearValveSelection, setDisplayLoadingScreen } from "App/redux/actions";
 import { StateConfig, TaskConfig } from "Components";
 import API from "App/API";
-import Schema from "App/Schema";
+import * as models from "App/Models";
 import * as yup from "yup";
 
 
@@ -15,11 +15,11 @@ const StateConfigs = {
 			"name": "duration",
 			"alias": "time",
 			"type": "number",
-			"description": "Controls how long before transitioning to the sample state" 
+			"description": "Controls how long before transitioning to the sample state", 
 		}, {
 			"name": "volume",
-			"description": "Controls how much water will be used to flush the system" 
-		}] 
+			"description": "Controls how much water will be used to flush the system", 
+		}], 
 	},
 	sample: {
 		name: "sample",
@@ -27,16 +27,16 @@ const StateConfigs = {
 			"name": "duration",
 			"alias": "time",
 			"type": "number",
-			"description": "Controls how long before transitioning to the dry state" 
+			"description": "Controls how long before transitioning to the dry state", 
 		}, {
 			"name": "volume",
 			"type": "number",
-			"description": "Controls how much water will be sampled" 
+			"description": "Controls how much water will be sampled", 
 		}, {
 			"name": "pressure",
 			"type": "number",
-			"description": "Controls when to automatically stop when the pressure exeeds the given limit" 
-		}] 
+			"description": "Controls when to automatically stop when the pressure exeeds the given limit", 
+		}], 
 	},
 	dry: {
 		name: "dry",
@@ -44,8 +44,8 @@ const StateConfigs = {
 			"name": "duration",
 			"alias": "time",
 			"type": "number",
-			"description": "Controls how long before transitioning to the preserve state" 
-		}] 
+			"description": "Controls how long before transitioning to the preserve state", 
+		}], 
 	},
 	preserve: {
 		name: "preserve",
@@ -53,8 +53,8 @@ const StateConfigs = {
 			"name": "duration",
 			"alias": "time",
 			"type": "number",
-			"description": "Controls how long before transitioning to the stop state" 
-		}] 
+			"description": "Controls how long before transitioning to the stop state", 
+		}], 
 	},
 };
 
@@ -81,7 +81,7 @@ const TaskValidationSchema = yup.object({
 	second: yup.number()
 		.min(0, "Second must be a positive number"),
 	notes: yup.string()
-		.nullable()
+		.nullable(),
 });
 
 function TopLevelConfig(_) {
@@ -166,7 +166,7 @@ function TopLevelConfig(_) {
 	
 	return (
 		<Formik 
-			initialValues={Schema.Task.cast(task)}
+			initialValues={models.Task.cast(task)}
 			validationSchema={TaskValidationSchema}
 			enableReinitialize={true} 
 			onSubmit={handleFormSubmit}>{(_) => (

@@ -1,7 +1,5 @@
 import store from "./redux/store";
 import { base } from "./Static";
-
-import { BaseTaskSchema } from "App/Schema";
 import {
 	apiSuccess,
 	apiTimeout,
@@ -23,29 +21,6 @@ function objectToQueryString(obj) {
 		.join("&");
 }
 
-const createTaskFromAPI = (data) => {
-	const task = BaseTaskSchema.cast(data);
-	if (!task) {
-		return null;
-	}
-
-	const date = new Date(task.schedule * 1000);
-	const dateComponents = [
-		date.getFullYear(),
-		date.getMonth() + 1,
-		date.getDate(),
-	];
-	const timeComponents = [date.getHours(), date.getMinutes()];
-	return {
-		...task,
-		date: dateComponents
-			.map((c) => c.toString().padStart(2, "0"))
-			.join("-"),
-		time: timeComponents
-			.map((c) => c.toString().padStart(2, "0"))
-			.join(":"),
-	};
-};
 
 // ────────────────────────────────────────────────────────────────────────────────
 // The server sends tasklist as an array. This method convert array of objects to

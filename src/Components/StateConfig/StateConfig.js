@@ -3,7 +3,6 @@ import { useField } from "formik";
 import { useDispatch } from "react-redux";
 
 import { BasicTextField } from "Components";
-import Schema from "App/Schema";
 
 function capitalizeFirst(str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);

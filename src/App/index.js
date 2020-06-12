@@ -1,5 +1,5 @@
 export * from "./App.js";
 export * from "./Static";
-export * from "./Schema";
+export * from "./Models";
 
 import "./App.scss";

@@ -4,7 +4,7 @@ import { Form, Formik } from "formik";
 
 import { useDispatch, useSelector } from "react-redux";
 import { selectTask, setDisplayLoadingScreen } from "../../App/redux/actions";
-import Schema from "App/Schema";
+import * as models from "App/Models";
 import API from "App/API";
 
 export function TaskListing() {
@@ -31,7 +31,7 @@ export function TaskListing() {
 
 	const handleTaskCreate = async (values) => {
 		dispatch(setDisplayLoadingScreen(true));
-		const { [Schema.keys.TASK_NAME]: newTaskName } = values;
+		const { [models.keys.TASK_NAME]: newTaskName } = values;
 		const response = await API.store.createTaskWithName(newTaskName);
 		if (response.success) {
 			dispatch(selectTask(newTaskName));

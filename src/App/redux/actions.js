@@ -20,7 +20,7 @@ const types = {
 	LOADING_SCREEN: "",
 	CLEAR_VALVE_SELECTION: "",
 	SET_VALVE_SELECTIONS: "",
-	TOGGLE_TASK_VALVE: ""
+	TOGGLE_TASK_VALVE: "",
 };Object.keys(types).forEach(k => types[k] = k);
 
 

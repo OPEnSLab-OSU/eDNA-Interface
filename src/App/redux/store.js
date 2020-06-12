@@ -1,6 +1,6 @@
-import { applyMiddleware, createStore } from "redux";
+import { applyMiddleware, combineReducers, createStore } from "redux";
 import { actionTypes, updateValveStatus  } from "./actions";
-import rootReducer from "./reducers";
+import * as reducers from "./reducers";
 
 
 const logger = store => next => action => {
@@ -19,7 +19,10 @@ const valveStatusExtracter = store => next => action => {
 	next(action);
 };
 
-export default createStore(rootReducer, applyMiddleware(
+const rootReducer = combineReducers(reducers);
+const middlewares = applyMiddleware(
 	logger,
-	valveStatusExtracter
-));
+	valveStatusExtracter,
+);
+
+export default createStore(rootReducer, middlewares);

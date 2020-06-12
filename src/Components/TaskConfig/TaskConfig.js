@@ -4,17 +4,16 @@ import { h } from "preact";
 import { useDispatch } from "react-redux";
 import { Form, useFormikContext } from "formik";
 
-import Schema from "App/Schema";
 import Switch from "react-switch";
 
 import { FaRegTrashAlt } from "react-icons/fa";
-import { zip } from "Util";
+import { zip } from "Util"; 
 
 import {
 	BasicTextArea,
 	FormikControlledTextField,
 	TaskScheduleTimeFields,
-	TaskValveFields
+	TaskValveFields,
 } from "./Fields";
 
 

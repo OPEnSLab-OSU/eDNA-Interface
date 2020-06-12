@@ -3,11 +3,10 @@ import {
 	initialPanelVisibility,
 	initialStateTimelineData,
 	initialTasks,
-	initialValveData
-} from "./initial-states";
+	initialValveData,
+} from "./states";
 
-import { combineReducers } from "redux";
-import Schema from "App/Schema";
+import * as models from "App/Models";
 
 //
 // ────────────────────────────────────────────────────── I ──────────
@@ -16,6 +15,7 @@ import Schema from "App/Schema";
 //
 
 function ifElse(condition, value1, value2) {
+
 	return condition ? value1 : value2;
 }
 
@@ -26,25 +26,25 @@ function ifElse(condition, value1, value2) {
 //
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Reducer representing the visibility all panels currently on screen
+// Representing the visibility all panels currently on screen
 // ────────────────────────────────────────────────────────────────────────────────
-function panels(state = initialPanelVisibility, action) {
+export function panels(state = initialPanelVisibility, action) {
 	const { TOGGLE_PANEL } = actionTypes;
 	const { type, panel } = action;
 
 	switch (type) {
 	case TOGGLE_PANEL:
-		return { ...state, [panel]: !state[panel], };
+		return { ...state, [panel]: !state[panel] };
 	default:
 		return state;	
 	}
 }
 
-function tasks(state = initialTasks, action) {
+export function tasks(state = initialTasks, action) {
 	const {
 		UPDATE_TASKLIST, 
 		UPDATE_TASK,
-		TOGGLE_TASK_VALVE
+		TOGGLE_TASK_VALVE,
 	} = actionTypes;
 
 	const { type, tasklist, data, taskId, valveId } = action;
@@ -60,7 +60,7 @@ function tasks(state = initialTasks, action) {
 		const index = valves.findIndex(id => id === valveId);
 		const new_task = ifElse(index > -1, 
 			{ ...task, valves: valves.filter(id => id !== valveId) },
-			{ ...task, valves: [...valves, valveId] }
+			{ ...task, valves: [...valves, valveId] },
 		);
 	
 		return { ...state, [taskId]: new_task };
@@ -71,10 +71,10 @@ function tasks(state = initialTasks, action) {
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Reducer for selected task name. Client should get the actual task object from
+// For selected task name. Client should get the actual task object from
 // state.tasks
 // ────────────────────────────────────────────────────────────────────────────────
-function selectedTask(state = null, action) {
+export function selectedTask(state = null, action) {
 	const { SELECT_TASK } = actionTypes;
 	const { type, taskId } = action;
 	switch (type) {
@@ -87,9 +87,9 @@ function selectedTask(state = null, action) {
 
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Reducer representing the state of the stateTimeline
+// Representing the state of the stateTimeline
 // ────────────────────────────────────────────────────────────────────────────────
-function stateTimeline(state = initialStateTimelineData, action) {
+export function stateTimeline(state = initialStateTimelineData, action) {
 	const { STATE_JUMP } = actionTypes;
 	const { type } = action;
 	switch (type) {
@@ -105,12 +105,12 @@ function stateTimeline(state = initialStateTimelineData, action) {
 // The final representation of valve overview is done by merge together the base
 // valve array and †he valves associated with the task.
 // ────────────────────────────────────────────────────────────────────────────────
-function valveOverview(state = initialValveData, action) {
+export function valves(state = initialValveData, action) {
 	const {
 		TOGGLE_VALVE_SELECTION, 
 		UPDATE_VALVE_STATUS,
 		CLEAR_VALVE_SELECTION,
-		SET_VALVE_SELECTIONS
+		SET_VALVE_SELECTIONS,
 	} = actionTypes;
 	const { type, valveId, payload, valveIds } = action;
 
@@ -137,9 +137,9 @@ function valveOverview(state = initialValveData, action) {
 
 
 // ────────────────────────────────────────────────────────────────────────────────
-// Reducer representing the state of the loading screen
+// Representing the state of the loading screen
 // ────────────────────────────────────────────────────────────────────────────────
-function loadingScreen(state = { hide: true, show: false }, action) {
+export function loadingScreen(state = { hide: true, show: false }, action) {
 	const { LOADING_SCREEN } = actionTypes;
 	const { type, value } = action;
 	switch (type) {
@@ -153,13 +153,13 @@ function loadingScreen(state = { hide: true, show: false }, action) {
 // ────────────────────────────────────────────────────────────────────────────────
 // State reducer for the general status of the sampler
 // ────────────────────────────────────────────────────────────────────────────────
-function status(state = Schema.Status.default(), action) {
+export function status(state = models.StatusSchema.default(), action) {
 	const { STATUS_UPDATE } = actionTypes;
 	const { type, payload } = action;
 
 	switch (type) {
 	case STATUS_UPDATE:
-		return Schema.Status.cast(payload);
+		return models.StatusSchema.cast(payload);
 	default:
 		return state;
 	}
@@ -168,11 +168,11 @@ function status(state = Schema.Status.default(), action) {
 // ────────────────────────────────────────────────────────────────────────────────
 // Keeping track of the state of the status connection.
 // ────────────────────────────────────────────────────────────────────────────────
-function connection(connection = { statusText: "offline", attempts: 0 }, action) {
+export function connection(connection = { statusText: "offline", attempts: 0 }, action) {
 	const {
 		CONNECTION_CONNECT, 
 		CONNECTION_SUCCESS,
-		CONNECTION_TIMEOUT 
+		CONNECTION_TIMEOUT, 
 	} = actionTypes;
 
 	const { attempts } = connection;
@@ -189,15 +189,3 @@ function connection(connection = { statusText: "offline", attempts: 0 }, action)
 	}
 }
 
-const rootReducer = combineReducers({ 
-	panels, 
-	tasks,
-	selectedTask,
-	stateTimeline,
-	valves: valveOverview,
-	status,
-	connection,
-	loadingScreen
-});
-
-export default rootReducer;
