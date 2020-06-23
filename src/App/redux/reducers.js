@@ -15,7 +15,6 @@ import * as models from "App/Models";
 //
 
 function ifElse(condition, value1, value2) {
-
 	return condition ? value1 : value2;
 }
 

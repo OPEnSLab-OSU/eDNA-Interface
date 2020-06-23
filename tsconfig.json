@@ -17,7 +17,8 @@
 			"Util/*": [".src/Util/*"]
 		},
 		"sourceMap": true,
-		"target": "es2016"
+		"target": "es2016",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"]
 	},
 	"exclude": [
 		"node_modules",
