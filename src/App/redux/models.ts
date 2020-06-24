@@ -1,7 +1,6 @@
-
 import * as yup from "yup";
-import { array, number, object, string } from "yup";
-
+import { array, number, object, string, boolean } from "yup";
+import { nanoid } from "@reduxjs/toolkit";
 
 //
 // ──────────────────────────────────────────────── I ──────────
@@ -49,25 +48,24 @@ export const KEYS = {
 // ────────────────────────────────────────────────────────────────
 //
 
-export function autoImplements<T>(): new () => T {
-	return class {} as any;
-}
+// export function autoImplements<T>(): new () => T {
+// 	return class {} as any;
+// }
 
-
-export function validateExtends<T, K>(data: object, schema: yup.Schema<T>, extras: (base: T) => K) : (T & K) | null {
-	const verifiedData = schema.cast(data);
-	if (verifiedData == null) {
-		return null;
+// Extends an object verified using a schema with another object
+export function createWithMixins<T, K>(
+	raw: T,
+	schema: yup.Schema<T>,
+	extras: (transformed: T) => K
+): (T & K) | undefined {
+	const transformed = schema.cast(raw);
+	if (schema.validateSync(transformed)) {
+		return { ...transformed, ...extras(transformed) };
 	}
-
-	return Object.assign(verifiedData, extras(verifiedData));
 }
 
-namespace SchemaHelpers {
-	export const numberParam = number()
-		.positive()
-		.notRequired()
-		.default(0);
+namespace Schemas {
+	export const stateInput = number().min(0).notRequired().default(0);
 }
 
 //
@@ -81,113 +79,137 @@ namespace SchemaHelpers {
 // ────────────────────────────────────────────────────────────────────────────────
 // This is where we define the structure of our JSON payload. In a more robust env,
 // one would send over a schema and use an editor plugin to strongly-type out the
-// object.
-export const BaseTaskSchema = object({
+// object but this should do for now.
+// prettier-ignore
+const BaseTaskSchema = object({
+	id: string()
+		.nullable()
+		.transform((_, original) => original?? nanoid()),
 	name: string()
 		.trim()
-		.defined(),
+		.required(),
 	status: number()
-		.defined()
-		.min(0),
+		.min(0)
+		.required(),
 	schedule: number()
-		.defined(),
+		.integer()
+		.required(),
 	valves: array(number().defined())
 		.ensure()
 		.defined(),
 	timeBetween: number()
 		.default(0),
 	notes: string(), 
-	flushTime: SchemaHelpers.numberParam,
-	flushVolume: SchemaHelpers.numberParam,
-	sampleTime: SchemaHelpers.numberParam,
-	samplePressure: SchemaHelpers.numberParam,
-	sampleVolume: SchemaHelpers.numberParam,
-	dryTime: SchemaHelpers.numberParam,
-	preserveTime: SchemaHelpers.numberParam,
+	flushTime: Schemas.stateInput,
+	flushVolume: Schemas.stateInput,
+	sampleTime: Schemas.stateInput,
+	samplePressure: Schemas.stateInput,
+	sampleVolume: Schemas.stateInput,
+	dryTime: Schemas.stateInput,
+	preserveTime: Schemas.stateInput,
 }).defined();
 
+export type BaseTask = yup.InferType<typeof BaseTaskSchema>;
 
-export type BaseTaskSchemaType = yup.InferType<typeof BaseTaskSchema>;
-export type TaskType = BaseTaskSchemaType & {
-	date: string,
-	time: string
+// NOTE: I would like to use get-accessors but I couldn't find a way to make it work
+// with spread operator
+export interface Task extends BaseTask {
+	id: string;
+	getDate(): string;
+	getTime(): string;
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Here we are extending the a valid task object with two computed extra properties:
-// date and time
+// date and time. Otherwise returns undefined.
 // ────────────────────────────────────────────────────────────────────────────────
-export function createTask(data: BaseTaskSchemaType) : TaskType | null {
-	return validateExtends(data, BaseTaskSchema, (base) => ({
-		get date() {
-			const date = new Date(base.schedule * 1000);
-			const components = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
-			return components
-				.map((c) => c.toString().padStart(2, "0"))
-				.join("-");
+export function createTask(raw: BaseTask): Task | undefined {
+	return createWithMixins(raw, BaseTaskSchema, transformed => ({
+		id: transformed.id!,
+		getDate(): string {
+			// Expect this.schedule to be a number
+			const schedule = (this as any).schedule;
+			if (typeof schedule != "number") {
+				throw "Schedule is not a number";
+			}
+
+			const date = new Date(schedule * 1000);
+			const components = [
+				date.getFullYear(),
+				date.getMonth() + 1,
+				date.getDate(),
+			];
+			return components.map(c => c.toString().padStart(2, "0")).join("-");
 		},
 
-		get time() {
-			const date = new Date(base.schedule * 1000);
+		getTime(): string {
+			// Expect this.schedule to be a number
+			const schedule = (this as any).schedule;
+			if (typeof schedule != "number") {
+				throw "Schedule is not a number";
+			}
+
+			const date = new Date(schedule * 1000);
 			const components = [date.getHours(), date.getMinutes()];
-			return components
-				.map((c) => c.toString().padStart(2, "0"))
-				.join(":");
+			return components.map(c => c.toString().padStart(2, "0")).join(":");
 		},
-	})); 
+	}));
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Example Usage
 // ────────────────────────────────────────────────────────────────────────────────
-/* const task: BaseTaskSchemaType = {
+/* const task: BaseTaskType = {
 	name: "Task 1",
 	status: 0,
-	schedule: Math.floor(Date.now() / 1000),
+	schedule: 200000000,
 	valves: [],
 	timeBetween: 0,
 };
 
-const cleanedTask = createTask(task);
-console.log(cleanedTask); */
+const a: TaskType = createTask(task)!;
+console.log(a.name, a.date(), a.time(), a);
+
+const b: TaskType = createTask({ ...a, id: null, schedule: 100000000 })!;
+console.log(b.name, b.date(), b.time(), b); */
 
 //
 // ──────────────────────────────────────────────────── IV ──────────
 //   :::::: S T A T U S : :  :   :    :     :        :          :
 // ──────────────────────────────────────────────────────────────
 //
-
+namespace Schemas {
+	export const statusField = number().nullable().default(null);
+}
+// prettier-ignore
 export const StatusSchema = object({
 	currentState: string()
 		.trim()
-		.nullable()
-		.required(),
-	
-	valves: array(number().min(0))
-		.ensure()
-		.required(),
-	
+		.nullable(),
+	valves: array(number().min(0).defined())
+		.ensure(),
 	time: number()
 		.min(0)
-		.default(null),
-	
-	pressure: number()
-		.default(null),
-	
-	temperature: number()
-		.default(null),
-	
-	barometric: number()
-		.default(null),
-	
-	waterVolume: number()
-		.default(null),
+		.nullable(),
+	pressure: Schemas.statusField,
+	temperature: Schemas.statusField,
+	barometric: Schemas.statusField,
+	waterVolume: Schemas.statusField,
+	waterFlow: Schemas.statusField,
+	waterDepth: Schemas.statusField,
+}).defined();
 
-	waterFlow: number()
-		.default(null),
+export type Status = yup.InferType<typeof StatusSchema>;
 
-	waterDepth: number()
-		.default(null),
-});
+//
+// ────────────────────────────────────────────────── V ──────────
+//   :::::: V A L V E : :  :   :    :     :        :          :
+// ────────────────────────────────────────────────────────────
+//
+export const ValveSchema = object({
+	id: number().min(0).integer().required(),
+	status: string().required(),
+	isSelected: boolean(),
+}).defined();
 
-
+export type Valve = yup.InferType<typeof ValveSchema>;

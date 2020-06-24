@@ -4,20 +4,20 @@
 		"outDir": "dist",
 		"strict": true,
 		"strictNullChecks": true,
-		"baseUrl": ".",
 		"jsx": "react",
 		"jsxFactory": "h",
 		"module": "commonJS",
+		"baseUrl": ".",
 		"paths": {
 			"App": ["./src/App"],
 			"App/*": ["./src/App/*"],
 			"Components": ["./src/Components"],
 			"Components/*": ["./src/Components/*"],
-			"Util": [".src/Util"],
-			"Util/*": [".src/Util/*"]
+			"Util": ["./src/Util"],
+			"Util/*": ["./src/Util/*"]
 		},
 		"sourceMap": true,
-		"target": "es2016",
+		"target": "es5",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"]
 	},
 	"exclude": [

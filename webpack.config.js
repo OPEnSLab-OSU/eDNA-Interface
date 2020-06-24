@@ -6,7 +6,7 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
-const entryPath = path.resolve(__dirname, "src/index.js");
+const entryPath = path.resolve(__dirname, "src/index.tsx");
 const outputPath = path.resolve(__dirname, "dist");
 
 module.exports = {
@@ -54,11 +54,13 @@ module.exports = {
 	module: {
 		rules: [
 			{
+				// Run TS files through TS compiler
 				test: /\.tsx?$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
 				loader: "ts-loader",
 			},
 			{
+				// Run JS files through Babel
 				test: /\.jsx?$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
 				loader: "babel-loader",

@@ -1,7 +1,7 @@
 import { Fragment, h, render } from "preact";
 import { App } from "App";
 import { Provider } from "react-redux";
-import store from "App/redux/store";
+import { store } from "App/redux/store";
 
 // const Reset = css`
 // 	html, body, div, span, applet, object, iframe,
@@ -13,8 +13,8 @@ import store from "App/redux/store";
 // 	dl, dt, dd, ol, ul, li,
 // 	fieldset, form, label, legend,
 // 	table, caption, tbody, tfoot, thead, tr, th, td,
-// 	article, aside, canvas, details, embed, 
-// 	figure, figcaption, footer, header, hgroup, 
+// 	article, aside, canvas, details, embed,
+// 	figure, figcaption, footer, header, hgroup,
 // 	menu, nav, output, ruby, section, summary,
 // 	time, mark, audio, video {
 // 		margin: 0;
@@ -25,7 +25,7 @@ import store from "App/redux/store";
 // 		vertical-align: baseline;
 // 	}
 // 	/* HTML5 display-role reset for older browsers */
-// 	article, aside, details, figcaption, figure, 
+// 	article, aside, details, figcaption, figure,
 // 	footer, header, hgroup, menu, nav, section {
 // 		display: block;
 // 	}

@@ -1,8 +1,8 @@
-import { createAction, PrepareAction } from "@reduxjs/toolkit";
-import { TaskType } from "App/Models";
+import { createAction } from "@reduxjs/toolkit";
+import { Task, Status, Valve } from "App/redux/models";
 
-const withPayload = <V>(func: (...args: any[]) => V): PrepareAction<V> => {
-	return (...args) => ({ payload: func(...args) });
+const withPayload = <K extends any[], V>(func: (...args: K) => V) => {
+	return (...args: K) => ({ payload: func(...args) });
 };
 
 // ────────────────────────────────────────────────────── II ──────────
@@ -14,7 +14,7 @@ export const togglePanel = createAction(
 	withPayload((panel: string) => ({ panel }))
 );
 
-export const setLoadingScreen = createAction(
+export const setDisplayLoadingScreen = createAction(
 	"loading-screen/toggle",
 	withPayload((showing: boolean) => ({ showing }))
 );
@@ -24,20 +24,22 @@ export const setLoadingScreen = createAction(
 // ────────────────────────────────────────────────────────────────────────────────
 // ValveOverview now get data directly from the valve status, the tasks, and the
 // current task
+export const setValveOverview = createAction(
+	"valveOverview/set",
+	withPayload((valves: Valve[]) => ({ valves }))
+);
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Status
 // ────────────────────────────────────────────────────────────────────────────────
-
-export const updateStatus = createAction(
+export const statusUpdate = createAction(
 	"status/update",
-	withPayload((status: object) => ({ status }))
+	withPayload((status: Status) => ({ ...status }))
 );
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Connection
 // ────────────────────────────────────────────────────────────────────────────────
-
 export const apiConnect = createAction("CONNECTION_CONNECT");
 export const apiTimeout = createAction("CONNECTION_TIMEOUT");
 export const apiSuccess = createAction("CONNECTION_SUCCESS");
@@ -45,20 +47,19 @@ export const apiSuccess = createAction("CONNECTION_SUCCESS");
 // ────────────────────────────────────────────────────────────────────────────────
 // Tasks
 // ────────────────────────────────────────────────────────────────────────────────
-
 export const updateTask = createAction(
 	"task/update",
-	withPayload((id: string, data: Partial<TaskType>) => ({ id, ...data }))
+	withPayload((id: string, data: Partial<Task>) => ({ id, ...data }))
 );
 
 export const toggleTaskValve = createAction(
 	"task/toggle-valve",
-	withPayload((id: string, valveId: string) => ({ id, valveId }))
+	withPayload((id: string, valveId: number) => ({ id, valveId }))
 );
 
-export const updateTaskList = createAction(
-	"tasklist/update",
-	withPayload((tasks: TaskType[]) => ({ tasks }))
+export const replaceTaskList = createAction(
+	"tasklist/replace",
+	withPayload((tasks: Task[]) => ({ tasks }))
 );
 
 export const selectTask = createAction(

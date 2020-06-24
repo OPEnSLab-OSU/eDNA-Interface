@@ -1,40 +1,15 @@
-import store from "./redux/store";
+import { store } from "./redux/store";
 import { base } from "./Static";
 import {
 	apiSuccess,
 	apiTimeout,
 	selectTask,
-	updateStatus,
+	statusUpdate,
 	updateTask,
 	updateTaskList,
 } from "./redux/actions";
 
-//
-// ────────────────────────────────────────────────────── I ──────────
-//   :::::: H E L P E R S : :  :   :    :     :        :          :
-// ────────────────────────────────────────────────────────────────
-//
-
-function objectToQueryString(obj) {
-	return Object.keys(obj)
-		.map((key) => key + "=" + obj[key])
-		.join("&");
-}
-
-
-// ────────────────────────────────────────────────────────────────────────────────
-// The server sends tasklist as an array. This method convert array of objects to
-// a single level object using the given key as direct properties
-// ────────────────────────────────────────────────────────────────────────────────
-const arrayToObject = (array, key) => {
-	return array.reduce(
-		(obj, item) => ({
-			...obj,
-			[item[key]]: item,
-		}),
-		{},
-	);
-};
+import { objectToQueryString, arrayToObject } from "Util";
 
 //
 // ────────────────────────────────────────────── II ──────────
@@ -80,13 +55,14 @@ class APIBuilder {
 
 const get = (path, options = {}) =>
 	new APIBuilder(path, { method: "GET", ...options });
+
 const post = (path, options = {}) =>
 	new APIBuilder(path, { method: "POST", ...options });
 
 async function getStatus(timeout) {
 	try {
 		const status = await get("api/status").withTimeout(timeout).send();
-		store.dispatch(updateStatus(status));
+		store.dispatch(statusUpdate(status));
 		store.dispatch(apiSuccess());
 		return status;
 	} catch (error) {
