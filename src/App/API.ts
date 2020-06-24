@@ -6,10 +6,11 @@ import {
 	selectTask,
 	statusUpdate,
 	updateTask,
-	updateTaskList,
+	replaceTaskList,
 } from "./redux/actions";
 
 import { objectToQueryString, arrayToObject } from "Util";
+import { createTask, Task } from "./redux/models";
 
 //
 // ────────────────────────────────────────────── II ──────────
@@ -18,28 +19,31 @@ import { objectToQueryString, arrayToObject } from "Util";
 //
 
 class APIBuilder {
-	constructor(path, options) {
+	controller!: AbortController;
+	timeout!: number;
+
+	constructor(public path: string, public options: any) {
 		this.path = path;
 		this.options = options;
 	}
 
-	withTimeout(millis) {
+	withTimeout(millis: number) {
 		this.controller = new AbortController();
 		this.timeout = millis;
 		this.options = { ...this.options, signal: this.controller.signal };
 		return this;
 	}
 
-	body(payload) {
+	body(payload: any) {
 		this.options = { ...this.options, body: payload };
 		return this;
 	}
 
-	json(payload) {
+	json(payload: any) {
 		return this.body(JSON.stringify(payload));
 	}
 
-	query(params) {
+	query(params: any) {
 		this.path += "?" + objectToQueryString(params);
 	}
 
@@ -48,18 +52,19 @@ class APIBuilder {
 			setTimeout(() => this.controller.abort(), this.timeout - 10);
 		}
 
-		const response = await fetch(new URL(this.path, base), this.options);
+		const path = new URL(this.path, base);
+		const response = await fetch(path.toString(), this.options);
 		return response.json();
 	}
 }
 
-const get = (path, options = {}) =>
+const get = (path: string, options = {}) =>
 	new APIBuilder(path, { method: "GET", ...options });
 
-const post = (path, options = {}) =>
+const post = (path: string, options = {}) =>
 	new APIBuilder(path, { method: "POST", ...options });
 
-async function getStatus(timeout) {
+async function getStatus(timeout: number) {
 	try {
 		const status = await get("api/status").withTimeout(timeout).send();
 		store.dispatch(statusUpdate(status));
@@ -77,66 +82,71 @@ async function getStatus(timeout) {
 async function getTaskList() {
 	const tasks = await get("api/tasks").send();
 	const taskList = arrayToObject(tasks, "name");
-	store.dispatch(updateTaskList(taskList));
+	store.dispatch(replaceTaskList(taskList));
 	return tasks;
 }
 
-async function getTaskWithName(name) {
+async function getTaskWithName(name: string) {
 	const response = await post("api/task/get")
 		.body(JSON.stringify({ name }))
 		.send();
-	if (response.success) {
-		store.dispatch(updateTask(response.payload));
+
+	const payload = createTask(response.payload);
+	if (response.success && payload) {
+		store.dispatch(updateTask(payload.id, payload));
 	}
 
 	return response;
 }
 
-async function uploadTask(values, path = "api/task/save") {
+async function uploadTask(values: Task, path = "api/task/save") {
 	const response = await post(path).json(values).send();
-	if (response.success) {
-		const updatedTask = response.payload;
-		const { [values.name]: removed, ...taskList } = store.getState().tasks;
-		taskList[updatedTask.name] = updatedTask;
-		store.dispatch(updateTaskList(taskList));
-		store.dispatch(selectTask(updatedTask.name));
+	const payload = createTask(response.payload);
+	if (response.success && payload) {
+		store.dispatch(updateTask(payload.id, payload));
+		store.dispatch(selectTask(payload.id));
 	}
 
 	return response;
 }
 
-async function scheduleTask(name) {
+async function scheduleTask(name: string) {
 	const response = await post("api/task/schedule").json({ name }).send();
-	if (response.success) {
-		store.dispatch(updateTask(response.payload));
+	const payload = createTask(response.payload);
+	if (response.success && payload) {
+		store.dispatch(updateTask(payload.id, payload));
 	}
 	return response;
 }
 
-async function unscheduleTask(name) {
-	const response = post("api/task/unschedule").json({ name }).send();
-	if (response.success) {
-		store.dispatch(updateTask(response.payload));
+async function unscheduleTask(name: string) {
+	const response = await post("api/task/unschedule").json({ name }).send();
+	const payload = createTask(response.payload);
+	if (response.success && payload) {
+		store.dispatch(updateTask(payload.id, payload));
 	}
 
 	return response;
 }
 
-async function createTaskWithName(name) {
+async function createTaskWithName(name: string) {
 	const response = await post("api/task/create").json({ name }).send();
-	if (response.success) {
-		store.dispatch(updateTask(response.payload));
+	const payload = createTask(response.payload);
+	if (response.success && payload) {
+		store.dispatch(updateTask(payload.id, payload));
 	}
 
 	return response;
 }
 
-async function deleteTaskWithName(name) {
+async function deleteTaskWithName(name: string) {
 	const response = await post("api/task/delete").json({ name }).send();
 	if (response.success) {
-		const taskList = store.getState().tasks;
-		delete taskList[name];
-		store.dispatch(updateTaskList(taskList));
+		const tasks = store.getState().tasks;
+		const taskList = Object.values(tasks)
+			.map(t => t as Task)
+			.filter(t => t.name !== name);
+		store.dispatch(replaceTaskList(taskList));
 	}
 
 	return response;
