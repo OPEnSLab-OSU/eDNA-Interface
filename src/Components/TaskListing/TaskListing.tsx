@@ -3,38 +3,39 @@ import { useState } from "preact/hooks";
 import { Form, Formik } from "formik";
 
 import { useDispatch, useSelector } from "react-redux";
-import { selectTask, setDisplayLoadingScreen } from "../../App/redux/actions";
-import * as models from "App/redux/models";
+import { selectTask, setDisplayLoadingScreen } from "App/redux/actions";
 import API from "App/API";
+import { RootState } from "App/redux/store";
+import { Task } from "App";
+
+import classNames from "classnames";
 
 export function TaskListing() {
 	const [editingMode, setEditingMode] = useState(false);
 	const toggleEditingMode = () => setEditingMode(!editingMode);
 
 	const dispatch = useDispatch();
-	const panels = useSelector(state => state.panels);
-	const tasks = useSelector(state => state.tasks);
-	const taskname = useSelector(state => state.selectedTask);
-	const task = tasks[taskname];
+	const panels = useSelector((state: RootState) => state.panels);
+	const tasks = useSelector((state: RootState) => state.tasks);
+	const selectedTaskId = useSelector((state: RootState) => state.selectedTask);
+	const selectedTask = tasks[selectedTaskId];
 
-	// NOTE: Handlers s
-	const handleTaskSelection = async name => {
+	console.log(tasks);
+
+	// NOTE: Handlers
+	const handleTaskSelection = async (id: number) => {
 		dispatch(setDisplayLoadingScreen(true));
-		await API.store.getTaskWithName(name);
-		dispatch(selectTask(name));
+		await API.store.getTaskWithId(id);
+		dispatch(selectTask(id));
 		dispatch(setDisplayLoadingScreen(false));
 	};
 
-	const handleTaskAdd = () => {
-		setEditingMode(mode => !mode);
-	};
-
-	const handleTaskCreate = async values => {
+	const handleTaskCreate = async (values: any) => {
 		dispatch(setDisplayLoadingScreen(true));
-		const { [models.keys.TASK_NAME]: newTaskName } = values;
-		const response = await API.store.createTaskWithName(newTaskName);
+		const { name } = values;
+		const [response, payload] = await API.store.createTaskWithName(name);
 		if (response.success) {
-			dispatch(selectTask(newTaskName));
+			dispatch(selectTask(payload.id!));
 			setEditingMode(false);
 		} else {
 			console.log(response.error);
@@ -46,27 +47,26 @@ export function TaskListing() {
 		<div className="tasklisting">
 			<div className="headline">
 				<div className="title">Tasks</div>
-
-				{/* CONDITIONAL: conditional rendering */}
 				{panels.task && (
 					<button
 						type="button"
 						className="create-group"
-						onClick={handleTaskAdd}>
+						onClick={() => setEditingMode(mode => !mode)}>
 						Create
 					</button>
 				)}
 			</div>
 			<ul>
 				{Object.values(tasks)
-					.sort((a, b) => b.name < a.name)
-					.map(({ name, status }) => (
+					.map(t => t as Task)
+					.sort((a, b) => (a.createdAt > b.createdAt ? 1 : -1))
+					.map(({ id, name, status }) => (
 						<li
-							key={name}
+							key={id}
 							className={classNames({
-								selected: task && task.name === name,
+								selected: selectedTask && selectedTask.id === id,
 							})}
-							onClick={() => handleTaskSelection(name)}>
+							onClick={() => handleTaskSelection(id)}>
 							{name}
 							<span class="right">
 								{status == 1 ? "active" : null}
@@ -74,7 +74,6 @@ export function TaskListing() {
 						</li>
 					))}
 
-				{/* CONDITIONAL: conditional rendering */}
 				{editingMode && (
 					<li className={classNames("edit")}>
 						<Formik
@@ -84,7 +83,6 @@ export function TaskListing() {
 								<Form>
 									<input
 										className="task"
-										name={"name"}
 										ref={ref => ref && ref.focus()}
 										autoFocus
 										{...formik.getFieldProps("name")}

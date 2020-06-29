@@ -7,6 +7,7 @@ import {
 	statusUpdate,
 	updateTask,
 	replaceTaskList,
+	insertTask,
 } from "./redux/actions";
 
 import { objectToQueryString, arrayToObject } from "Util";
@@ -81,19 +82,17 @@ async function getStatus(timeout: number) {
 // ────────────────────────────────────────────────────────────────────────────────
 async function getTaskList() {
 	const tasks = await get("api/tasks").send();
-	const taskList = arrayToObject(tasks, "name");
-	store.dispatch(replaceTaskList(taskList));
+	console.log(tasks);
+	store.dispatch(replaceTaskList(tasks));
 	return tasks;
 }
 
-async function getTaskWithName(name: string) {
-	const response = await post("api/task/get")
-		.body(JSON.stringify({ name }))
-		.send();
+async function getTaskWithId(id: number) {
+	const response = await post("api/task/get").body(JSON.stringify({ id })).send();
 
 	const payload = createTask(response.payload);
 	if (response.success && payload) {
-		store.dispatch(updateTask(payload.id, payload));
+		store.dispatch(updateTask(id, payload));
 	}
 
 	return response;
@@ -110,20 +109,20 @@ async function uploadTask(values: Task, path = "api/task/save") {
 	return response;
 }
 
-async function scheduleTask(name: string) {
-	const response = await post("api/task/schedule").json({ name }).send();
+async function scheduleTask(id: number) {
+	const response = await post("api/task/schedule").json({ id }).send();
 	const payload = createTask(response.payload);
 	if (response.success && payload) {
-		store.dispatch(updateTask(payload.id, payload));
+		store.dispatch(updateTask(id, payload));
 	}
 	return response;
 }
 
-async function unscheduleTask(name: string) {
-	const response = await post("api/task/unschedule").json({ name }).send();
+async function unscheduleTask(id: number) {
+	const response = await post("api/task/unschedule").json({ id }).send();
 	const payload = createTask(response.payload);
 	if (response.success && payload) {
-		store.dispatch(updateTask(payload.id, payload));
+		store.dispatch(updateTask(id, payload));
 	}
 
 	return response;
@@ -131,21 +130,22 @@ async function unscheduleTask(name: string) {
 
 async function createTaskWithName(name: string) {
 	const response = await post("api/task/create").json({ name }).send();
-	const payload = createTask(response.payload);
-	if (response.success && payload) {
-		store.dispatch(updateTask(payload.id, payload));
+	if (response.success) {
+		const payload = createTask(response.payload)!;
+		store.dispatch(insertTask(payload));
+		return [response, payload];
 	}
 
-	return response;
+	return [response, null];
 }
 
-async function deleteTaskWithName(name: string) {
-	const response = await post("api/task/delete").json({ name }).send();
+async function deleteTask(id: number) {
+	const response = await post("api/task/delete").json({ id }).send();
 	if (response.success) {
 		const tasks = store.getState().tasks;
 		const taskList = Object.values(tasks)
 			.map(t => t as Task)
-			.filter(t => t.name !== name);
+			.filter(t => t.id !== id);
 		store.dispatch(replaceTaskList(taskList));
 	}
 
@@ -160,11 +160,11 @@ export default {
 	store: {
 		getStatus,
 		getTaskList,
-		getTaskWithName,
+		getTaskWithId,
 		uploadTask,
 		scheduleTask,
 		unscheduleTask,
 		createTaskWithName,
-		deleteTaskWithName,
+		deleteTask,
 	},
 };

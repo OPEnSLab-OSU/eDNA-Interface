@@ -49,12 +49,17 @@ export const apiSuccess = createAction("CONNECTION_SUCCESS");
 // ────────────────────────────────────────────────────────────────────────────────
 export const updateTask = createAction(
 	"task/update",
-	withPayload((id: string, data: Partial<Task>) => ({ id, ...data }))
+	withPayload((id: number, data: Partial<Task>) => ({ ...data, id }))
+);
+
+export const insertTask = createAction(
+	"task/create",
+	withPayload((data: Task) => ({ data }))
 );
 
 export const toggleTaskValve = createAction(
 	"task/toggle-valve",
-	withPayload((id: string, valveId: number) => ({ id, valveId }))
+	withPayload((id: number, valveId: number) => ({ id, valveId }))
 );
 
 export const replaceTaskList = createAction(
@@ -64,5 +69,5 @@ export const replaceTaskList = createAction(
 
 export const selectTask = createAction(
 	"task/select",
-	withPayload((id: string) => ({ id }))
+	withPayload((id: number) => ({ id }))
 );

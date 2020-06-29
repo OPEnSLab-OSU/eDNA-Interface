@@ -1,5 +1,5 @@
 import * as actions from "./actions";
-import { Task, StatusSchema, Valve, Status } from "App/redux/models";
+import { Task, StatusSchema, Valve, Status, createTask } from "App/redux/models";
 import { createReducer, Dictionary } from "@reduxjs/toolkit";
 import { arrayToObject } from "Util";
 
@@ -40,6 +40,10 @@ export const tasks = createReducer<Dictionary<Task>>({}, builder =>
 				return { ...state, [task.id]: { ...task, ...payload } };
 			}
 		})
+		.addCase(actions.insertTask, (state, { payload }) => {
+			const { data } = payload;
+			return { ...state, [data.id]: data };
+		})
 		.addCase(actions.replaceTaskList, (_, { payload }) => {
 			return arrayToObject(payload.tasks, "id");
 		})
@@ -66,7 +70,7 @@ export const tasks = createReducer<Dictionary<Task>>({}, builder =>
 // For selected task name. Client should get the actual task object from
 // state.tasks
 // ────────────────────────────────────────────────────────────────────────────────
-export const selectedTask = createReducer({}, builder =>
+export const selectedTask = createReducer(0, builder =>
 	builder.addCase(actions.selectTask, (_, { payload }) => payload.id)
 );
 

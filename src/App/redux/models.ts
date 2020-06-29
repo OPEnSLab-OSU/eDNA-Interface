@@ -82,12 +82,14 @@ namespace Schemas {
 // object but this should do for now.
 // prettier-ignore
 const BaseTaskSchema = object({
-	id: string()
-		.nullable()
-		.transform((_, original) => original?? nanoid()),
+	id: number()
+		.nullable(),
 	name: string()
 		.trim()
 		.required(),
+	createdAt: number()
+		.integer()
+		.default(0),
 	status: number()
 		.min(0)
 		.required(),
@@ -114,7 +116,8 @@ export type BaseTask = yup.InferType<typeof BaseTaskSchema>;
 // NOTE: I would like to use get-accessors but I couldn't find a way to make it work
 // with spread operator
 export interface Task extends BaseTask {
-	id: string;
+	id: number;
+	createdAt: number;
 	getDate(): string;
 	getTime(): string;
 }
@@ -126,6 +129,7 @@ export interface Task extends BaseTask {
 export function createTask(raw: BaseTask): Task | undefined {
 	return createWithMixins(raw, BaseTaskSchema, transformed => ({
 		id: transformed.id!,
+		createdAt: transformed.createdAt!,
 		getDate(): string {
 			// Expect this.schedule to be a number
 			const schedule = (this as any).schedule;

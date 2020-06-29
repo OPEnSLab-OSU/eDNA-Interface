@@ -1,3 +1,3 @@
-export * from "./TaskListing.js";
+export * from "./TaskListing.tsx";
 
 import "./TaskListing.scss";
