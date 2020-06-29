@@ -1,1 +1,1 @@
-export * from "./TopLevelConfig.js";
+export * from "./TopLevelConfig.jsx";
