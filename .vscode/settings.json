@@ -1,3 +1,8 @@
 {
-	// "prettier.disableLanguages": ["javascript", "typescript"]
+	"prettier.disableLanguages": [
+		"javascript",
+		"javascriptreact",
+		"typescript",
+		"typescriptreact"
+	]
 }

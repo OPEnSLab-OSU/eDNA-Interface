@@ -1,139 +1,45 @@
 {
 	"env": {
 		"browser": true,
-		"es2020": true,
-		"es6": true,
-		"node": true
+		"es2020": true
 	},
-	"extends": ["eslint:recommended", "plugin:react/recommended"],
 	"globals": {
 		"Atomics": "readonly",
-		"SharedArrayBuffer": "readonly",
-		"classNames": true
+		"SharedArrayBuffer": "readonly"
 	},
-	"parser": "babel-eslint",
+	"extends": ["airbnb-typescript-prettier"],
+	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
-		"ecmaFeatures": {
-			"experimentalObjectRestSpread": true,
-			"jsx": true
-		},
+		"sourceType": "module",
 		"ecmaVersion": 2020,
-		"sourceType": "module"
-	},
-	"plugins": ["react", "@typescript-eslint"],
-	"rules": {
-		"block-spacing": ["error", "always"],
-		"brace-style": ["error", "1tbs"],
-		"comma-spacing": [
-			"error",
-			{
-				"after": true
-			}
-		],
-		"comma-dangle": ["error", "always-multiline"],
-		"indent": [
-			"error",
-			"tab",
-			{
-				"ObjectExpression": "first"
-			}
-		],
-		"key-spacing": [
-			"error",
-			{
-				"afterColon": true
-			}
-		],
-		"keyword-spacing": "error",
-		"linebreak-style": ["error", "unix"],
-		"newline-per-chained-call": [
-			"error",
-			{
-				"ignoreChainWithDepth": 3
-			}
-		],
-		"no-console": "off",
-		"no-empty": "off",
-		"no-fallthrough": "off",
-		"no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
-		"no-unused-vars": [
-			"warn",
-			{
-				"argsIgnorePattern": "_|props|h",
-				"ignoreRestSiblings": true,
-				"varsIgnorePattern": "_|props|h"
-			}
-		],
-		"object-curly-newline": [
-			"error",
-			{
-				"ExportDeclaration": {
-					"minProperties": 5,
-					"multiline": true
-				},
-				"ImportDeclaration": {
-					"consistent": true,
-					"multiline": true
-				},
-				"ObjectExpression": {
-					"multiline": true
-				},
-				"ObjectPattern": {
-					"multiline": true
-				}
-			}
-		],
-		"object-curly-spacing": ["error", "always"],
-		"object-property-newline": [
-			"error",
-			{ "allowAllPropertiesOnSameLine": true }
-		],
-		"quotes": ["error", "double"],
-		"react/jsx-curly-spacing": "error",
-		"react/jsx-no-comment-textnodes": "error",
-		"react/jsx-no-undef": "error",
-		"react/jsx-uses-react": "error",
-		"react/jsx-uses-vars": "error",
-		"react/no-find-dom-node": "error",
-		"react/no-is-mounted": "error",
-		"react/no-string-refs": "error",
-		"react/no-unknown-property": ["error", { "ignore": ["class", "for"] }],
-		"react/prop-types": "off",
-		"require-atomic-updates": "off",
-		"semi": "error",
-		"sort-imports": ["error", { "ignoreDeclarationSort": true }],
-		"space-infix-ops": "error"
+		"ecmaFeatures": {
+			"jsx": true
+		}
 	},
 	"settings": {
 		"react": {
 			"pragma": "h",
 			"version": "preact"
+		},
+		"import/resolver": {
+			"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
 		}
 	},
-	"overrides": [
-		{
-			// "extends": [
-			// 	"eslint:recommended",
-			// 	"plugin:react/recommended",
-			// 	"plugin:@typescript-eslint/eslint-recommended",
-			// 	"plugin:@typescript-eslint/recommended"
-			// ],
-			"files": ["**/*.ts", "**/*.tsx"],
-			"parser": "@typescript-eslint/parser",
-			"parserOptions": {
-				"project": "./tsconfig.json"
-			},
-			"plugins": ["@typescript-eslint"],
-			"rules": {
-				"indent": "off",
-				"@typescript-eslint/indent": [
-					"error",
-					"tab",
-					{
-						"ObjectExpression": "first"
-					}
-				]
+	"rules": {
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/no-namespace": "off",
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{
+				"args": "none"
 			}
-		}
-	]
+		],
+		"@typescript-eslint/no-var-requires": "off",
+		"consistent-return": "off",
+		"import/no-default-export": "off",
+		"import/prefer-default-export": "off",
+		"no-unused-expressions": "off",
+		"no-param-reassign": "off"
+	}
 }
