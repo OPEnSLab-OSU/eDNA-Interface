@@ -5,8 +5,9 @@ const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
-const entryPath = path.resolve(__dirname, "src/index.tsx");
+const entryPath = path.resolve(__dirname, "src/index");
 const outputPath = path.resolve(__dirname, "dist");
 
 module.exports = {
@@ -32,6 +33,7 @@ module.exports = {
 		new CompressionPlugin(),
 		new HtmlWebpackInlineSourcePlugin(),
 		new HtmlWebpackHarddiskPlugin(),
+		new ForkTsCheckerWebpackPlugin(),
 		// new webpack.HotModuleReplacementPlugin()
 	],
 	resolve: {
@@ -41,7 +43,7 @@ module.exports = {
 			react: "preact/compat",
 			"react-dom": "preact/compat",
 
-			// Top level resolves
+			// // // Top level resolves
 			Components: path.resolve(__dirname, "src/Components"),
 			App: path.resolve(__dirname, "src/App"),
 			Hooks: path.resolve(__dirname, "src/Hooks"),
@@ -58,6 +60,10 @@ module.exports = {
 				test: /\.tsx?$/,
 				exclude: [path.resolve(__dirname, "node_modules")],
 				loader: "ts-loader",
+				options: {
+					// disable type checker - we will use it in fork plugin
+					transpileOnly: true,
+				},
 			},
 			{
 				// Run JS files through Babel

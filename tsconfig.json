@@ -15,11 +15,13 @@
 			"Components/*": ["./src/Components/*"],
 			"Util": ["./src/Util"],
 			"Util/*": ["./src/Util/*"]
+			// "M": ["./src/Libraries"]
 		},
 		"sourceMap": true,
 		"target": "es5",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
-		"noEmitOnError": false
+		"noEmitOnError": false,
+		"importsNotUsedAsValues": "preserve"
 	},
 	"exclude": [
 		"node_modules",
