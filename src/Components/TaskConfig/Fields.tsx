@@ -1,9 +1,10 @@
-import { Fragment, h } from "preact";
+import { Fragment, h, FunctionalComponent } from "preact";
 import { BasicTextField, TextFieldComponent } from "Components/TextField";
 import { useFormContext } from "react-hook-form";
-import * as React from "react";
 
-export const FormControlledTimeFields: React.FC<{ disabled: boolean }> = props => {
+export const FormControlledTimeFields: FunctionalComponent<{ disabled: boolean }> = (
+	props
+) => {
 	const { register, errors } = useFormContext();
 	const fields = ["hour", "minute", "second"];
 
@@ -11,14 +12,14 @@ export const FormControlledTimeFields: React.FC<{ disabled: boolean }> = props =
 		<TextFieldComponent className="textfield time">
 			{() => (
 				<Fragment>
-					{fields.map(name => (
+					{fields.map((name) => (
 						<input
 							key={name}
 							name={name}
 							ref={register({ required: true })}
 							className="input"
 							type="number"
-							placeholder={name + "s"}
+							placeholder={`${name}s`}
 							disabled={props.disabled ?? false}
 						/>
 					))}
@@ -32,7 +33,9 @@ interface TaskValveFieldsProps {
 	valves?: string[];
 }
 
-export const FormControlledValveFields: React.FC<TaskValveFieldsProps> = props => {
+export const FormControlledValveFields: FunctionalComponent<TaskValveFieldsProps> = (
+	props
+) => {
 	const valves = props.valves ?? ["No Valve has been assigned"];
 	return (
 		<TextFieldComponent
@@ -41,7 +44,7 @@ export const FormControlledValveFields: React.FC<TaskValveFieldsProps> = props =
 			helpertext="Valves assigned to this task">
 			{() => (
 				<div className="valve-badge-container">
-					{valves.map(v => (
+					{valves.map((v) => (
 						<span key={v} className="valve-badge">
 							{v}
 						</span>
@@ -52,12 +55,12 @@ export const FormControlledValveFields: React.FC<TaskValveFieldsProps> = props =
 	);
 };
 
-export const FormControlledNotes: React.FC<any> = props => {
+export const FormControlledNotes: React.FC<any> = (props) => {
 	const { register } = useFormContext();
 
 	return (
 		<TextFieldComponent className="textfield textarea" {...props}>
-			{() => <textarea className={"input"} name="notes" ref={register} />}
+			{() => <textarea className="input" name="notes" ref={register} />}
 		</TextFieldComponent>
 	);
 };
@@ -67,7 +70,7 @@ export const FormControlledTextField: React.FC<{
 	title: string;
 	helpertext?: string;
 	onChange?: React.FormEventHandler<HTMLInputElement>;
-}> = props => {
+}> = (props) => {
 	const { register, errors } = useFormContext();
 	return <BasicTextField ref={register} errors={errors[props.name]} {...props} />;
 };

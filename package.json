@@ -6,7 +6,8 @@
 		"build": "webpack --mode production",
 		"build:dev": "nodemon --watch webpack.config.js --exec 'webpack --mode development --watch'",
 		"start": "nodemon --watch webpack.config.js --exec 'webpack-dev-server'",
-		"reinstall": "rm -rf node_modules && npm install"
+		"reinstall": "rm -rf node_modules && npm install",
+		"lint": "eslint --ext .js,.ts,.jsx,.tsx ./src"
 	},
 	"keywords": [],
 	"author": "",

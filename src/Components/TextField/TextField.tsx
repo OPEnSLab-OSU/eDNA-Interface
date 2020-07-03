@@ -33,12 +33,7 @@ export const TextFieldComponent: FunctionComponent<TextFieldProps> = ({
 	// delete (props as any).class;
 	const inputComponent = children ?? (
 		<Fragment>
-			<input
-				className="input"
-				name={name}
-				ref={register}
-				required={required}
-			/>
+			<input className="input" name={name} ref={register} required={required} />
 			<label className="title" htmlFor={name}>
 				{title}
 			</label>

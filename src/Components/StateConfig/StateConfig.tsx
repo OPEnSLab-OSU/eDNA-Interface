@@ -1,7 +1,8 @@
 import { h } from "preact";
 import { useDispatch } from "react-redux";
-
 import { BasicTextField } from "Components/TextField";
+
+import cn from "classnames";
 
 function capitalizeFirst(str: string) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
@@ -24,19 +25,20 @@ function capitalizeFirst(str: string) {
 function StateConfig({ config, colorIndex, disabled }: any) {
 	return (
 		<div className="config">
-			{/* <h2 className={classNames("headline", "background-accent-" + (colorIndex + 1))}>
+			<h2 className={cn("headline", `background-accent-${colorIndex + 1}`)}>
 				{config.name}
-				<i className={classNames("square", "background-accent-" + (colorIndex + 1))}></i>
+				<i className={cn("square", `background-accent-${colorIndex + 1}`)} />
 			</h2>
 			<div className="content">
-				{config.properties.map((property, i) => (
-					<FormikConfigField key={i}
+				{config.properties.map((property: any) => (
+					<BasicTextField
+						key={property.name}
 						configName={config.name}
 						disabled={disabled}
 						{...property}
 					/>
 				))}
-			</div> */}
+			</div>
 		</div>
 	);
 }

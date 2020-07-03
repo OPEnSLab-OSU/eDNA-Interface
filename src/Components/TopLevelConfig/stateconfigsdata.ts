@@ -6,13 +6,11 @@ export const stateConfigData = {
 				name: "duration",
 				alias: "time",
 				type: "number",
-				description:
-					"Controls how long before transitioning to the sample state",
+				description: "Controls how long before transitioning to the sample state",
 			},
 			{
 				name: "volume",
-				description:
-					"Controls how much water will be used to flush the system",
+				description: "Controls how much water will be used to flush the system",
 			},
 		],
 	},
@@ -23,8 +21,7 @@ export const stateConfigData = {
 				name: "duration",
 				alias: "time",
 				type: "number",
-				description:
-					"Controls how long before transitioning to the dry state",
+				description: "Controls how long before transitioning to the dry state",
 			},
 			{
 				name: "volume",
@@ -58,8 +55,7 @@ export const stateConfigData = {
 				name: "duration",
 				alias: "time",
 				type: "number",
-				description:
-					"Controls how long before transitioning to the stop state",
+				description: "Controls how long before transitioning to the stop state",
 			},
 		],
 	},

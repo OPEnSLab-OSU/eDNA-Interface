@@ -137,11 +137,7 @@ export function createTask(raw: BaseTask): Task | undefined {
 			}
 
 			const date = new Date(schedule * 1000);
-			const components = [
-				date.getFullYear(),
-				date.getMonth() + 1,
-				date.getDate(),
-			];
+			const components = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
 			return components.map((c) => c.toString().padStart(2, "0")).join("-");
 		},
 

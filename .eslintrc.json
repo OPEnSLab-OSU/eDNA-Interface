@@ -38,6 +38,7 @@
 		"import/prefer-default-export": "off",
 		"no-param-reassign": "off",
 		"no-unused-expressions": "off",
-		"react/jsx-props-no-spreading": "off"
+		"react/jsx-props-no-spreading": "off",
+		"react/destructuring-assignment": "off"
 	}
 }

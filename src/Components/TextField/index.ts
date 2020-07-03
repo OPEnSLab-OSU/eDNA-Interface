@@ -1,2 +1,3 @@
-export * from "./TextField";
 import "./TextField.scss";
+
+export * from "./TextField";

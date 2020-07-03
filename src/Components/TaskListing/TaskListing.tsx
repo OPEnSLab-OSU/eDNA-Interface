@@ -103,9 +103,7 @@ export function TaskListing() {
 						<li
 							key={id}
 							className={cn({ selected: selectedTask?.id === id })}>
-							<button
-								type="button"
-								onClick={() => handleTaskSelection(id)}>
+							<button type="button" onClick={() => handleTaskSelection(id)}>
 								{name}
 								<span className="right">
 									{status === 1 ? "active" : null}

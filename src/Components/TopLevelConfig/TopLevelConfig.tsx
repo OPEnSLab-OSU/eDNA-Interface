@@ -68,9 +68,7 @@ export function TopLevelConfig() {
 
 	return (
 		<div className="stateconfig">
-			<div className="column">
-				<TaskConfig expanded />
-			</div>
+			<div className="column">{/* <TaskConfig expanded /> */}</div>
 			{/* <div className="column">
 				<StateConfig
 					config={StateConfigs.flush}

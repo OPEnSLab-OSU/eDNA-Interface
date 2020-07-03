@@ -38,9 +38,7 @@ function makeStatusItemData(
 	return [
 		{
 			name: "State",
-			properties: [
-				{ name: "current", value: String(currentState).toUpperCase() },
-			],
+			properties: [{ name: "current", value: String(currentState).toUpperCase() }],
 		},
 		{
 			name: "Valve",

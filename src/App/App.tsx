@@ -70,10 +70,7 @@ export function App() {
 	return (
 		<div className="app">
 			{panels.status && (
-				<Status
-					connection={connection}
-					setStatusUpdating={setStatusUpdating}
-				/>
+				<Status connection={connection} setStatusUpdating={setStatusUpdating} />
 			)}
 			<main className={classNames("main", { showTask: panels.task })}>
 				<Dropbar />

@@ -31,10 +31,7 @@ export const objectToQueryString = (obj: { [key: string]: any }) => {
 		.join("&");
 };
 
-export const partition = <T extends any>(
-	ary: T[],
-	predicate: (elem: T) => boolean
-) => {
+export const partition = <T extends any>(ary: T[], predicate: (elem: T) => boolean) => {
 	const a: T[] = [];
 	const b: T[] = [];
 	ary.forEach((e) => (predicate(e) ? a.push(e) : b.push(e)));

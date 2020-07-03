@@ -3,7 +3,7 @@
 	"useTabs": true,
 	"trailingComma": "es5",
 	"arrowParens": "always",
-	"printWidth": 84,
+	"printWidth": 90,
 	"jsxBracketSameLine": true,
 	"bracketSpacing": true,
 	"jsxSingleQuote": false,
