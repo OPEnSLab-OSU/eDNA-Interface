@@ -21,14 +21,8 @@
 		"target": "es5",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"noEmitOnError": false,
-		"importsNotUsedAsValues": "preserve"
+		"importsNotUsedAsValues": "preserve",
+		"allowSyntheticDefaultImports": true
 	},
-	"exclude": [
-		"node_modules",
-		"**/node_modules/*",
-		"dist",
-		"**/dist/*",
-		"public",
-		"**public/*"
-	]
+	"exclude": ["node_modules", "node_modules.nosync", "dist", "public"]
 }

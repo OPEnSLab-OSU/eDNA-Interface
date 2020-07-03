@@ -1,18 +1,19 @@
 import { h } from "preact";
 import { useDispatch, useSelector } from "react-redux";
 import { setDisplayLoadingScreen, togglePanel } from "App/redux/actions";
-
-import API from "App/API";
+import classNames from "classnames";
+import { API } from "App/API";
+import { RootState } from "App/redux/store";
 
 export function Dropbar() {
-	const panels = useSelector(state => state.panels);
+	const panels = useSelector((state: RootState) => state.panels);
 	const dispatch = useDispatch();
 
 	// timeZoneOffset is used to report local time in server
 	const updateRTC = async () => {
 		const payload = {
-			utc: Math.floor(Date.now() / 1000), 
-			timezoneOffset: new Date().getTimezoneOffset() 
+			utc: Math.floor(Date.now() / 1000),
+			timezoneOffset: new Date().getTimezoneOffset(),
 		};
 
 		dispatch(setDisplayLoadingScreen(true));
@@ -24,17 +25,23 @@ export function Dropbar() {
 		<div className="dropbar">
 			<nav className="nav">
 				<ul className="left-section">
-					<li className={classNames("toggle", { "active": panels.status })} 
+					<button
+						type="button"
+						className={classNames("toggle", { active: panels.status })}
 						onClick={() => dispatch(togglePanel("status"))}>
 						status
-					</li>
+					</button>
 				</ul>
 				<ul className="right-section">
-					<li className="toggle" onClick={updateRTC}>update rtc</li>
-					<li className={classNames("toggle", { "active": panels.task })}
+					<button type="button" className="toggle" onClick={updateRTC}>
+						update rtc
+					</button>
+					<button
+						type="button"
+						className={classNames("toggle", { active: panels.task })}
 						onClick={() => dispatch(togglePanel("task"))}>
 						tasks
-					</li>
+					</button>
 				</ul>
 			</nav>
 		</div>

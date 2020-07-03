@@ -10,12 +10,12 @@ import {
 } from "./actions";
 import * as reducers from "./reducers";
 
-const logger: Middleware = store => next => action => {
+const logger: Middleware = (store) => (next) => (action) => {
 	next(action);
 	console.log(store.getState());
 };
 
-const valveStatusExtractor: Middleware = store => next => action => {
+const valveStatusExtractor: Middleware = (store) => (next) => (action) => {
 	const statusText = ["sampled", "free", "operating"];
 	if (action.type === statusUpdate.type) {
 		const statusUpdateAction = action as ReturnType<typeof statusUpdate>;
@@ -37,7 +37,7 @@ const valveStatusExtractor: Middleware = store => next => action => {
 const rootReducer = combineReducers(reducers);
 export const store = configureStore({
 	reducer: rootReducer,
-	middleware: getDefaultMiddleware =>
+	middleware: (getDefaultMiddleware) =>
 		getDefaultMiddleware({
 			serializableCheck: {
 				ignoredActions: [

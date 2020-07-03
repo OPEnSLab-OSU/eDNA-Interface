@@ -1,2 +1,3 @@
-export * from "./Status";
 import "./Status.scss";
+
+export * from "./Status";

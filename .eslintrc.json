@@ -25,22 +25,19 @@
 			"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
 		}
 	},
+	"plugins": ["compat"],
 	"rules": {
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-namespace": "off",
-		"@typescript-eslint/no-unused-vars": [
-			"warn",
-			{
-				"args": "none"
-			}
-		],
+		"@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
 		"@typescript-eslint/no-var-requires": "off",
 		"consistent-return": "off",
+		"eqeqeq": "off",
 		"import/no-default-export": "off",
 		"import/prefer-default-export": "off",
-		"no-unused-expressions": "off",
 		"no-param-reassign": "off",
+		"no-unused-expressions": "off",
 		"react/jsx-props-no-spreading": "off"
 	}
 }

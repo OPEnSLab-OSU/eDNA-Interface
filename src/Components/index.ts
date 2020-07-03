@@ -6,5 +6,5 @@ export * from "./TaskConfig";
 export * from "./TaskListing";
 export * from "./TextField";
 export * from "./ValveOverview";
-export * from "./LoadingScreen"; 
+export * from "./LoadingScreen";
 export * from "./TopLevelConfig";

@@ -7,6 +7,7 @@ type IStateNodeProps = { name: string; color: string | null; position: number };
 function StateNode({ name, color, position }: IStateNodeProps) {
 	return (
 		<button
+			type="button"
 			className={classNames("state-node")}
 			style={`color: ${color}`}
 			disabled={color === null}>

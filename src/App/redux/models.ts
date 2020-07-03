@@ -1,6 +1,5 @@
 import * as yup from "yup";
 import { array, number, object, string, boolean } from "yup";
-import { nanoid } from "@reduxjs/toolkit";
 
 //
 // ──────────────────────────────────────────────── I ──────────
@@ -127,14 +126,14 @@ export interface Task extends BaseTask {
 // date and time. Otherwise returns undefined.
 // ────────────────────────────────────────────────────────────────────────────────
 export function createTask(raw: BaseTask): Task | undefined {
-	return createWithMixins(raw, BaseTaskSchema, transformed => ({
+	return createWithMixins(raw, BaseTaskSchema, (transformed) => ({
 		id: transformed.id!,
 		createdAt: transformed.createdAt!,
 		getDate(): string {
 			// Expect this.schedule to be a number
-			const schedule = (this as any).schedule;
-			if (typeof schedule != "number") {
-				throw "Schedule is not a number";
+			const { schedule } = this as any;
+			if (typeof schedule !== "number") {
+				throw new Error("Schedule is not a number");
 			}
 
 			const date = new Date(schedule * 1000);
@@ -143,19 +142,19 @@ export function createTask(raw: BaseTask): Task | undefined {
 				date.getMonth() + 1,
 				date.getDate(),
 			];
-			return components.map(c => c.toString().padStart(2, "0")).join("-");
+			return components.map((c) => c.toString().padStart(2, "0")).join("-");
 		},
 
 		getTime(): string {
 			// Expect this.schedule to be a number
-			const schedule = (this as any).schedule;
-			if (typeof schedule != "number") {
-				throw "Schedule is not a number";
+			const { schedule } = this as any;
+			if (typeof schedule !== "number") {
+				throw new Error("Schedule is not a number");
 			}
 
 			const date = new Date(schedule * 1000);
 			const components = [date.getHours(), date.getMinutes()];
-			return components.map(c => c.toString().padStart(2, "0")).join(":");
+			return components.map((c) => c.toString().padStart(2, "0")).join(":");
 		},
 	}));
 }
@@ -185,6 +184,7 @@ console.log(b.name, b.date(), b.time(), b); */
 namespace Schemas {
 	export const statusField = number().nullable().default(null);
 }
+
 // prettier-ignore
 export const StatusSchema = object({
 	currentState: string()
@@ -192,7 +192,7 @@ export const StatusSchema = object({
 		.nullable(),
 	valves: array(number().min(0).defined())
 		.ensure(),
-	time: number()
+	utc: number()
 		.min(0)
 		.nullable(),
 	pressure: Schemas.statusField,

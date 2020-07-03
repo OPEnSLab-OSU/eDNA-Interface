@@ -1,3 +1,4 @@
+import { objectToQueryString, arrayToObject } from "Util";
 import { store } from "./redux/store";
 import { base } from "./Static";
 import {
@@ -10,7 +11,6 @@ import {
 	insertTask,
 } from "./redux/actions";
 
-import { objectToQueryString, arrayToObject } from "Util";
 import { createTask, Task } from "./redux/models";
 
 //
@@ -21,6 +21,7 @@ import { createTask, Task } from "./redux/models";
 
 class APIBuilder {
 	controller!: AbortController;
+
 	timeout!: number;
 
 	constructor(public path: string, public options: any) {
@@ -45,7 +46,7 @@ class APIBuilder {
 	}
 
 	query(params: any) {
-		this.path += "?" + objectToQueryString(params);
+		this.path += `?${objectToQueryString(params)}`;
 	}
 
 	async send() {
@@ -142,21 +143,21 @@ async function createTaskWithName(name: string) {
 async function deleteTask(id: number) {
 	const response = await post("api/task/delete").json({ id }).send();
 	if (response.success) {
-		const tasks = store.getState().tasks;
+		const { tasks } = store.getState();
 		const taskList = Object.values(tasks)
-			.map(t => t as Task)
-			.filter(t => t.id !== id);
+			.map((t) => t as Task)
+			.filter((t) => t.id !== id);
 		store.dispatch(replaceTaskList(taskList));
 	}
 
 	return response;
 }
 
-export default {
+export const API = {
 	get,
 	post,
 
-	// APIs that modifies redux store upon success
+	// APIs that directly modifies the redux store upon success
 	store: {
 		getStatus,
 		getTaskList,

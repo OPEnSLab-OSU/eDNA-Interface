@@ -1,7 +1,7 @@
-import * as actions from "./actions";
-import { Task, StatusSchema, Valve, Status, createTask } from "App/redux/models";
+import { Task, StatusSchema, Valve, Status } from "App/redux/models";
 import { createReducer, Dictionary } from "@reduxjs/toolkit";
 import { arrayToObject } from "Util";
+import * as actions from "./actions";
 
 //
 // ────────────────────────────────────────────────────── I ──────────
@@ -22,7 +22,7 @@ function ifElse<B extends boolean, T, K>(c: B, a: T, b: K) {
 // ────────────────────────────────────────────────────────────────────────────────
 // Representing the visibility all panels currently on screen
 // ────────────────────────────────────────────────────────────────────────────────
-export const panels = createReducer({ status: true, task: true }, builder =>
+export const panels = createReducer({ status: true, task: true }, (builder) =>
 	builder.addCase(actions.togglePanel, (state, { payload }) => ({
 		...state,
 		...payload,
@@ -32,7 +32,7 @@ export const panels = createReducer({ status: true, task: true }, builder =>
 // ────────────────────────────────────────────────────────────────────────────────
 // Reducer for all tasks object
 // ────────────────────────────────────────────────────────────────────────────────
-export const tasks = createReducer<Dictionary<Task>>({}, builder =>
+export const tasks = createReducer<Dictionary<Task>>({}, (builder) =>
 	builder
 		.addCase(actions.updateTask, (state, { payload }) => {
 			const task = state[payload.id];
@@ -48,21 +48,21 @@ export const tasks = createReducer<Dictionary<Task>>({}, builder =>
 			return arrayToObject(payload.tasks, "id");
 		})
 		.addCase(actions.toggleTaskValve, (state, { payload }) => {
-			const { id, valveId } = payload;
-			const task = state[id];
+			const { id: taskId, valveId } = payload;
+			const task = state[taskId];
 			if (!task) {
 				return;
 			}
 
-			const valves = task.valves;
-			const index = valves.findIndex(id => id === valveId);
+			const { valves } = task;
+			const index = valves.findIndex((id) => id === valveId);
 			const newTask = ifElse(
 				index > -1,
-				{ ...task, valves: valves.filter(id => id !== valveId) },
+				{ ...task, valves: valves.filter((id) => id !== valveId) },
 				{ ...task, valves: [...valves, valveId] }
 			);
 
-			return { ...state, [id]: newTask };
+			return { ...state, [taskId]: newTask };
 		})
 );
 
@@ -70,7 +70,7 @@ export const tasks = createReducer<Dictionary<Task>>({}, builder =>
 // For selected task name. Client should get the actual task object from
 // state.tasks
 // ────────────────────────────────────────────────────────────────────────────────
-export const selectedTask = createReducer(0, builder =>
+export const selectedTask = createReducer(0, (builder) =>
 	builder.addCase(actions.selectTask, (_, { payload }) => payload.id)
 );
 
@@ -86,9 +86,9 @@ const initialValves: { all: Valve[] } = {
 	})),
 };
 
-export const valves = createReducer(initialValves, builder =>
+export const valves = createReducer(initialValves, (builder) =>
 	builder.addCase(actions.setValveOverview, (state, { payload }) => {
-		payload.valves.forEach(v => {
+		payload.valves.forEach((v) => {
 			state.all[v.id] = v;
 		});
 	})
@@ -98,7 +98,7 @@ export const valves = createReducer(initialValves, builder =>
 // Representing the state of the loading screen
 // ────────────────────────────────────────────────────────────────────────────────
 const initialLoadingScreen = { show: false, hide: true };
-export const loadingScreen = createReducer(initialLoadingScreen, builder =>
+export const loadingScreen = createReducer(initialLoadingScreen, (builder) =>
 	builder.addCase(actions.setDisplayLoadingScreen, (_, { payload }) => ({
 		show: payload.showing,
 		hide: !payload.showing,
@@ -109,7 +109,7 @@ export const loadingScreen = createReducer(initialLoadingScreen, builder =>
 // State reducer for the general status of the sampler
 // ────────────────────────────────────────────────────────────────────────────────
 const initialStatus = StatusSchema.default();
-export const status = createReducer<Status>(initialStatus, builder =>
+export const status = createReducer<Status>(initialStatus, (builder) =>
 	builder.addCase(actions.statusUpdate, (state, { payload }) => ({
 		...state,
 		...payload,
@@ -120,7 +120,7 @@ export const status = createReducer<Status>(initialStatus, builder =>
 // Keeping track of the state of the status connection.
 // ────────────────────────────────────────────────────────────────────────────────
 const initialConnection = { statusText: "offline", attempts: 0 };
-export const connection = createReducer(initialConnection, builder =>
+export const connection = createReducer(initialConnection, (builder) =>
 	builder
 		.addCase(actions.apiConnect, () => ({
 			statusText: "connecting",
@@ -130,7 +130,7 @@ export const connection = createReducer(initialConnection, builder =>
 			statusText: "online",
 			attempts: 0,
 		}))
-		.addCase(actions.apiTimeout, state => ({
+		.addCase(actions.apiTimeout, (state) => ({
 			statusText: state.attempts >= 3 ? "offline" : "timeout",
 			attempts: state.attempts + 1,
 		}))

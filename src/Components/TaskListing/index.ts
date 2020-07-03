@@ -1,3 +1,3 @@
-export * from "./TaskListing";
-
 import "./TaskListing.scss";
+
+export * from "./TaskListing";

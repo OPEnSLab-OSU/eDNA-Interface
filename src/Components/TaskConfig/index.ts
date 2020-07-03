@@ -1,2 +1,3 @@
-export * from "./TaskConfig";
 import "./TaskConfig.scss";
+
+export * from "./TaskConfig";

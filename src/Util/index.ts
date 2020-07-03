@@ -20,15 +20,25 @@
 // ────────────────────────────────────────────────────────────────────────────────
 // Combine two arrays into an array of tuple. See Python's zip for details.
 // ────────────────────────────────────────────────────────────────────────────────
-export const zip = <T, K>(a: T[], b: K[]) => a.map((k, i) => [k, b[i]]);
+export const zip = <T, K>(a: T[], b: K[]): [T, K][] => a.map((k, i) => [k, b[i]]);
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Convert object to query string
 // ────────────────────────────────────────────────────────────────────────────────
 export const objectToQueryString = (obj: { [key: string]: any }) => {
 	return Object.keys(obj)
-		.map(key => key + "=" + obj[key])
+		.map((key) => `${key}=${obj[key]}`)
 		.join("&");
+};
+
+export const partition = <T extends any>(
+	ary: T[],
+	predicate: (elem: T) => boolean
+) => {
+	const a: T[] = [];
+	const b: T[] = [];
+	ary.forEach((e) => (predicate(e) ? a.push(e) : b.push(e)));
+	return [a, b] as const;
 };
 
 // ────────────────────────────────────────────────────────────────────────────────

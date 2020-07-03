@@ -1,30 +1,24 @@
 import { Fragment, h } from "preact";
-import { useField, useFormikContext } from "formik";
-import {
-	BasicTextField,
-	TextFieldProps,
-	TextFieldComponent,
-} from "Components/TextField";
+import { BasicTextField, TextFieldComponent } from "Components/TextField";
+import { useFormContext } from "react-hook-form";
+import * as React from "react";
 
-function TaskScheduleTimeFields(props: TextFieldProps) {
-	const { getFieldProps, getFieldMeta } = useFormikContext();
+export const FormControlledTimeFields: React.FC<{ disabled: boolean }> = props => {
+	const { register, errors } = useFormContext();
 	const fields = ["hour", "minute", "second"];
-	// const mapsFieldsToProps = fields.map(getFieldProps);
-	const mapsFieldsToMetas = fields.map(getFieldMeta);
-	const errors = mapsFieldsToMetas.filter(m => m.error).map(m => m.error);
 
 	return (
-		<TextFieldComponent className="textfield time" {...props} errors={errors}>
+		<TextFieldComponent className="textfield time">
 			{() => (
 				<Fragment>
-					{["hour", "minute", "second"].map(t => (
+					{fields.map(name => (
 						<input
-							key={t}
+							key={name}
+							name={name}
+							ref={register({ required: true })}
 							className="input"
 							type="number"
-							placeholder={t + "s"}
-							required
-							{...getFieldProps(t)}
+							placeholder={name + "s"}
 							disabled={props.disabled ?? false}
 						/>
 					))}
@@ -32,16 +26,20 @@ function TaskScheduleTimeFields(props: TextFieldProps) {
 			)}
 		</TextFieldComponent>
 	);
+};
+
+interface TaskValveFieldsProps {
+	valves?: string[];
 }
 
-function TaskValveFields(props) {
-	const { values } = useFormikContext();
-	const __valves = values.valves;
-	const valves = __valves.length == 0 ? ["No Valve has been assigned"] : __valves;
-
+export const FormControlledValveFields: React.FC<TaskValveFieldsProps> = props => {
+	const valves = props.valves ?? ["No Valve has been assigned"];
 	return (
-		<TextFieldComponent className="textfield valves" {...props}>
-			{_ => (
+		<TextFieldComponent
+			className="textfield valves"
+			title="Valves *"
+			helpertext="Valves assigned to this task">
+			{() => (
 				<div className="valve-badge-container">
 					{valves.map(v => (
 						<span key={v} className="valve-badge">
@@ -52,34 +50,24 @@ function TaskValveFields(props) {
 			)}
 		</TextFieldComponent>
 	);
-}
+};
 
-function BasicTextArea(props) {
-	const { getFieldProps } = useFormikContext();
+export const FormControlledNotes: React.FC<any> = props => {
+	const { register } = useFormContext();
+
 	return (
 		<TextFieldComponent className="textfield textarea" {...props}>
-			{rest => (
-				<textarea
-					name="notes"
-					className={"input"}
-					{...rest}
-					{...getFieldProps("notes")}
-				/>
-			)}
+			{() => <textarea className={"input"} name="notes" ref={register} />}
 		</TextFieldComponent>
 	);
-}
+};
 
-function FormikControlledTextField(props) {
-	const [fields, meta, helpers] = useField(props);
-	return (
-		<BasicTextField {...fields} {...props} error={meta.touched && meta.error} />
-	);
-}
-
-export {
-	TaskScheduleTimeFields,
-	TaskValveFields,
-	BasicTextArea,
-	FormikControlledTextField,
+export const FormControlledTextField: React.FC<{
+	name: string;
+	title: string;
+	helpertext?: string;
+	onChange?: React.FormEventHandler<HTMLInputElement>;
+}> = props => {
+	const { register, errors } = useFormContext();
+	return <BasicTextField ref={register} errors={errors[props.name]} {...props} />;
 };

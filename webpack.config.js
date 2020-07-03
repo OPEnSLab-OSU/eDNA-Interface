@@ -4,8 +4,8 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const HtmlWebpackHarddiskPlugin = require("html-webpack-harddisk-plugin");
 const CompressionPlugin = require("compression-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 
 const entryPath = path.resolve(__dirname, "src/index");
 const outputPath = path.resolve(__dirname, "dist");
@@ -39,11 +39,11 @@ module.exports = {
 	resolve: {
 		extensions: [".tsx", ".ts", ".js"],
 		alias: {
-			// Preact compatability layer for existing React libraries
+			// Preact compatability layer
 			react: "preact/compat",
 			"react-dom": "preact/compat",
 
-			// // // Top level resolves
+			// Top level resolves
 			Components: path.resolve(__dirname, "src/Components"),
 			App: path.resolve(__dirname, "src/App"),
 			Hooks: path.resolve(__dirname, "src/Hooks"),

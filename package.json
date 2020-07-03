@@ -44,6 +44,7 @@
 		"eslint": "^7.3.1",
 		"eslint-config-airbnb-typescript-prettier": "^3.1.0",
 		"eslint-import-resolver-typescript": "^2.0.0",
+		"eslint-plugin-compat": "^3.8.0",
 		"fork-ts-checker-webpack-plugin": "^5.0.5",
 		"html-webpack-harddisk-plugin": "^1.0.1",
 		"html-webpack-inline-source-plugin": "0.0.10",
