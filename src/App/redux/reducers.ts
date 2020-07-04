@@ -1,6 +1,9 @@
-import { Task, StatusSchema, Valve, Status } from "App/redux/models";
 import { createReducer, Dictionary } from "@reduxjs/toolkit";
+
+import { Status, Task, Valve } from "App/redux/models";
+
 import { arrayToObject } from "Util";
+
 import * as actions from "./actions";
 
 //
@@ -108,7 +111,7 @@ export const loadingScreen = createReducer(initialLoadingScreen, (builder) =>
 // ────────────────────────────────────────────────────────────────────────────────
 // State reducer for the general status of the sampler
 // ────────────────────────────────────────────────────────────────────────────────
-const initialStatus = StatusSchema.default();
+const initialStatus: Status = { valves: Array.from({ length: 24 }, () => 0) };
 export const status = createReducer<Status>(initialStatus, (builder) =>
 	builder.addCase(actions.statusUpdate, (state, { payload }) => ({
 		...state,

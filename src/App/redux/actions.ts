@@ -1,5 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
-import { Task, Status, Valve } from "App/redux/models";
+
+import { Status, Task, Valve } from "App/redux/models";
 
 const withPayload = <K extends any[], V>(func: (...args: K) => V) => {
 	return (...args: K) => ({ payload: func(...args) });

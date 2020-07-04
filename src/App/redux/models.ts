@@ -1,5 +1,5 @@
 import * as yup from "yup";
-import { array, number, object, string, boolean } from "yup";
+import { array, boolean, number, object, string } from "yup";
 
 //
 // ──────────────────────────────────────────────── I ──────────
@@ -63,10 +63,6 @@ export function createWithMixins<T, K>(
 	}
 }
 
-namespace Schemas {
-	export const stateInput = number().min(0).notRequired().default(0);
-}
-
 //
 // ──────────────────────────────────────────────── III ─────────
 //   :::::: T A S K : :  :   :    :     :        :          :
@@ -80,80 +76,65 @@ namespace Schemas {
 // one would send over a schema and use an editor plugin to strongly-type out the
 // object but this should do for now.
 // prettier-ignore
-const BaseTaskSchema = object({
+const StateField = number().min(0).required().default(0);
+// prettier-ignore
+export const TaskSchema = object({
 	id: number()
-		.nullable(),
+		.min(1)
+		.required()
+		.truncate()
+		.default(Math.floor(Math.random() * (2**32 - 1) + 1)) ,
 	name: string()
 		.trim()
 		.required(),
 	createdAt: number()
 		.integer()
+		.required()
 		.default(0),
 	status: number()
 		.min(0)
-		.required(),
-	schedule: number()
 		.integer()
-		.required(),
+		.required()
+		.default(0),
+	schedule: number()
+		.min(0)
+		.integer()
+		.required()
+		.default(0),
 	valves: array(number().defined())
 		.ensure()
 		.defined(),
 	timeBetween: number()
-		.default(0),
-	notes: string(), 
-	flushTime: Schemas.stateInput,
-	flushVolume: Schemas.stateInput,
-	sampleTime: Schemas.stateInput,
-	samplePressure: Schemas.stateInput,
-	sampleVolume: Schemas.stateInput,
-	dryTime: Schemas.stateInput,
-	preserveTime: Schemas.stateInput,
+		.min(0)
+		.required()
+		.default(5),
+	notes: string(),
+	flushTime: StateField,
+	flushVolume: StateField,
+	sampleTime: StateField,
+	samplePressure: StateField,
+	sampleVolume: StateField,
+	dryTime: StateField,
+	preserveTime: StateField
 }).defined();
 
-export type BaseTask = yup.InferType<typeof BaseTaskSchema>;
-
-// NOTE: I would like to use get-accessors but I couldn't find a way to make it work
-// with spread operator
-export interface Task extends BaseTask {
-	id: number;
-	createdAt: number;
-	getDate(): string;
-	getTime(): string;
-}
+export type Task = yup.InferType<typeof TaskSchema>;
+export type RequiredTaskProperties = "name";
+export type OptionalTask = Partial<Omit<Task, RequiredTaskProperties>>;
+export type RequiredTask = Required<Pick<Task, RequiredTaskProperties>>;
+export interface DefaultTask extends OptionalTask, RequiredTask {}
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Here we are extending the a valid task object with two computed extra properties:
 // date and time. Otherwise returns undefined.
 // ────────────────────────────────────────────────────────────────────────────────
-export function createTask(raw: BaseTask): Task | undefined {
-	return createWithMixins(raw, BaseTaskSchema, (transformed) => ({
-		id: transformed.id!,
-		createdAt: transformed.createdAt!,
-		getDate(): string {
-			// Expect this.schedule to be a number
-			const { schedule } = this as any;
-			if (typeof schedule !== "number") {
-				throw new Error("Schedule is not a number");
-			}
 
-			const date = new Date(schedule * 1000);
-			const components = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
-			return components.map((c) => c.toString().padStart(2, "0")).join("-");
-		},
-
-		getTime(): string {
-			// Expect this.schedule to be a number
-			const { schedule } = this as any;
-			if (typeof schedule !== "number") {
-				throw new Error("Schedule is not a number");
-			}
-
-			const date = new Date(schedule * 1000);
-			const components = [date.getHours(), date.getMinutes()];
-			return components.map((c) => c.toString().padStart(2, "0")).join(":");
-		},
-	}));
-}
+export const verifyTaskFromAPI = async (
+	raw: DefaultTask,
+	options: yup.ValidateOptions = { strict: true }
+): Promise<Task> => {
+	return TaskSchema.validate(raw, options);
+};
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Example Usage
@@ -177,39 +158,26 @@ console.log(b.name, b.date(), b.time(), b); */
 //   :::::: S T A T U S : :  :   :    :     :        :          :
 // ──────────────────────────────────────────────────────────────
 //
-namespace Schemas {
-	export const statusField = number().nullable().default(null);
-}
-
-// prettier-ignore
-export const StatusSchema = object({
-	currentState: string()
-		.trim()
-		.nullable(),
-	valves: array(number().min(0).defined())
-		.ensure(),
-	utc: number()
-		.min(0)
-		.nullable(),
-	pressure: Schemas.statusField,
-	temperature: Schemas.statusField,
-	barometric: Schemas.statusField,
-	waterVolume: Schemas.statusField,
-	waterFlow: Schemas.statusField,
-	waterDepth: Schemas.statusField,
-}).defined();
-
-export type Status = yup.InferType<typeof StatusSchema>;
+export type Status = {
+	currentState?: string;
+	valves: number[];
+	utc?: number;
+	pressure?: number;
+	temperature?: number;
+	barometric?: number;
+	waterVolume?: number;
+	waterFlow?: number;
+	waterDepth?: number;
+};
 
 //
 // ────────────────────────────────────────────────── V ──────────
 //   :::::: V A L V E : :  :   :    :     :        :          :
 // ────────────────────────────────────────────────────────────
 //
-export const ValveSchema = object({
-	id: number().min(0).integer().required(),
-	status: string().required(),
-	isSelected: boolean(),
-}).defined();
 
-export type Valve = yup.InferType<typeof ValveSchema>;
+export type Valve = {
+	id: number;
+	status: string;
+	isSelected?: boolean;
+};
