@@ -1,0 +1,29 @@
+{
+	"compilerOptions": {
+		"allowJs": true,
+		"outDir": "dist",
+		"strict": true,
+		"strictNullChecks": true,
+		"jsx": "react",
+		"jsxFactory": "h",
+		"module": "commonJS",
+		"baseUrl": ".",
+		"paths": {
+			"App": ["./src/App"],
+			"App/*": ["./src/App/*"],
+			"Components": ["./src/Components"],
+			"Components/*": ["./src/Components/*"],
+			"Util": ["./src/Util"],
+			"Util/*": ["./src/Util/*"]
+			// "M": ["./src/Libraries"]
+		},
+		"sourceMap": true,
+		"target": "es5",
+		"lib": ["ESNext", "DOM", "DOM.Iterable"],
+		"noEmitOnError": false,
+		"importsNotUsedAsValues": "preserve",
+		"allowSyntheticDefaultImports": true
+		// "skipLibCheck": true
+	},
+	"exclude": ["node_modules", "node_modules.nosync", "dist", "public"]
+}
