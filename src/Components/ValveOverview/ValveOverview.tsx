@@ -1,12 +1,13 @@
-import { h, FunctionComponent } from "preact";
+import { Dictionary } from "@reduxjs/toolkit";
+import cn from "classnames";
+import { FunctionComponent, h } from "preact";
 import { useDispatch, useSelector } from "react-redux";
+
 import { toggleTaskValve } from "App/redux/actions";
 import { Valve } from "App/redux/models";
 import { RootState } from "App/redux/store";
-import { partition } from "Util";
 
-import cn from "classnames";
-import { Dictionary } from "@reduxjs/toolkit";
+import { partition } from "Util";
 
 type ValveNodeProps = {
 	onClick(event: MouseEvent): void;
@@ -36,6 +37,7 @@ const ValveNode: FunctionComponent<ValveNodeProps> = ({
 };
 
 function ValveOverview() {
+	const dispatch = useDispatch();
 	const valves = useSelector((state: RootState) => state.valves);
 	const tasks = useSelector((state: RootState) => state.tasks);
 	const selectedTaskId = useSelector((state: RootState) => state.selectedTask);
@@ -45,7 +47,9 @@ function ValveOverview() {
 	const [top, bottom] = partition(valves.all, (v) => v.id < length / 2);
 
 	const valveToQueue = new Map<number, number>();
-	selectedTask?.valves.forEach((v, i) => valveToQueue.set(v, i));
+	selectedTask?.valves.forEach((v) => {
+		valves.all[v].status != "sampled" && valveToQueue.set(v, valveToQueue.size);
+	});
 
 	const valveToCurrent = new Map<number, boolean>();
 	selectedTask?.valves.forEach((v) =>
@@ -54,6 +58,7 @@ function ValveOverview() {
 
 	const toggle = (id: number) => {
 		console.log(id);
+		dispatch(toggleTaskValve(selectedTaskId, id));
 	};
 
 	const valveToValveNode = (v: Valve) => (

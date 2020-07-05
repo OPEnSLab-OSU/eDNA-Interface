@@ -1,14 +1,14 @@
-import { h } from "preact";
-import { useState, useRef, useEffect, StateUpdater } from "preact/hooks";
-
-import { useDispatch, useSelector } from "react-redux";
-import { selectTask, setDisplayLoadingScreen } from "App/redux/actions";
-import { RootState } from "App/redux/store";
-import { API } from "App/API";
-import { Task } from "App/redux/models";
-
-import { useForm } from "react-hook-form";
 import cn from "classnames";
+import { h } from "preact";
+import { StateUpdater, useEffect, useRef, useState } from "preact/hooks";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+
+import { API } from "App/API";
+import { selectTask, setDisplayLoadingScreen } from "App/redux/actions";
+import { Task } from "App/redux/models";
+import { selectedTaskSelector } from "App/redux/selectors";
+import { RootState } from "App/redux/store";
 
 type FormCreateTaskValuesType = {
 	name: string;
@@ -29,8 +29,9 @@ const FormCreateTask: React.FC<{
 	const createTask = async (data: FormCreateTaskValuesType) => {
 		dispatch(setDisplayLoadingScreen(true));
 		const [response, payload] = await API.store.createTaskWithName(data.name);
-		if (response.success) {
-			dispatch(selectTask(payload.id!));
+		console.log(response, payload);
+		if (response.success && payload) {
+			dispatch(selectTask(payload.id));
 			setShowTaskInput(false);
 		} else {
 			console.log(response.error);
@@ -72,12 +73,11 @@ export function TaskListing() {
 	const dispatch = useDispatch();
 	const panels = useSelector((state: RootState) => state.panels);
 	const tasks = useSelector((state: RootState) => state.tasks);
-	const selectedTaskId = useSelector((state: RootState) => state.selectedTask);
-	const selectedTask = tasks[selectedTaskId];
+	const selectedTask = useSelector(selectedTaskSelector);
 
 	const handleTaskSelection = async (id: number) => {
 		dispatch(setDisplayLoadingScreen(true));
-		await API.store.getTaskWithId(id);
+		const [response, payload] = await API.store.getTaskWithId(id);
 		dispatch(selectTask(id));
 		dispatch(setDisplayLoadingScreen(false));
 	};
@@ -102,13 +102,12 @@ export function TaskListing() {
 					.map(({ id, name, status }) => (
 						<li
 							key={id}
-							className={cn({ selected: selectedTask?.id === id })}>
-							<button type="button" onClick={() => handleTaskSelection(id)}>
-								{name}
-								<span className="right">
-									{status === 1 ? "active" : null}
-								</span>
-							</button>
+							className={cn({ selected: selectedTask?.id === id })}
+							onClick={() => handleTaskSelection(id)}>
+							{name}
+							<span className="right">
+								{status === 1 ? "active" : "idle"}
+							</span>
 						</li>
 					))}
 				{showTaskInput && (

@@ -1,7 +1,8 @@
+import classNames from "classnames";
 import { Fragment, h } from "preact";
 import { useSelector } from "react-redux";
+
 import { RootState } from "App/redux/store";
-import classNames from "classnames";
 
 type IStateNodeProps = { name: string; color: string | null; position: number };
 function StateNode({ name, color, position }: IStateNodeProps) {

@@ -51,3 +51,28 @@ export const arrayToObject = (array: any[], key: string) => {
 		{}
 	);
 };
+
+export const sum = (numbers: (number | null | undefined)[]): number => {
+	return numbers.reduce((a, b) => (a ?? 0) + (b ?? 0), 0) as number;
+};
+
+export const toDateString = (schedule?: number) => {
+	const date = new Date((schedule ?? 0) * 1000);
+	const components = [date.getFullYear(), date.getMonth() + 1, date.getDate()];
+	return components.map((c) => c.toString().padStart(2, "0")).join("-");
+};
+
+export const toTimeString = (schedule?: number) => {
+	const date = new Date((schedule ?? 0) * 1000);
+	const components = [date.getHours(), date.getMinutes()];
+	return components.map((c) => c.toString().padStart(2, "0")).join(":");
+};
+
+export const secondToTimeComponents = (seconds?: number) => {
+	seconds = seconds ?? 0;
+	const day = Math.floor(seconds / (3600 * 24));
+	const hour = Math.floor((seconds % (3600 * 24)) / 3600);
+	const min = Math.floor((seconds % 3600) / 60);
+	const sec = Math.floor(seconds % 60);
+	return { day, hour, minute: min, second: sec } as const;
+};

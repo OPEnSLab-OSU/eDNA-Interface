@@ -1,8 +1,9 @@
-import { h } from "preact";
-import { useSelector } from "react-redux";
-import { RootState } from "App/redux/store";
-import { StateUpdater } from "preact/hooks";
 import cn from "classnames";
+import { h } from "preact";
+import { StateUpdater } from "preact/hooks";
+import { useSelector } from "react-redux";
+
+import { RootState } from "App/redux/store";
 
 type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
 	k: infer I

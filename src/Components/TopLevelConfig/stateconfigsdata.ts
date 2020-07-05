@@ -1,15 +1,27 @@
-export const stateConfigData = {
+import { Dictionary } from "@reduxjs/toolkit";
+
+export type StateConfigData = {
+	name: string;
+	properties: { name: string; alias?: string; type: string; description?: string }[];
+};
+
+export const stateConfigData: {
+	flush: StateConfigData;
+	sample: StateConfigData;
+	dry: StateConfigData;
+	preserve: StateConfigData;
+} = {
 	flush: {
 		name: "flush",
 		properties: [
 			{
-				name: "duration",
-				alias: "time",
+				name: "time",
 				type: "number",
 				description: "Controls how long before transitioning to the sample state",
 			},
 			{
 				name: "volume",
+				type: "number",
 				description: "Controls how much water will be used to flush the system",
 			},
 		],
@@ -18,8 +30,7 @@ export const stateConfigData = {
 		name: "sample",
 		properties: [
 			{
-				name: "duration",
-				alias: "time",
+				name: "time",
 				type: "number",
 				description: "Controls how long before transitioning to the dry state",
 			},
@@ -40,8 +51,7 @@ export const stateConfigData = {
 		name: "dry",
 		properties: [
 			{
-				name: "duration",
-				alias: "time",
+				name: "time",
 				type: "number",
 				description:
 					"Controls how long before transitioning to the preserve state",
@@ -52,8 +62,7 @@ export const stateConfigData = {
 		name: "preserve",
 		properties: [
 			{
-				name: "duration",
-				alias: "time",
+				name: "time",
 				type: "number",
 				description: "Controls how long before transitioning to the stop state",
 			},

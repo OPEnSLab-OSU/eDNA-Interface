@@ -1,23 +1,28 @@
-import { objectToQueryString, arrayToObject } from "Util";
-import { store } from "./redux/store";
-import { base } from "./Static";
+import { objectToQueryString } from "Util";
+
 import {
 	apiSuccess,
 	apiTimeout,
-	selectTask,
+	insertTask,
+	replaceTaskList,
 	statusUpdate,
 	updateTask,
-	replaceTaskList,
-	insertTask,
 } from "./redux/actions";
-
-import { createTask, Task } from "./redux/models";
+import { Status, Task, verifyTaskFromAPI } from "./redux/models";
+import { store } from "./redux/store";
+import { base } from "./Static";
 
 //
 // ────────────────────────────────────────────── II ──────────
 //   :::::: A P I : :  :   :    :     :        :          :
 // ────────────────────────────────────────────────────────
 //
+
+type DefaultAPIResponse = {
+	success?: string;
+	error?: string;
+	payload?: any;
+};
 
 class APIBuilder {
 	controller!: AbortController;
@@ -49,7 +54,7 @@ class APIBuilder {
 		this.path += `?${objectToQueryString(params)}`;
 	}
 
-	async send() {
+	async send<T = DefaultAPIResponse>(): Promise<T> {
 		if (this.controller) {
 			setTimeout(() => this.controller.abort(), this.timeout - 10);
 		}
@@ -68,7 +73,7 @@ const post = (path: string, options = {}) =>
 
 async function getStatus(timeout: number) {
 	try {
-		const status = await get("api/status").withTimeout(timeout).send();
+		const status = await get("api/status").withTimeout(timeout).send<Status>();
 		store.dispatch(statusUpdate(status));
 		store.dispatch(apiSuccess());
 		return status;
@@ -82,59 +87,74 @@ async function getStatus(timeout: number) {
 // This method replaces the entire tasklist with the one from the server
 // ────────────────────────────────────────────────────────────────────────────────
 async function getTaskList() {
-	const tasks = await get("api/tasks").send();
-	console.log(tasks);
-	store.dispatch(replaceTaskList(tasks));
-	return tasks;
+	const payload = await get("api/tasks").send<Task[]>();
+	const options = { strict: true };
+	const verifiedTasks = await Promise.all(
+		payload.map((t) => verifyTaskFromAPI(t, options))
+	);
+	store.dispatch(replaceTaskList(verifiedTasks));
+	return verifiedTasks;
 }
 
-async function getTaskWithId(id: number) {
+async function getTaskWithId(
+	id: number
+): Promise<readonly [DefaultAPIResponse, Task | null]> {
 	const response = await post("api/task/get").body(JSON.stringify({ id })).send();
+	if (response.success) {
+		const verified = await verifyTaskFromAPI(response.payload);
+		store.dispatch(updateTask(id, verified));
+		return [response, verified];
+	}
+	return [response, null];
+}
 
-	const payload = createTask(response.payload);
-	if (response.success && payload) {
-		store.dispatch(updateTask(id, payload));
+async function uploadTask(
+	task: Task,
+	path = "api/task/save"
+): Promise<DefaultAPIResponse> {
+	const response = await post(path).json(task).send();
+	if (response.success) {
+		store.dispatch(updateTask(task.id, task));
+		console.log(store.getState().tasks);
 	}
 
 	return response;
 }
 
-async function uploadTask(values: Task, path = "api/task/save") {
-	const response = await post(path).json(values).send();
-	const payload = createTask(response.payload);
-	if (response.success && payload) {
-		store.dispatch(updateTask(payload.id, payload));
-		store.dispatch(selectTask(payload.id));
-	}
-
-	return response;
-}
-
-async function scheduleTask(id: number) {
+async function scheduleTask(
+	id: number
+): Promise<readonly [DefaultAPIResponse, Task | null]> {
 	const response = await post("api/task/schedule").json({ id }).send();
-	const payload = createTask(response.payload);
-	if (response.success && payload) {
+	if (response.success) {
+		const payload = await verifyTaskFromAPI(response.payload);
 		store.dispatch(updateTask(id, payload));
+		return [response, payload] as const;
 	}
-	return response;
+
+	return [response, null];
 }
 
-async function unscheduleTask(id: number) {
+async function unscheduleTask(
+	id: number
+): Promise<readonly [DefaultAPIResponse, Task | null]> {
 	const response = await post("api/task/unschedule").json({ id }).send();
-	const payload = createTask(response.payload);
-	if (response.success && payload) {
+	if (response.success) {
+		const payload = await verifyTaskFromAPI(response.payload);
 		store.dispatch(updateTask(id, payload));
+		return [response, payload] as const;
 	}
 
-	return response;
+	return [response, null];
 }
 
-async function createTaskWithName(name: string) {
+async function createTaskWithName(
+	name: string
+): Promise<readonly [DefaultAPIResponse, Task | null]> {
 	const response = await post("api/task/create").json({ name }).send();
 	if (response.success) {
-		const payload = createTask(response.payload)!;
+		const payload = await verifyTaskFromAPI(response.payload);
 		store.dispatch(insertTask(payload));
-		return [response, payload];
+		return [response, payload] as const;
 	}
 
 	return [response, null];

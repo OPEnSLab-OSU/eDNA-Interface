@@ -1,5 +1,5 @@
-import { h } from "preact";
 import classNames from "classnames";
+import { h } from "preact";
 // const keys = { 9: 1, 32: 1, 33: 1, 34: 1, 35: 1, 36: 1, 37: 1, 38: 1, 39: 1, 40: 1, };
 
 function preventDefault(e: Event) {

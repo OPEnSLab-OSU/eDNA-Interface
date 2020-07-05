@@ -1,8 +1,9 @@
+import classNames from "classnames";
 import { h } from "preact";
 import { useDispatch, useSelector } from "react-redux";
-import { setDisplayLoadingScreen, togglePanel } from "App/redux/actions";
-import classNames from "classnames";
+
 import { API } from "App/API";
+import { setDisplayLoadingScreen, togglePanel } from "App/redux/actions";
 import { RootState } from "App/redux/store";
 
 export function Dropbar() {

@@ -1,18 +1,21 @@
+import classNames from "classnames";
 import { h } from "preact";
 import { useEffect, useState } from "preact/hooks";
 import { useDispatch, useSelector, useStore } from "react-redux";
+
 import { Dropbar } from "Components/Dropbar";
+import { LoadingScreen } from "Components/LoadingScreen";
 import { StateTimeline } from "Components/StateTimeline";
 import { Status } from "Components/StatusPanel";
 import { TaskListing } from "Components/TaskListing";
 import { TopLevelConfig } from "Components/TopLevelConfig";
-import { LoadingScreen } from "Components/LoadingScreen";
 import { ValveOverview } from "Components/ValveOverview";
-import { FormContext, useForm } from "react-hook-form";
-import classNames from "classnames";
+
 import { API } from "./API";
+import { apiConnect, insertTask, selectTask } from "./redux/actions";
+import { verifyTaskFromAPI } from "./redux/models";
+import { selectedTaskSelector } from "./redux/selectors";
 import { RootState } from "./redux/store";
-import { apiConnect } from "./redux/actions";
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Get status update from the server every second. Stop the update if receive three
@@ -46,24 +49,29 @@ function useStatusUpdating() {
 
 		timerId = window.setInterval(() => statusUpdate(), timeout);
 		return () => timerId && clearInterval(timerId);
-	}, [statusUpdating, dispatch, store]);
+	}, [statusUpdating]);
 
 	return [statusUpdating, setStatusUpdating] as const;
 }
 
 export function App() {
-	const dispatch = useDispatch();
+	const [, setStatusUpdating] = useStatusUpdating();
 	const panels = useSelector((state: RootState) => state.panels);
 	const connection = useSelector((state: RootState) => state.connection);
 	const loadingScreen = useSelector((state: RootState) => state.loadingScreen);
-	const [, setStatusUpdating] = useStatusUpdating();
+	const selectedTask = useSelector(selectedTaskSelector);
 
 	// Get list of tasks from the server
 	useEffect(() => {
-		(async function startup() {
+		(async () => {
 			await API.store.getTaskList();
-			// await API.store.getTaskWithName("Task 1");
-			// dispatch(selectTask("Task 1"));
+			// const mock = await verifyTaskFromAPI(
+			// 	{ name: "Task 1", schedule: 10000000 },
+			// 	{ strict: false }
+			// );
+			// console.log("MOCK TEST");
+			// dispatch(insertTask(mock));
+			// dispatch(selectTask(mock.id));
 		})();
 	}, []);
 
@@ -76,7 +84,11 @@ export function App() {
 				<Dropbar />
 				<StateTimeline />
 				<ValveOverview />
-				<TopLevelConfig />
+				{selectedTask ? (
+					<TopLevelConfig />
+				) : (
+					<div>Please select a task to configure...</div>
+				)}
 			</main>
 			{panels.task && (
 				<div className="task-panel">
@@ -87,12 +99,3 @@ export function App() {
 		</div>
 	);
 }
-
-// export const App: React.FC = () => {
-// 	const methods = useForm();
-// 	return (
-// 		<FormContext {...methods}>
-// 			<TextFieldComponent name="text" title="asdf" />
-// 		</FormContext>
-// 	);
-// };

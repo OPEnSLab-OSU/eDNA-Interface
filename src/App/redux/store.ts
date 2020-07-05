@@ -1,18 +1,17 @@
-import { combineReducers, Middleware } from "redux";
-import { configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
+
 import {
-	statusUpdate,
-	setValveOverview,
-	updateTask,
 	insertTask,
 	replaceTaskList,
+	setValveOverview,
+	statusUpdate,
 	toggleTaskValve,
+	updateTask,
 } from "./actions";
 import * as reducers from "./reducers";
 
 const logger: Middleware = (store) => (next) => (action) => {
 	next(action);
-	console.log(store.getState());
 };
 
 const valveStatusExtractor: Middleware = (store) => (next) => (action) => {
