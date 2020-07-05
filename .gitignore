@@ -2,3 +2,4 @@
 node_modules
 node_modules.nosync
 dist
+bundle_size.txt

@@ -25,20 +25,47 @@
 			"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
 		}
 	},
-	"plugins": ["compat"],
+	"plugins": ["compat", "simple-import-sort"],
 	"rules": {
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-namespace": "off",
-		"@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{
+				"args": "none"
+			}
+		],
 		"@typescript-eslint/no-var-requires": "off",
 		"consistent-return": "off",
 		"eqeqeq": "off",
+		"import/first": "error",
+		"import/newline-after-import": "error",
 		"import/no-default-export": "off",
+		"import/no-duplicates": "error",
+		"import/no-unresolved": "off",
 		"import/prefer-default-export": "off",
+		"jsx-a11y/click-events-have-key-events": "off",
+		"jsx-a11y/no-noninteractive-element-interactions": "off",
+		"no-console": "off",
 		"no-param-reassign": "off",
 		"no-unused-expressions": "off",
+		"react-hooks/exhaustive-deps": "off",
+		"react/destructuring-assignment": "off",
 		"react/jsx-props-no-spreading": "off",
-		"react/destructuring-assignment": "off"
+		"simple-import-sort/sort": [
+			"error",
+			{
+				"groups": [
+					["^\\u0000"],
+					["^@?\\w"],
+					["^App(/.*|$)"],
+					["^Components(/.*|$)"],
+					["^Util(/.*|$)"],
+					["^\\."]
+				]
+			}
+		],
+		"sort-imports": "off"
 	}
 }

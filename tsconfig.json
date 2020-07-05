@@ -23,6 +23,7 @@
 		"noEmitOnError": false,
 		"importsNotUsedAsValues": "preserve",
 		"allowSyntheticDefaultImports": true
+		// "skipLibCheck": true
 	},
 	"exclude": ["node_modules", "node_modules.nosync", "dist", "public"]
 }

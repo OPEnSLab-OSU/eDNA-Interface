@@ -6,10 +6,12 @@ const CompressionPlugin = require("compression-webpack-plugin");
 const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { WebpackBundleSizeAnalyzerPlugin } = require("webpack-bundle-size-analyzer");
+const BrotliWebpackPlugin = require("brotli-webpack-plugin");
 
 const entryPath = path.resolve(__dirname, "src/index");
 const outputPath = path.resolve(__dirname, "dist");
-
+const nodeModules = path.resolve(__dirname, "node_modules");
 module.exports = {
 	entry: entryPath,
 	output: {
@@ -19,10 +21,10 @@ module.exports = {
 		hotUpdateMainFilename: "hot/hot-update.json",
 	},
 	devServer: { compress: true },
-	devtool: "inline-source-map",
+	devtool: "source-map",
 	plugins: [
+		new WebpackBundleSizeAnalyzerPlugin(path.resolve(__dirname, "bundle_size.txt")),
 		new webpack.ProgressPlugin(),
-		new webpack.ProvidePlugin({ classNames: "classnames" }),
 		new CleanWebpackPlugin(),
 		new HtmlWebpackPlugin({
 			template: path.resolve(__dirname, "src/Template/index.html"),
@@ -57,8 +59,8 @@ module.exports = {
 		rules: [
 			{
 				// Run TS files through TS compiler
-				test: /\.tsx?$/,
-				exclude: [path.resolve(__dirname, "node_modules")],
+				test: /\.(ts|js)x?$/,
+				exclude: [nodeModules],
 				loader: "ts-loader",
 				options: {
 					// disable type checker - we will use it in fork plugin
@@ -66,19 +68,13 @@ module.exports = {
 				},
 			},
 			{
-				// Run JS files through Babel
-				test: /\.jsx?$/,
-				exclude: [path.resolve(__dirname, "node_modules")],
-				loader: "babel-loader",
-			},
-			{
 				test: /\.css$/,
-				exclude: [path.resolve(__dirname, "node_modules")],
+				exclude: [nodeModules],
 				loaders: ["style-loader", "css-loader"],
 			},
 			{
 				test: /\.scss$/,
-				exclude: [path.resolve(__dirname, "node_modules")],
+				exclude: [nodeModules],
 				loaders: [
 					"style-loader",
 					"css-loader",
