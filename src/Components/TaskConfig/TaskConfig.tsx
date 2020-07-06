@@ -1,6 +1,6 @@
 import cn from "classnames";
 import { h } from "preact";
-import { ErrorMessage, Field, useFormContext } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import Switch from "react-switch";
 
@@ -8,11 +8,10 @@ import { API } from "App/API";
 import { setDisplayLoadingScreen } from "App/redux/actions";
 import { Task, verifyTaskFromAPI } from "App/redux/models";
 import { selectedTaskSelector } from "App/redux/selectors";
-import { RootState } from "App/redux/store";
 
 import { BasicTextField } from "Components/TextField";
 
-import { secondToTimeComponents, sum, zip } from "Util";
+import { secondToTimeComponents, sum, toDateString, toTimeString, zip } from "Util";
 
 import {
 	FormControlledNotes,
@@ -49,7 +48,7 @@ const secondsToTimeString = (seconds: number): string => {
 		.join();
 };
 
-const DisplayRuntime = (values: any) => {
+const DisplayRuntime = () => {
 	const { watch } = useFormContext();
 	const fields = watch(["flushTime", "sampleTime", "dryTime", "preserveTime"]);
 	const total = sum(Object.values(fields).map((e) => parseInt(e, 10)));
@@ -64,8 +63,46 @@ const DisplayRuntime = (values: any) => {
 // ──────────────────────────────────────────────────────────────────────
 //
 
-export function TaskConfig(props: any) {
-	const { register, getValues, watch, handleSubmit } = useFormContext();
+export const mergeWithFormValues = (base: Task, values: any) => {
+	const taskForMerge: Task = { ...base };
+	taskForMerge.name = values.name;
+	taskForMerge.notes = values.notes;
+
+	const { date, time } = values;
+	const schedule = new Date(`${date}T${time}:00`);
+	taskForMerge.schedule = Math.floor(schedule.getTime() / 1000);
+
+	const { hour, minute, second } = values;
+	taskForMerge.timeBetween = sum([
+		parseInt(hour, 10) * 60 * 24,
+		parseInt(minute, 10) * 60,
+		parseInt(second, 10),
+	]);
+
+	[
+		"flushTime",
+		"flushVolume",
+		"sampleTime",
+		"samplePressure",
+		"sampleVolume",
+		"dryTime",
+		"preserveTime",
+	].forEach((f) => {
+		(taskForMerge as any)[f] = parseInt(values[f], 10);
+	});
+
+	return taskForMerge;
+};
+
+export const defaultValuesFromTask = (task: Task) => ({
+	...task,
+	...secondToTimeComponents(task.timeBetween),
+	date: toDateString(task.schedule),
+	time: toTimeString(task.schedule),
+});
+
+export function TaskConfig() {
+	const { register, getValues, watch, handleSubmit, reset } = useFormContext();
 	const dispatch = useDispatch();
 	const selectedTask = useSelector(selectedTaskSelector);
 	const isTaskActive = selectedTask?.status == 1;
@@ -76,41 +113,11 @@ export function TaskConfig(props: any) {
 
 	const onSave = async () => {
 		dispatch(setDisplayLoadingScreen(true));
-		const values = getValues();
-		const taskForSubmission: Task = { ...selectedTask };
-		taskForSubmission.name = values.name;
-		taskForSubmission.notes = values.notes;
-
-		const { date, time } = values;
-		const schedule = new Date(`${date}T${time}:00`);
-		taskForSubmission.schedule = Math.floor(schedule.getTime() / 1000);
-
-		const { hour, minute, second } = getValues();
-		taskForSubmission.timeBetween = sum([
-			parseInt(hour, 10) * 60 * 24,
-			parseInt(minute, 10) * 60,
-			parseInt(second, 10),
-		]);
-
-		[
-			"flushTime",
-			"flushVolume",
-			"sampleTime",
-			"samplePressure",
-			"sampleVolume",
-			"dryTime",
-			"preserveTime",
-		].forEach((f) => {
-			(taskForSubmission as any)[f] = parseInt(values[f], 10);
-		});
-
+		const taskForSubmission = mergeWithFormValues(selectedTask, getValues());
 		const verified = await verifyTaskFromAPI(taskForSubmission);
-		const response = await API.store.uploadTask(verified);
-		if (response.success) {
-			console.log(response.success);
-		}
-
+		await API.store.uploadTask(verified);
 		dispatch(setDisplayLoadingScreen(false));
+		reset(defaultValuesFromTask(verified));
 	};
 
 	const onDelete = async () => {
@@ -120,14 +127,12 @@ export function TaskConfig(props: any) {
 		}
 	};
 
-	const onSchedule = async (data: any) => {
-		console.log("on schedule", data);
+	const onSchedule = async () => {
 		const [response] = await API.store.scheduleTask(selectedTask.id);
 		console.log(response.success);
 	};
 
-	const onUnschedule = async (data: any) => {
-		console.log("on unschedule", data);
+	const onUnschedule = async () => {
 		const [response] = await API.store.unscheduleTask(selectedTask.id);
 		console.log(response.success);
 	};

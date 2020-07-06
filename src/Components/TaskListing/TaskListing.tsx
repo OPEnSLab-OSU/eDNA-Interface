@@ -77,7 +77,7 @@ export function TaskListing() {
 
 	const handleTaskSelection = async (id: number) => {
 		dispatch(setDisplayLoadingScreen(true));
-		const [response, payload] = await API.store.getTaskWithId(id);
+		await API.store.getTaskWithId(id);
 		dispatch(selectTask(id));
 		dispatch(setDisplayLoadingScreen(false));
 	};
@@ -106,7 +106,7 @@ export function TaskListing() {
 							onClick={() => handleTaskSelection(id)}>
 							{name}
 							<span className="right">
-								{status === 1 ? "active" : "idle"}
+								{status === 1 ? "ACTIVE" : null}
 							</span>
 						</li>
 					))}
