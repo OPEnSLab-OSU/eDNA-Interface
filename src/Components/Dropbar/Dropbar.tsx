@@ -22,6 +22,13 @@ export function Dropbar() {
 		dispatch(setDisplayLoadingScreen(false));
 	};
 
+	const preloadWater = async () => {
+		dispatch(setDisplayLoadingScreen(true));
+		const response = await API.get("api/preload").send();
+		console.log(response);
+		dispatch(setDisplayLoadingScreen(false));
+	};
+
 	return (
 		<div className="dropbar">
 			<nav className="nav">
@@ -34,6 +41,9 @@ export function Dropbar() {
 					</button>
 				</ul>
 				<ul className="right-section">
+					<button type="button" className="toggle" onClick={preloadWater}>
+						preload water
+					</button>
 					<button type="button" className="toggle" onClick={updateRTC}>
 						update rtc
 					</button>

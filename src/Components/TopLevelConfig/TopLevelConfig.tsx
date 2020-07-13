@@ -1,4 +1,6 @@
+// import Masonry from "masonry-layout";
 import { h } from "preact";
+import { useEffect, useRef } from "preact/hooks";
 import { FormContext, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 
@@ -9,6 +11,10 @@ import { defaultValuesFromTask, FormValues, TaskConfig } from "Components/TaskCo
 
 import { StateConfigData, stateConfigData } from "./stateconfigsdata";
 
+// function MasonryComponen() {
+// 	const mason = useRef(new Masonry());
+// }
+
 export function TopLevelConfig() {
 	const selectedTask = useSelector(selectedTaskSelector)!;
 	const hookForm = useForm<FormValues>({
@@ -16,14 +22,14 @@ export function TopLevelConfig() {
 	});
 
 	return (
-		<div className="stateconfig">
+		<div className="top-level-config-wrapper">
 			<FormContext {...hookForm}>
-				<form>
-					<div className="column">
+				<div className="task-wrapper">
+					<form>
 						<TaskConfig />
-					</div>
-				</form>
-				<div className="column">
+					</form>
+				</div>
+				<div className="config-grid-wrapper">
 					{["flush", "sample", "dry", "preserve"].map((name, i) => (
 						<StateConfig
 							key={name}

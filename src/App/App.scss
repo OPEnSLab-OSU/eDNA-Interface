@@ -42,11 +42,11 @@ a,
 
 .app {
 	display: grid;
-	grid-template-columns: min-content 1fr min-content;
+	grid-template-columns: min-content 1fr;
 	grid-template-rows: min-content 1fr;
 	grid-template-areas:
-		"status main main"
-		"status main main";
+		"status main"
+		"status main";
 
 	overflow: hidden;
 	height: 100vh;

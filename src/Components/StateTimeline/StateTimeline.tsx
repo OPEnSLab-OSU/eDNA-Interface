@@ -18,7 +18,7 @@ function StateNode({ name, color, position }: IStateNodeProps) {
 	);
 }
 
-const stateNames = ["stop", "flush", "sample", "dry", "preserve"];
+const stateNames = ["idle", "stop", "flush", "sample", "dry", "preserve"];
 const nodeColors = ["#173F5F", "#20639B", "#3CAEA3", "#ED553B"];
 
 export function StateTimeline() {
@@ -31,7 +31,7 @@ export function StateTimeline() {
 						key={name}
 						name={name}
 						color={
-							name === status.currentState
+							name === status.currentState?.split("-")[0].toLowerCase()
 								? nodeColors[i % stateNames.length]
 								: null
 						}

@@ -7,15 +7,15 @@ const HtmlWebpackInlineSourcePlugin = require("html-webpack-inline-source-plugin
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const { WebpackBundleSizeAnalyzerPlugin } = require("webpack-bundle-size-analyzer");
-const BrotliWebpackPlugin = require("brotli-webpack-plugin");
 
-const entryPath = path.resolve(__dirname, "src/index");
-const outputPath = path.resolve(__dirname, "dist");
-const nodeModules = path.resolve(__dirname, "node_modules");
+const entryFolder = path.resolve(__dirname, "src/index");
+const outputFolder = path.resolve(__dirname, "dist");
+const nodeFolder = path.resolve(__dirname, "node_modules");
+
 module.exports = {
-	entry: entryPath,
+	entry: entryFolder,
 	output: {
-		path: outputPath,
+		path: outputFolder,
 		filename: "bundle.js",
 		hotUpdateChunkFilename: "hot/hot-update.js",
 		hotUpdateMainFilename: "hot/hot-update.json",
@@ -60,7 +60,7 @@ module.exports = {
 			{
 				// Run TS files through TS compiler
 				test: /\.(ts|js)x?$/,
-				exclude: [nodeModules],
+				exclude: nodeFolder,
 				loader: "ts-loader",
 				options: {
 					// disable type checker - we will use it in fork plugin
@@ -68,25 +68,9 @@ module.exports = {
 				},
 			},
 			{
-				test: /\.css$/,
-				exclude: [nodeModules],
-				loaders: ["style-loader", "css-loader"],
-			},
-			{
-				test: /\.scss$/,
-				exclude: [nodeModules],
-				loaders: [
-					"style-loader",
-					"css-loader",
-					{
-						loader: "postcss-loader",
-						options: {
-							sourceMap: true,
-							config: { path: "postcss.config.js" },
-						},
-					},
-					"sass-loader",
-				],
+				test: /\.s?css$/,
+				exclude: nodeFolder,
+				loaders: ["style-loader", "css-loader", "sass-loader"],
 			},
 		],
 	},

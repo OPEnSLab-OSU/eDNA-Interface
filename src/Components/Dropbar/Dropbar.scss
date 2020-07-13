@@ -8,6 +8,7 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-auto-flow: column;
+		gap: 16px;
 
 		button {
 			text-decoration: none;
@@ -35,6 +36,7 @@
 	.toggle {
 		cursor: pointer;
 		padding-bottom: 4px;
+		width: max-content;
 
 		&.active {
 			width: min-content;

@@ -1,26 +1,15 @@
 {
-	"env": {
-		"browser": true,
-		"es2020": true
-	},
-	"globals": {
-		"Atomics": "readonly",
-		"SharedArrayBuffer": "readonly"
-	},
+	"env": { "browser": true, "es2020": true },
+	"globals": { "Atomics": "readonly", "SharedArrayBuffer": "readonly" },
 	"extends": ["airbnb-typescript-prettier"],
 	"parser": "@typescript-eslint/parser",
 	"parserOptions": {
 		"sourceType": "module",
 		"ecmaVersion": 2020,
-		"ecmaFeatures": {
-			"jsx": true
-		}
+		"ecmaFeatures": { "jsx": true }
 	},
 	"settings": {
-		"react": {
-			"pragma": "h",
-			"version": "preact"
-		},
+		"react": { "pragma": "h", "version": "preact" },
 		"import/resolver": {
 			"typescript": {} // this loads <rootdir>/tsconfig.json to eslint
 		}
@@ -30,12 +19,7 @@
 		"@typescript-eslint/explicit-module-boundary-types": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/no-namespace": "off",
-		"@typescript-eslint/no-unused-vars": [
-			"warn",
-			{
-				"args": "none"
-			}
-		],
+		"@typescript-eslint/no-unused-vars": ["warn", { "args": "none" }],
 		"@typescript-eslint/no-var-requires": "off",
 		"consistent-return": "off",
 		"eqeqeq": "off",

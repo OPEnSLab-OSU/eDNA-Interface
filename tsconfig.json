@@ -6,7 +6,7 @@
 		"strictNullChecks": true,
 		"jsx": "react",
 		"jsxFactory": "h",
-		"module": "commonJS",
+		"module": "CommonJS",
 		"baseUrl": ".",
 		"paths": {
 			"App": ["./src/App"],
@@ -15,15 +15,14 @@
 			"Components/*": ["./src/Components/*"],
 			"Util": ["./src/Util"],
 			"Util/*": ["./src/Util/*"]
-			// "M": ["./src/Libraries"]
 		},
 		"sourceMap": true,
-		"target": "es5",
+		"target": "ES5",
 		"lib": ["ESNext", "DOM", "DOM.Iterable"],
 		"noEmitOnError": false,
 		"importsNotUsedAsValues": "preserve",
-		"allowSyntheticDefaultImports": true
-		// "skipLibCheck": true
+		"allowSyntheticDefaultImports": true,
+		"skipLibCheck": true
 	},
 	"exclude": ["node_modules", "node_modules.nosync", "dist", "public"]
 }

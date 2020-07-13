@@ -17,12 +17,12 @@ export const stateConfigData: {
 			{
 				name: "time",
 				type: "number",
-				description: "Controls how long before transitioning to the sample state",
+				description: "Time limit before moving to the next state",
 			},
 			{
 				name: "volume",
 				type: "number",
-				description: "Controls how much water will be used to flush the system",
+				description: "Amount of water to flush in ml",
 			},
 		],
 	},
@@ -32,18 +32,17 @@ export const stateConfigData: {
 			{
 				name: "time",
 				type: "number",
-				description: "Controls how long before transitioning to the dry state",
+				description: "Time limit before moving to the next state",
 			},
 			{
 				name: "volume",
 				type: "number",
-				description: "Controls how much water will be sampled",
+				description: "Amount of water to sample in ml",
 			},
 			{
 				name: "pressure",
 				type: "number",
-				description:
-					"Controls when to automatically stop when the pressure exeeds the given limit",
+				description: "Max pressure before moving to the next state",
 			},
 		],
 	},
@@ -53,8 +52,7 @@ export const stateConfigData: {
 			{
 				name: "time",
 				type: "number",
-				description:
-					"Controls how long before transitioning to the preserve state",
+				description: "Time limit before moving to the next state",
 			},
 		],
 	},
@@ -64,7 +62,7 @@ export const stateConfigData: {
 			{
 				name: "time",
 				type: "number",
-				description: "Controls how long before transitioning to the stop state",
+				description: "Time limit before moving to the next state",
 			},
 		],
 	},

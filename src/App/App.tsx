@@ -47,7 +47,7 @@ function useStatusUpdating() {
 		dispatch(apiConnect());
 		statusUpdate();
 
-		timerId = window.setInterval(() => statusUpdate(), timeout);
+		timerId = window.setInterval(statusUpdate, timeout);
 		return () => timerId && clearInterval(timerId);
 	}, [statusUpdating]);
 
@@ -60,11 +60,12 @@ export function App() {
 	const connection = useSelector((state: RootState) => state.connection);
 	const loadingScreen = useSelector((state: RootState) => state.loadingScreen);
 	const selectedTask = useSelector(selectedTaskSelector);
+	const dispatch = useDispatch();
 
 	// Get list of tasks from the server
 	useEffect(() => {
 		(async () => {
-			await API.store.getTaskList();
+			// await API.store.getTaskList();
 			// const mock = await verifyTaskFromAPI(
 			// 	{ name: "Task 1", schedule: 10000000 },
 			// 	{ strict: false }

@@ -5,13 +5,8 @@ import { useSelector } from "react-redux";
 
 import { RootState } from "App/redux/store";
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
-	k: infer I
-) => void
-	? I
-	: never;
+import { PickAndFlatten } from "Util";
 
-type PickAndFlatten<T, K extends keyof T> = UnionToIntersection<T[K]>;
 type StatusItemData = {
 	name: string;
 	properties: { name: string; value: any }[];
@@ -39,7 +34,12 @@ function makeStatusItemData(
 	return [
 		{
 			name: "State",
-			properties: [{ name: "current", value: String(currentState).toUpperCase() }],
+			properties: [
+				{
+					name: "current",
+					value: String(currentState).toUpperCase().split("-")[0],
+				},
+			],
 		},
 		{
 			name: "Valve",

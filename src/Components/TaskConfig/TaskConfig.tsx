@@ -121,6 +121,11 @@ export function TaskConfig() {
 	};
 
 	const onDelete = async () => {
+		if (selectedTask.status == 1) {
+			alert("Not supposed to happen. Please stop looking around!");
+			return;
+		}
+
 		const response = await API.store.deleteTask(selectedTask.id);
 		if (response.success) {
 			console.log(response.success);

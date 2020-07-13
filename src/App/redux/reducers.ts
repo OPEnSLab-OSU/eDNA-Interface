@@ -26,10 +26,9 @@ function ifElse<B extends boolean, T, K>(c: B, a: T, b: K) {
 // Representing the visibility all panels currently on screen
 // ────────────────────────────────────────────────────────────────────────────────
 export const panels = createReducer({ status: true, task: true }, (builder) =>
-	builder.addCase(actions.togglePanel, (state, { payload }) => ({
-		...state,
-		...payload,
-	}))
+	builder.addCase(actions.togglePanel, (state, { payload }) => {
+		(state as any)[payload.panel] = !(state as any)[payload.panel];
+	})
 );
 
 // ────────────────────────────────────────────────────────────────────────────────

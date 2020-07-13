@@ -71,7 +71,6 @@ const FormCreateTask: React.FC<{
 export function TaskListing() {
 	const [showTaskInput, setShowTaskInput] = useState(false);
 	const dispatch = useDispatch();
-	const panels = useSelector((state: RootState) => state.panels);
 	const tasks = useSelector((state: RootState) => state.tasks);
 	const selectedTask = useSelector(selectedTaskSelector);
 
@@ -86,14 +85,12 @@ export function TaskListing() {
 		<div className="tasklisting">
 			<div className="headline">
 				<div className="title">Tasks</div>
-				{panels.task && (
-					<button
-						type="button"
-						className="create-group"
-						onClick={() => setShowTaskInput(true)}>
-						Create
-					</button>
-				)}
+				<button
+					type="button"
+					className="create-group"
+					onClick={() => setShowTaskInput(true)}>
+					Create
+				</button>
 			</div>
 			<ul>
 				{Object.values(tasks)
