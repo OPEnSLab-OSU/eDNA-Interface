@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import { h } from "preact";
 import { useEffect, useState } from "preact/hooks";
+import ReactNotification, { store } from "react-notifications-component";
 import { useDispatch, useSelector, useStore } from "react-redux";
 
 import { Dropbar } from "Components/Dropbar";
@@ -22,7 +23,7 @@ import { RootState } from "./redux/store";
 // consecutive failed attempts.
 // ────────────────────────────────────────────────────────────────────────────────
 function useStatusUpdating() {
-	const store = useStore();
+	const reduxStore = useStore();
 	const dispatch = useDispatch();
 	const [statusUpdating, setStatusUpdating] = useState(false);
 
@@ -37,7 +38,7 @@ function useStatusUpdating() {
 			try {
 				await API.store.getStatus(timeout);
 			} catch (error) {
-				if (store.getState().connection.statusText === "offline") {
+				if (reduxStore.getState().connection.statusText === "offline") {
 					timerId && clearInterval(timerId);
 					setStatusUpdating(false);
 				}
@@ -65,7 +66,7 @@ export function App() {
 	// Get list of tasks from the server
 	useEffect(() => {
 		(async () => {
-			// await API.store.getTaskList();
+			await API.store.getTaskList();
 			// const mock = await verifyTaskFromAPI(
 			// 	{ name: "Task 1", schedule: 10000000 },
 			// 	{ strict: false }
@@ -78,6 +79,7 @@ export function App() {
 
 	return (
 		<div className="app">
+			<ReactNotification />
 			{panels.status && (
 				<Status connection={connection} setStatusUpdating={setStatusUpdating} />
 			)}

@@ -1,6 +1,7 @@
 import cn from "classnames";
 import { h } from "preact";
 import { StateUpdater } from "preact/hooks";
+import { store } from "react-notifications-component";
 import { useSelector } from "react-redux";
 
 import { RootState } from "App/redux/store";
@@ -106,6 +107,30 @@ export const Status = (props: {
 						<i>E</i>DNA
 					</span>
 				</li>
+				{/* 
+				<button
+					type="button"
+					onClick={() => {
+						store.addNotification({
+							message: "success",
+							type: "success",
+							insert: "top",
+							container: "bottom-center",
+							animationIn: ["animated", "fadeIn"],
+							animationOut: ["animated", "fadeOut"],
+							slidingExit: {
+								duration: 1000,
+								timingFunction: "ease-out",
+								delay: 0,
+							},
+							dismiss: {
+								duration: 1000,
+								onScreen: false,
+							},
+						});
+					}}>
+					Add
+				</button> */}
 
 				{statusItemData.map((data) => (
 					<StatusItem key={data.name} {...data} />

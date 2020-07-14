@@ -15,13 +15,18 @@ const logger: Middleware = (store) => (next) => (action) => {
 };
 
 const valveStatusExtractor: Middleware = (store) => (next) => (action) => {
-	const statusText = ["sampled", "free", "operating"];
+	const statusText = new Map<number, string>();
+	statusText.set(-1, "unavailable");
+	statusText.set(0, "sampled");
+	statusText.set(1, "free");
+	statusText.set(2, "operating");
+
 	if (action.type === statusUpdate.type) {
 		const statusUpdateAction = action as ReturnType<typeof statusUpdate>;
 		const mappedValvesFromStatus = statusUpdateAction.payload.valves?.map(
 			(valveStatus, index) => ({
 				id: index,
-				status: statusText[valveStatus],
+				status: statusText.get(valveStatus)!,
 			})
 		);
 

@@ -29,7 +29,7 @@ const ValveNode: FunctionComponent<ValveNodeProps> = ({
 			type="button"
 			className={cn("valve-node", { current })}
 			onClick={onClick}
-			disabled={status === "sampled"}>
+			disabled={status === "sampled" || status === "unavailable"}>
 			{id}
 			{queue != undefined ? <div className="badge">{queue + 1}</div> : null}
 		</button>
@@ -48,7 +48,8 @@ function ValveOverview() {
 
 	const valveToQueue = new Map<number, number>();
 	selectedTask?.valves.forEach((v) => {
-		valves.all[v].status != "sampled" && valveToQueue.set(v, valveToQueue.size);
+		const { status } = valves.all[v];
+		status === "sampled" && valveToQueue.set(v, valveToQueue.size);
 	});
 
 	const valveToCurrent = new Map<number, boolean>();
