@@ -8,8 +8,9 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr;
 		grid-auto-flow: column;
+		gap: 16px;
 
-		li {
+		button {
 			text-decoration: none;
 			list-style: none;
 			text-transform: uppercase;
@@ -35,6 +36,7 @@
 	.toggle {
 		cursor: pointer;
 		padding-bottom: 4px;
+		width: max-content;
 
 		&.active {
 			width: min-content;

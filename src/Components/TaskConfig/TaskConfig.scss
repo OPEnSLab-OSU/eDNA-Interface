@@ -86,6 +86,7 @@
 .textfield.time {
 	display: grid;
 	grid-template-columns: repeat(3, 1fr);
+	// grid-template-rows: auto [last-line];
 	gap: 0 8px;
 
 	.title {
@@ -98,6 +99,7 @@
 
 	.error {
 		grid-column: 1/-1;
+		// grid-row-start: span 9999;
 	}
 
 	.input {

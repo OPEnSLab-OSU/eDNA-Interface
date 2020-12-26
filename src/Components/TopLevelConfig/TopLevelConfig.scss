@@ -1,0 +1,20 @@
+.top-level-config-wrapper {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+	margin-top: 0;
+	gap: 24px;
+
+	padding-bottom: 24px;
+
+	.config-grid-wrapper {
+		display: grid;
+		gap: 24px;
+		align-items: flex-start;
+		grid-template-columns: repeat(auto-fill, minmax(264px, 1fr));
+	}
+
+	.task-wrapper {
+		grid-row: 1/-1;
+		height: 100%;
+	}
+}
